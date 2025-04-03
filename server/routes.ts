@@ -13,6 +13,7 @@ import { randomBytes } from "crypto";
 import { FlightService } from "./services/flight-service";
 import { TicketService } from "./services/ticket-service";
 import { PaymentService } from "./services/payment-service";
+import { setupAuth } from "./auth";
 
 // Initialize services
 const flightService = new FlightService(storage);
@@ -20,6 +21,9 @@ const ticketService = new TicketService(storage);
 const paymentService = new PaymentService();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
+  
   // API routes
 
   // Airport search
@@ -60,6 +64,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User authentication is now handled by Passport in auth.ts
+  // The following routes are now replaced by /api/register, /api/login, /api/logout and /api/user
+  
+  /* 
   // User registration
   app.post("/api/users/register", async (req: Request, res: Response) => {
     try {
@@ -114,6 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Login failed" });
     }
   });
+  */
 
   // Create booking
   app.post("/api/bookings", async (req: Request, res: Response) => {

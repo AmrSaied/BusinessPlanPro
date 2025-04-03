@@ -1,313 +1,249 @@
+import { db, pool } from './db';
+import { IStorage } from './storage';
 import { 
   User, InsertUser, 
-  Flight, InsertFlight,
-  Passenger, InsertPassenger,
+  Flight, InsertFlight, 
+  Passenger, InsertPassenger, 
   Booking, InsertBooking, 
-  Airport, InsertAirport,
-  BookingPassenger, InsertBookingPassenger
-} from "@shared/schema";
+  Airport, InsertAirport, 
+  BookingPassenger, InsertBookingPassenger 
+} from '@shared/schema';
+import { eq, ilike, or, and } from 'drizzle-orm';
+import { users, flights, passengers, bookings, airports, bookingPassengers } from '@shared/schema';
+import { generatePNR } from './utils';
+import connectPgSimple from 'connect-pg-simple';
+import session from 'express-session';
 
-import session from "express-session";
-
-export interface IStorage {
-  // Session store
+/**
+ * PostgreSQL implementation of the Storage interface
+ */
+export class DatabaseStorage implements IStorage {
   sessionStore: session.Store;
   
-  // User operations
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
-  
-  // Flight operations
-  getFlight(id: number): Promise<Flight | undefined>;
-  getFlights(
-    departureAirport?: string, 
-    arrivalAirport?: string, 
-    departureDate?: string
-  ): Promise<Flight[]>;
-  createFlight(flight: InsertFlight): Promise<Flight>;
-  
-  // Passenger operations
-  getPassenger(id: number): Promise<Passenger | undefined>;
-  getPassengersByUserId(userId: number): Promise<Passenger[]>;
-  createPassenger(passenger: InsertPassenger): Promise<Passenger>;
-  
-  // Booking operations
-  getBooking(id: number): Promise<Booking | undefined>;
-  getBookingByReference(reference: string): Promise<Booking | undefined>;
-  getBookingsByUserId(userId: number): Promise<Booking[]>;
-  createBooking(booking: InsertBooking): Promise<Booking>;
-  updateBooking(id: number, booking: Partial<Booking>): Promise<Booking | undefined>;
-  
-  // Airport operations
-  getAirport(id: number): Promise<Airport | undefined>;
-  getAirportByIataCode(iataCode: string): Promise<Airport | undefined>;
-  searchAirports(query: string): Promise<Airport[]>;
-  createAirport(airport: InsertAirport): Promise<Airport>;
-  
-  // Booking-Passenger operations
-  createBookingPassenger(bookingPassenger: InsertBookingPassenger): Promise<BookingPassenger>;
-  getPassengersByBookingId(bookingId: number): Promise<Passenger[]>;
-}
-
-import createMemoryStore from "memorystore";
-
-const MemoryStore = createMemoryStore(session);
-
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private flights: Map<number, Flight>;
-  private passengers: Map<number, Passenger>;
-  private bookings: Map<number, Booking>;
-  private airports: Map<number, Airport>;
-  private bookingPassengers: Map<number, BookingPassenger>;
-  
-  private currentUserId: number;
-  private currentFlightId: number;
-  private currentPassengerId: number;
-  private currentBookingId: number;
-  private currentAirportId: number;
-  private currentBookingPassengerId: number;
-  
-  sessionStore: session.Store;
-
   constructor() {
-    this.users = new Map();
-    this.flights = new Map();
-    this.passengers = new Map();
-    this.bookings = new Map();
-    this.airports = new Map();
-    this.bookingPassengers = new Map();
+    const PostgresSessionStore = connectPgSimple(session);
     
-    this.currentUserId = 1;
-    this.currentFlightId = 1;
-    this.currentPassengerId = 1;
-    this.currentBookingId = 1;
-    this.currentAirportId = 1;
-    this.currentBookingPassengerId = 1;
-    
-    // Initialize memory store for sessions
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
+    // Initialize session store
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+      tableName: 'session', // Optional. Default is "session"
+      createTableIfMissing: true
     });
-    
-    // Initialize with some sample airports
-    this.initializeAirports();
-    this.initializeFlights();
   }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const results = await db.select().from(users).where(eq(users.id, id));
+    return results[0];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const results = await db.select().from(users).where(eq(users.username, username));
+    return results[0];
   }
-  
+
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email === email,
-    );
+    const results = await db.select().from(users).where(eq(users.email, email));
+    return results[0];
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { 
-      ...insertUser, 
-      id, 
-      createdAt: new Date(),
-      firstName: insertUser.firstName ?? null,
-      lastName: insertUser.lastName ?? null,
-      preferredLanguage: insertUser.preferredLanguage ?? null 
-    };
-    this.users.set(id, user);
-    return user;
+    const results = await db.insert(users).values(insertUser).returning();
+    return results[0];
   }
-  
+
   async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
-    const user = await this.getUser(id);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...userData };
-    this.users.set(id, updatedUser);
-    return updatedUser;
+    const results = await db.update(users)
+      .set(userData)
+      .where(eq(users.id, id))
+      .returning();
+    return results[0];
   }
 
   // Flight operations
   async getFlight(id: number): Promise<Flight | undefined> {
-    return this.flights.get(id);
+    const results = await db.select().from(flights).where(eq(flights.id, id));
+    return results[0];
   }
-  
+
   async getFlights(
     departureAirport?: string, 
     arrivalAirport?: string, 
     departureDate?: string
   ): Promise<Flight[]> {
-    let flights = Array.from(this.flights.values());
+    let query = db.select().from(flights);
     
+    // Build conditions array
+    const conditions = [];
     if (departureAirport) {
-      flights = flights.filter(f => f.departureAirport === departureAirport);
+      conditions.push(eq(flights.departureAirport, departureAirport));
     }
     
     if (arrivalAirport) {
-      flights = flights.filter(f => f.arrivalAirport === arrivalAirport);
+      conditions.push(eq(flights.arrivalAirport, arrivalAirport));
     }
     
     // In a real implementation, we would also filter by date
     
-    return flights;
+    // Apply conditions if any exist
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    // Execute the query and return results
+    const results = await query;
+    return results;
   }
-  
+
   async createFlight(insertFlight: InsertFlight): Promise<Flight> {
-    const id = this.currentFlightId++;
-    const flight: Flight = { ...insertFlight, id };
-    this.flights.set(id, flight);
-    return flight;
+    const results = await db.insert(flights).values(insertFlight).returning();
+    return results[0];
   }
 
   // Passenger operations
   async getPassenger(id: number): Promise<Passenger | undefined> {
-    return this.passengers.get(id);
+    const results = await db.select().from(passengers).where(eq(passengers.id, id));
+    return results[0];
   }
-  
+
   async getPassengersByUserId(userId: number): Promise<Passenger[]> {
-    return Array.from(this.passengers.values()).filter(
-      (passenger) => passenger.userId === userId,
-    );
+    return await db.select().from(passengers).where(eq(passengers.userId, userId));
   }
-  
+
   async createPassenger(insertPassenger: InsertPassenger): Promise<Passenger> {
-    const id = this.currentPassengerId++;
-    const passenger: Passenger = { 
-      ...insertPassenger, 
-      id,
-      userId: insertPassenger.userId ?? null,
-      isSaved: insertPassenger.isSaved ?? null
-    };
-    this.passengers.set(id, passenger);
-    return passenger;
+    const results = await db.insert(passengers).values(insertPassenger).returning();
+    return results[0];
   }
 
   // Booking operations
   async getBooking(id: number): Promise<Booking | undefined> {
-    return this.bookings.get(id);
+    const results = await db.select().from(bookings).where(eq(bookings.id, id));
+    return results[0];
   }
-  
+
   async getBookingByReference(reference: string): Promise<Booking | undefined> {
-    return Array.from(this.bookings.values()).find(
-      (booking) => booking.bookingReference === reference,
-    );
+    const results = await db.select().from(bookings).where(eq(bookings.bookingReference, reference));
+    return results[0];
   }
-  
+
   async getBookingsByUserId(userId: number): Promise<Booking[]> {
-    return Array.from(this.bookings.values()).filter(
-      (booking) => booking.userId === userId,
-    );
+    return await db.select().from(bookings).where(eq(bookings.userId, userId));
   }
-  
+
   async createBooking(insertBooking: InsertBooking): Promise<Booking> {
-    const id = this.currentBookingId++;
-    const booking: Booking = { 
-      ...insertBooking, 
-      id, 
-      createdAt: new Date(),
-      userId: insertBooking.userId ?? null,
-      flightId: insertBooking.flightId ?? null,
-      currency: insertBooking.currency ?? null,
-      expressProcessing: insertBooking.expressProcessing ?? null,
-      editableTicket: insertBooking.editableTicket ?? null,
-      hotelReservation: insertBooking.hotelReservation ?? null,
-      insuranceLetter: insertBooking.insuranceLetter ?? null,
-      specialRequests: insertBooking.specialRequests ?? null,
-      contactPhone: insertBooking.contactPhone ?? null
-    };
-    this.bookings.set(id, booking);
-    return booking;
-  }
-  
-  async updateBooking(id: number, bookingData: Partial<Booking>): Promise<Booking | undefined> {
-    const booking = await this.getBooking(id);
-    if (!booking) return undefined;
+    // Generate a unique booking reference if one isn't provided
+    if (!insertBooking.bookingReference) {
+      insertBooking.bookingReference = generatePNR();
+    }
     
-    const updatedBooking = { ...booking, ...bookingData };
-    this.bookings.set(id, updatedBooking);
-    return updatedBooking;
+    const results = await db.insert(bookings).values(insertBooking).returning();
+    return results[0];
+  }
+
+  async updateBooking(id: number, bookingData: Partial<Booking>): Promise<Booking | undefined> {
+    const results = await db.update(bookings)
+      .set(bookingData)
+      .where(eq(bookings.id, id))
+      .returning();
+    return results[0];
   }
 
   // Airport operations
   async getAirport(id: number): Promise<Airport | undefined> {
-    return this.airports.get(id);
+    const results = await db.select().from(airports).where(eq(airports.id, id));
+    return results[0];
   }
-  
+
   async getAirportByIataCode(iataCode: string): Promise<Airport | undefined> {
-    return Array.from(this.airports.values()).find(
-      (airport) => airport.iataCode === iataCode,
-    );
+    const results = await db.select().from(airports).where(eq(airports.iataCode, iataCode));
+    return results[0];
   }
-  
+
   async searchAirports(query: string): Promise<Airport[]> {
+    if (!query || query.trim() === '') {
+      return [];
+    }
+    
     const lowerQuery = query.toLowerCase();
     
     // First try exact matches on country
-    const countryMatches = Array.from(this.airports.values()).filter(
-      (airport) => airport.country.toLowerCase() === lowerQuery
-    );
-    
+    const countryMatches = await db.select()
+      .from(airports)
+      .where(ilike(airports.country, lowerQuery))
+      .limit(10);
+      
     if (countryMatches.length > 0) {
-      return countryMatches.slice(0, 10); // Limit to 10 results
+      return countryMatches;
     }
     
     // Then try partial matches on all fields
-    return Array.from(this.airports.values()).filter(
-      (airport) => 
-        airport.iataCode.toLowerCase().includes(lowerQuery) ||
-        airport.name.toLowerCase().includes(lowerQuery) ||
-        airport.city.toLowerCase().includes(lowerQuery) ||
-        airport.country.toLowerCase().includes(lowerQuery)
-    ).slice(0, 10); // Limit to 10 results
+    return await db.select()
+      .from(airports)
+      .where(
+        or(
+          ilike(airports.iataCode, `%${lowerQuery}%`),
+          ilike(airports.name, `%${lowerQuery}%`),
+          ilike(airports.city, `%${lowerQuery}%`),
+          ilike(airports.country, `%${lowerQuery}%`)
+        )
+      )
+      .limit(10);
   }
-  
+
   async createAirport(insertAirport: InsertAirport): Promise<Airport> {
-    const id = this.currentAirportId++;
-    const airport: Airport = { 
-      ...insertAirport, 
-      id,
-      icaoCode: insertAirport.icaoCode ?? null,
-      latitude: insertAirport.latitude ?? null,
-      longitude: insertAirport.longitude ?? null,
-      timezone: insertAirport.timezone ?? null,
-      localName: insertAirport.localName ?? null
-    };
-    this.airports.set(id, airport);
-    return airport;
+    const results = await db.insert(airports).values(insertAirport).returning();
+    return results[0];
   }
 
   // Booking-Passenger operations
   async createBookingPassenger(insertBookingPassenger: InsertBookingPassenger): Promise<BookingPassenger> {
-    const id = this.currentBookingPassengerId++;
-    const bookingPassenger: BookingPassenger = { ...insertBookingPassenger, id };
-    this.bookingPassengers.set(id, bookingPassenger);
-    return bookingPassenger;
+    const results = await db.insert(bookingPassengers).values(insertBookingPassenger).returning();
+    return results[0];
   }
-  
+
   async getPassengersByBookingId(bookingId: number): Promise<Passenger[]> {
-    const passengerIds = Array.from(this.bookingPassengers.values())
-      .filter(bp => bp.bookingId === bookingId)
-      .map(bp => bp.passengerId);
+    // Join booking_passengers and passengers tables to get passengers for a booking
+    const result = await db.select({
+      passenger: passengers
+    })
+    .from(bookingPassengers)
+    .innerJoin(
+      passengers,
+      eq(bookingPassengers.passengerId, passengers.id)
+    )
+    .where(eq(bookingPassengers.bookingId, bookingId));
     
-    return Array.from(this.passengers.values()).filter(
-      passenger => passengerIds.includes(passenger.id)
-    );
+    return result.map(row => row.passenger);
   }
   
-  // Helper methods to initialize data
-  private initializeAirports() {
-    const airports: InsertAirport[] = [
+  // Helper method to seed the database with initial data
+  async seedDatabase() {
+    try {
+      // Check if we have already seeded the database
+      const countResult = await pool.query('SELECT COUNT(*) FROM airports');
+      const airportCount = parseInt(countResult.rows[0].count);
+      
+      if (airportCount > 0) {
+        console.log('Database already has data, skipping seed');
+        return;
+      }
+      
+      console.log('Seeding database with initial data...');
+      
+      // Seed airports
+      await this.seedAirports();
+      
+      // Seed flights
+      await this.seedFlights();
+      
+      console.log('Database seeded successfully');
+    } catch (error) {
+      console.error('Error seeding database:', error);
+    }
+  }
+  
+  private async seedAirports() {
+    const airportData: InsertAirport[] = [
       {
         iataCode: "JFK",
         icaoCode: "KJFK",
@@ -442,13 +378,13 @@ export class MemStorage implements IStorage {
       }
     ];
     
-    airports.forEach(airport => {
-      this.createAirport(airport);
-    });
+    for (const airport of airportData) {
+      await this.createAirport(airport);
+    }
   }
   
-  private initializeFlights() {
-    const flights: InsertFlight[] = [
+  private async seedFlights() {
+    const flightData: InsertFlight[] = [
       {
         airlineCode: "EK",
         airlineName: "Emirates",
@@ -526,17 +462,8 @@ export class MemStorage implements IStorage {
       }
     ];
     
-    flights.forEach(flight => {
-      this.createFlight(flight);
-    });
+    for (const flight of flightData) {
+      await this.createFlight(flight);
+    }
   }
 }
-
-import { DatabaseStorage } from './db-storage';
-
-// Select the storage implementation based on environment
-const USE_DATABASE = process.env.DATABASE_URL !== undefined;
-
-export const storage = USE_DATABASE 
-  ? new DatabaseStorage() 
-  : new MemStorage();
