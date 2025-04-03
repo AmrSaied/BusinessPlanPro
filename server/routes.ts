@@ -26,8 +26,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/airports/search", async (req: Request, res: Response) => {
     const query = req.query.q as string;
     
-    if (!query || query.length < 2) {
-      return res.status(400).json({ error: "Search query must be at least 2 characters" });
+    if (!query) {
+      return res.status(400).json({ error: "Search query is required" });
     }
     
     try {

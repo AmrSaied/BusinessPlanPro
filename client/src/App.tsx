@@ -43,11 +43,13 @@ function Router() {
           <PaymentPage />
         </MainLayout>
       )} />
-      <Route path="/confirmation/:bookingId" component={(params) => (
-        <MainLayout>
-          <ConfirmationPage bookingId={params.bookingId} />
-        </MainLayout>
-      )} />
+      <Route path="/confirmation/:bookingId">
+        {(params) => (
+          <MainLayout>
+            <ConfirmationPage bookingId={params.bookingId} />
+          </MainLayout>
+        )}
+      </Route>
       <Route path="/faq" component={() => (
         <MainLayout>
           <FaqPage />

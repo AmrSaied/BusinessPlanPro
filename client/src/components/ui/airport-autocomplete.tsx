@@ -47,8 +47,8 @@ const AirportAutocomplete = ({
   }, [value]);
 
   useEffect(() => {
-    // Only fetch if query is at least 2 characters
-    if (query.length >= 2) {
+    // Only fetch if query has something
+    if (query.length > 0) {
       refetch();
     }
   }, [query, refetch]);
@@ -99,7 +99,7 @@ const AirportAutocomplete = ({
           placeholder={placeholder || t('airport_placeholder')}
           value={displayValue}
           onChange={handleInputChange}
-          onFocus={() => query.length >= 2 && setShowResults(true)}
+          onFocus={() => setShowResults(true)}
         />
         {isFetching && (
           <div className="absolute inset-y-0 right-3 flex items-center">
@@ -130,9 +130,9 @@ const AirportAutocomplete = ({
             ))
           ) : (
             <div className="py-2 px-4 text-sm text-gray-500">
-              {query.length < 2 
-                ? 'Type at least 2 characters to search' 
-                : 'No airports found'}
+              {query.length === 0 
+                ? 'Type a city, country, or airport code to search' 
+                : 'No airports found - try typing a country name like "egypt" or a city name'}
             </div>
           )}
         </div>

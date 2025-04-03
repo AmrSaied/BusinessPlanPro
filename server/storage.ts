@@ -101,7 +101,14 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id, createdAt: new Date() };
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      createdAt: new Date(),
+      firstName: insertUser.firstName ?? null,
+      lastName: insertUser.lastName ?? null,
+      preferredLanguage: insertUser.preferredLanguage ?? null 
+    };
     this.users.set(id, user);
     return user;
   }
@@ -160,7 +167,12 @@ export class MemStorage implements IStorage {
   
   async createPassenger(insertPassenger: InsertPassenger): Promise<Passenger> {
     const id = this.currentPassengerId++;
-    const passenger: Passenger = { ...insertPassenger, id };
+    const passenger: Passenger = { 
+      ...insertPassenger, 
+      id,
+      userId: insertPassenger.userId ?? null,
+      isSaved: insertPassenger.isSaved ?? null
+    };
     this.passengers.set(id, passenger);
     return passenger;
   }
@@ -187,7 +199,16 @@ export class MemStorage implements IStorage {
     const booking: Booking = { 
       ...insertBooking, 
       id, 
-      createdAt: new Date()
+      createdAt: new Date(),
+      userId: insertBooking.userId ?? null,
+      flightId: insertBooking.flightId ?? null,
+      currency: insertBooking.currency ?? null,
+      expressProcessing: insertBooking.expressProcessing ?? null,
+      editableTicket: insertBooking.editableTicket ?? null,
+      hotelReservation: insertBooking.hotelReservation ?? null,
+      insuranceLetter: insertBooking.insuranceLetter ?? null,
+      specialRequests: insertBooking.specialRequests ?? null,
+      contactPhone: insertBooking.contactPhone ?? null
     };
     this.bookings.set(id, booking);
     return booking;
@@ -215,6 +236,17 @@ export class MemStorage implements IStorage {
   
   async searchAirports(query: string): Promise<Airport[]> {
     const lowerQuery = query.toLowerCase();
+    
+    // First try exact matches on country
+    const countryMatches = Array.from(this.airports.values()).filter(
+      (airport) => airport.country.toLowerCase() === lowerQuery
+    );
+    
+    if (countryMatches.length > 0) {
+      return countryMatches.slice(0, 10); // Limit to 10 results
+    }
+    
+    // Then try partial matches on all fields
     return Array.from(this.airports.values()).filter(
       (airport) => 
         airport.iataCode.toLowerCase().includes(lowerQuery) ||
@@ -226,7 +258,15 @@ export class MemStorage implements IStorage {
   
   async createAirport(insertAirport: InsertAirport): Promise<Airport> {
     const id = this.currentAirportId++;
-    const airport: Airport = { ...insertAirport, id };
+    const airport: Airport = { 
+      ...insertAirport, 
+      id,
+      icaoCode: insertAirport.icaoCode ?? null,
+      latitude: insertAirport.latitude ?? null,
+      longitude: insertAirport.longitude ?? null,
+      timezone: insertAirport.timezone ?? null,
+      localName: insertAirport.localName ?? null
+    };
     this.airports.set(id, airport);
     return airport;
   }
