@@ -4,6 +4,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { BookingProvider } from "./context/booking-context";
 import { LanguageProvider } from "./context/language-context";
+import { AuthProvider } from "./hooks/use-auth";
+import { ProtectedRoute } from "./lib/protected-route";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import FlightSearchPage from "@/pages/flight-search-page";
@@ -13,6 +15,7 @@ import PaymentPage from "@/pages/payment-page";
 import ConfirmationPage from "@/pages/confirmation-page";
 import FaqPage from "@/pages/faq-page";
 import UserDashboard from "@/pages/user-dashboard";
+import AuthPage from "@/pages/auth-page";
 import MainLayout from "./layout/main-layout";
 
 function Router() {
@@ -50,16 +53,20 @@ function Router() {
           </MainLayout>
         )}
       </Route>
+      <Route path="/auth" component={AuthPage} />
       <Route path="/faq" component={() => (
         <MainLayout>
           <FaqPage />
         </MainLayout>
       )} />
-      <Route path="/dashboard" component={() => (
-        <MainLayout>
-          <UserDashboard />
-        </MainLayout>
-      )} />
+      <ProtectedRoute 
+        path="/dashboard" 
+        component={() => (
+          <MainLayout>
+            <UserDashboard />
+          </MainLayout>
+        )} 
+      />
       <Route component={() => (
         <MainLayout>
           <NotFound />
@@ -72,12 +79,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BookingProvider>
-        <LanguageProvider>
-          <Router />
-          <Toaster />
-        </LanguageProvider>
-      </BookingProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <BookingProvider>
+            <Router />
+            <Toaster />
+          </BookingProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

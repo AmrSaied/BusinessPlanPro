@@ -7,9 +7,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Menu, Globe, ChevronDown, User } from 'lucide-react';
+import { Menu, Globe, ChevronDown, User, LogOut } from 'lucide-react';
+
+// Try to import useAuth but handle situations where the provider is not available
+let useAuth: any;
+try {
+  useAuth = require('@/hooks/use-auth').useAuth;
+} catch (error) {
+  useAuth = () => ({ user: null });
+}
 
 const Header = () => {
   const [location] = useLocation();
@@ -17,9 +26,17 @@ const Header = () => {
   const { currentLanguage, changeLanguage, languages } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Mock user state - in a real app, this would use auth context
-  const isLoggedIn = false;
-  const userName = "John Doe";
+  // Handle possible errors if auth provider is not initialized
+  let authState = { user: null, logoutMutation: { mutate: () => {} } };
+  try {
+    authState = useAuth();
+  } catch (error) {
+    console.log('Auth provider not available');
+  }
+  
+  const { user, logoutMutation } = authState;
+  const isLoggedIn = !!user;
+  const userName = user?.username || "";
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -98,8 +115,12 @@ const Header = () => {
                         <a className="w-full">{t('nav_dashboard')}</a>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <a href="#" className="w-full">{t('nav_logout')}</a>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+                      <div className="flex items-center w-full">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        <span>{t('nav_logout')}</span>
+                      </div>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -136,11 +157,27 @@ const Header = () => {
                 <a className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_faq')}</a>
               </Link>
               <a href="#" className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_support')}</a>
-              <Link href="/auth">
-                <a className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center">
-                  {t('nav_sign_in')}
-                </a>
-              </Link>
+              
+              {isLoggedIn ? (
+                <>
+                  <Link href="/dashboard">
+                    <a className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_dashboard')}</a>
+                  </Link>
+                  <button 
+                    onClick={() => logoutMutation.mutate()}
+                    className="flex items-center font-medium text-gray-600 hover:text-primary transition py-2"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span>{t('nav_logout')}</span>
+                  </button>
+                </>
+              ) : (
+                <Link href="/auth">
+                  <a className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center">
+                    {t('nav_sign_in')}
+                  </a>
+                </Link>
+              )}
             </nav>
           </div>
         )}
