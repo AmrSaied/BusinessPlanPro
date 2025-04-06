@@ -121,13 +121,15 @@ export const insertBookingPassengerSchema = createInsertSchema(bookingPassengers
 
 // Define search parameters schema for flight search
 export const flightSearchSchema = z.object({
-  departureAirport: z.string().min(3).max(3),
-  arrivalAirport: z.string().min(3).max(3),
+  origin: z.string().min(3).max(3),
+  destination: z.string().min(3).max(3),
   departureDate: z.string(),
   returnDate: z.string().optional(),
   passengers: z.number().min(1).max(9),
   travelPurpose: z.string(),
-  tripType: z.enum(["oneWay", "roundTrip"]),
+  tripType: z.enum(["one-way", "round-trip"]),
+  originDisplay: z.string().optional(),
+  destinationDisplay: z.string().optional(),
 });
 
 // Payment Schema

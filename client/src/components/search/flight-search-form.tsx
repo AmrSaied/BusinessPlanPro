@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { flightSearchSchema, type FlightSearchParams } from "@shared/schema";
+import { flightSearchSchema, type FlightSearch } from "@shared/schema";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -14,12 +14,12 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { CalendarIcon, PlaneTakeoff, PlaneLanding, Users, Passport } from "lucide-react";
+import { CalendarIcon, PlaneTakeoff, PlaneLanding, Users, Briefcase } from "lucide-react";
 import AirportSearch from "./airport-search";
 import { Airport } from "@shared/schema";
 
 interface FlightSearchFormProps {
-  onSubmit: (data: FlightSearchParams) => void;
+  onSubmit: (data: FlightSearch) => void;
 }
 
 const FlightSearchForm = ({ onSubmit }: FlightSearchFormProps) => {
@@ -34,7 +34,7 @@ const FlightSearchForm = ({ onSubmit }: FlightSearchFormProps) => {
     formState: { errors },
     setValue,
     watch,
-  } = useForm<FlightSearchParams>({
+  } = useForm<FlightSearch>({
     resolver: zodResolver(flightSearchSchema),
     defaultValues: {
       origin: "",
@@ -73,8 +73,15 @@ const FlightSearchForm = ({ onSubmit }: FlightSearchFormProps) => {
   };
 
   // Handle form submission
-  const onFormSubmit = (data: FlightSearchParams) => {
-    onSubmit(data);
+  const onFormSubmit = (data: FlightSearch) => {
+    // Ensure we have the complete airport data for better display
+    const submissionData = {
+      ...data,
+      originDisplay: originAirport ? `${originAirport.iataCode} - ${originAirport.city}` : data.origin,
+      destinationDisplay: destinationAirport ? `${destinationAirport.iataCode} - ${destinationAirport.city}` : data.destination
+    };
+    
+    onSubmit(submissionData);
   };
 
   return (
@@ -290,7 +297,7 @@ const FlightSearchForm = ({ onSubmit }: FlightSearchFormProps) => {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Passport className="h-5 w-5 text-gray-400" />
+                      <Briefcase className="h-5 w-5 text-gray-400" />
                     </div>
                     <Controller
                       name="travelPurpose"

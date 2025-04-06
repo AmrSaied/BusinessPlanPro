@@ -18,6 +18,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [displayValue, setDisplayValue] = useState(value || "");
+  const [selectedAirport, setSelectedAirport] = useState<Airport | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Query for airport search
@@ -27,7 +28,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
     refetch,
   } = useQuery<Airport[]>({
     queryKey: [`/api/airports/search?q=${searchTerm}&lang=${language}`],
-    enabled: true, // Always enabled to allow empty queries to return all airports
+    enabled: isOpen, // Only fetch when dropdown is open
   });
 
   // Handle outside click to close dropdown
@@ -44,18 +45,33 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
     };
   }, []);
 
+  // Update displayValue when prop value changes (for form resets or defaults)
+  useEffect(() => {
+    if (value !== undefined && (!selectedAirport || selectedAirport.iataCode !== value)) {
+      setDisplayValue(value);
+    }
+  }, [value, selectedAirport]);
+
   // Handle search input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setDisplayValue(value);
     setSearchTerm(value);
+    setSelectedAirport(null);
     
+    // Always open dropdown when typing
     setIsOpen(true);
-    refetch();
+  };
+
+  // Handle focus on input
+  const handleFocus = () => {
+    setIsOpen(true);
+    refetch(); // Refetch when focused to get the latest data
   };
 
   // Handle selection of an airport
   const handleAirportSelect = (airport: Airport) => {
+    setSelectedAirport(airport);
     onSelect(airport);
     setDisplayValue(`${airport.iataCode} - ${airport.city}`);
     setIsOpen(false);
@@ -74,7 +90,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
           placeholder={placeholder}
           value={displayValue}
           onChange={handleInputChange}
-          onFocus={() => setIsOpen(true)}
+          onFocus={handleFocus}
         />
 
         {/* Results dropdown */}

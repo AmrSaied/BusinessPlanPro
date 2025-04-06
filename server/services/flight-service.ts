@@ -9,25 +9,25 @@ export class FlightService {
   }
   
   async searchFlights(
-    departureAirport: string,
-    arrivalAirport: string,
+    origin: string,
+    destination: string,
     departureDate: string,
     returnDate?: string,
-    tripType: "oneWay" | "roundTrip" = "oneWay"
+    tripType: "one-way" | "round-trip" = "one-way"
   ): Promise<{ outbound: Flight[], return?: Flight[] }> {
     // Get outbound flights
     const outboundFlights = await this.storage.getFlights(
-      departureAirport,
-      arrivalAirport,
+      origin,
+      destination,
       departureDate
     );
     
     // For round trips, also get return flights
     let returnFlights;
-    if (tripType === "roundTrip" && returnDate) {
+    if (tripType === "round-trip" && returnDate) {
       returnFlights = await this.storage.getFlights(
-        arrivalAirport,
-        departureAirport,
+        destination,
+        origin,
         returnDate
       );
     }

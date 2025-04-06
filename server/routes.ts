@@ -100,8 +100,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // First try to search flights using our flight service (local database)
       let flights = await flightService.searchFlights(
-        searchParams.departureAirport,
-        searchParams.arrivalAirport,
+        searchParams.origin,
+        searchParams.destination,
         searchParams.departureDate,
         searchParams.returnDate,
         searchParams.tripType
@@ -112,8 +112,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           console.log('Fetching flights from AviationStack API...');
           const apiParams: any = {
-            departureAirport: searchParams.departureAirport,
-            arrivalAirport: searchParams.arrivalAirport
+            departureAirport: searchParams.origin,
+            arrivalAirport: searchParams.destination
           };
           
           if (searchParams.departureDate) {
