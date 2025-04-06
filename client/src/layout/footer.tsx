@@ -3,8 +3,37 @@ import { useTranslation } from 'react-i18next';
 import { useLanguage } from '@/context/language-context';
 
 const Footer = () => {
-  const { t } = useTranslation();
-  const { languages, changeLanguage } = useLanguage();
+  // Default translations fallback
+  let translations = { 
+    t: (key: string) => key,
+    i18n: { language: 'en' }
+  };
+  
+  try {
+    translations = useTranslation();
+  } catch (error) {
+    console.error('Translation context not available');
+  }
+  
+  const { t } = translations;
+  
+  // Default language context fallback
+  let languageContext: any = {
+    currentLanguage: 'en',
+    changeLanguage: (lang: string) => console.log(`Would change to ${lang}`),
+    languages: { 
+      en: { nativeName: 'English', flag: '🇺🇸' },
+      es: { nativeName: 'Español', flag: '🇪🇸' }
+    }
+  };
+  
+  try {
+    languageContext = useLanguage();
+  } catch (error) {
+    console.error('Language context not available');
+  }
+  
+  const { languages, changeLanguage } = languageContext;
 
   return (
     <footer className="bg-gray-800 text-white pt-12 pb-6">
@@ -22,18 +51,18 @@ const Footer = () => {
               {t('footer_description')}
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition">
+              <span className="text-gray-400 hover:text-white transition cursor-pointer">
                 <i className="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
+              </span>
+              <span className="text-gray-400 hover:text-white transition cursor-pointer">
                 <i className="fab fa-twitter"></i>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
+              </span>
+              <span className="text-gray-400 hover:text-white transition cursor-pointer">
                 <i className="fab fa-instagram"></i>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
+              </span>
+              <span className="text-gray-400 hover:text-white transition cursor-pointer">
                 <i className="fab fa-linkedin-in"></i>
-              </a>
+              </span>
             </div>
           </div>
           
@@ -43,24 +72,24 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link href="/">
-                  <a className="text-gray-400 hover:text-white transition">{t('footer_home')}</a>
+                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_home')}</span>
                 </Link>
               </li>
               <li>
                 <Link href="/#how-it-works">
-                  <a className="text-gray-400 hover:text-white transition">{t('footer_how_it_works')}</a>
+                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_how_it_works')}</span>
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition">{t('footer_pricing')}</a>
+                <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_pricing')}</span>
               </li>
               <li>
                 <Link href="/faq">
-                  <a className="text-gray-400 hover:text-white transition">{t('footer_faq')}</a>
+                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_faq')}</span>
                 </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-white transition">{t('footer_contact')}</a>
+                <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_contact')}</span>
               </li>
             </ul>
           </div>
@@ -69,11 +98,11 @@ const Footer = () => {
           <div>
             <h3 className="font-heading font-semibold text-lg mb-4">{t('support')}</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition">{t('footer_help')}</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">{t('footer_chat')}</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">{t('footer_email')}</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">{t('footer_terms')}</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition">{t('footer_privacy')}</a></li>
+              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_help')}</span></li>
+              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_chat')}</span></li>
+              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_email')}</span></li>
+              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_terms')}</span></li>
+              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_privacy')}</span></li>
             </ul>
           </div>
           

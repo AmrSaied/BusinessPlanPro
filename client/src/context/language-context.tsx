@@ -16,15 +16,42 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
 
   useEffect(() => {
-    // Load the current language on mount
-    loadLanguageAsync(currentLanguage);
+    // Get saved language from localStorage or use browser default
+    const savedLanguage = localStorage.getItem('i18nextLng') || navigator.language.split('-')[0];
+    
+    // If saved language is valid, use it
+    if (Object.keys(supportedLanguages).includes(savedLanguage)) {
+      setCurrentLanguage(savedLanguage);
+      loadLanguageAsync(savedLanguage);
+      i18n.changeLanguage(savedLanguage);
+      
+      // Set RTL direction for Arabic
+      document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+    } else {
+      // Otherwise default to English
+      loadLanguageAsync('en');
+    }
   }, []);
 
   const changeLanguage = async (language: string) => {
     try {
-      await loadLanguageAsync(language);
-      await i18n.changeLanguage(language);
-      setCurrentLanguage(language);
+      console.log(`Changing language to: ${language}`);
+      // Only load if it's a different language
+      if (language !== currentLanguage) {
+        await loadLanguageAsync(language);
+        await i18n.changeLanguage(language);
+        
+        // Store in localStorage for persistence
+        localStorage.setItem('i18nextLng', language);
+        
+        // Update state
+        setCurrentLanguage(language);
+        
+        // Update document direction for RTL languages like Arabic
+        document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+        
+        console.log(`Language changed successfully to: ${language}`);
+      }
     } catch (error) {
       console.error('Failed to change language:', error);
     }

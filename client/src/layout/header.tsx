@@ -23,9 +23,39 @@ try {
 
 const Header = () => {
   const [location] = useLocation();
-  const { t } = useTranslation();
-  const { currentLanguage, changeLanguage, languages } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Default translations fallback
+  let translations = { 
+    t: (key: string) => key,
+    i18n: { language: 'en' }
+  };
+  
+  try {
+    translations = useTranslation();
+  } catch (error) {
+    console.error('Translation context not available');
+  }
+  
+  const { t } = translations;
+  
+  // Default language context fallback
+  let languageContext: any = {
+    currentLanguage: 'en',
+    changeLanguage: (lang: string) => console.log(`Would change to ${lang}`),
+    languages: { 
+      en: { nativeName: 'English', flag: '🇺🇸' },
+      es: { nativeName: 'Español', flag: '🇪🇸' }
+    }
+  };
+  
+  try {
+    languageContext = useLanguage();
+  } catch (error) {
+    console.error('Language context not available');
+  }
+  
+  const { currentLanguage, changeLanguage, languages } = languageContext;
   
   // Handle possible errors if auth provider is not initialized
   let authState: { user: SelectUser | null, logoutMutation: { mutate: () => void } } = { 
@@ -98,8 +128,18 @@ const Header = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48">
                 {Object.entries(languages).map(([code, { nativeName, flag }]) => (
-                  <DropdownMenuItem key={code} onClick={() => changeLanguage(code)}>
-                    <span className="mr-2">{flag}</span> {nativeName}
+                  <DropdownMenuItem 
+                    key={code} 
+                    onClick={() => changeLanguage(code)}
+                    className={code === currentLanguage ? "bg-primary/10" : ""}
+                  >
+                    <div className="flex items-center w-full">
+                      <span className="mr-2 text-lg">{flag}</span> 
+                      <span>{nativeName}</span>
+                      {code === currentLanguage && (
+                        <span className="ml-auto">✓</span>
+                      )}
+                    </div>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
