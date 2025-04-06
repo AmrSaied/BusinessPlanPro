@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Menu, Globe, ChevronDown, User, LogOut } from 'lucide-react';
+import { User as SelectUser } from '@shared/schema';
 
 // Try to import useAuth but handle situations where the provider is not available
 let useAuth: any;
@@ -27,7 +28,11 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Handle possible errors if auth provider is not initialized
-  let authState = { user: null, logoutMutation: { mutate: () => {} } };
+  let authState: { user: SelectUser | null, logoutMutation: { mutate: () => void } } = { 
+    user: null, 
+    logoutMutation: { mutate: () => {} } 
+  };
+  
   try {
     authState = useAuth();
   } catch (error) {
@@ -36,7 +41,9 @@ const Header = () => {
   
   const { user, logoutMutation } = authState;
   const isLoggedIn = !!user;
-  const userName = user?.username || "";
+  
+  // Get userName safely with type assertion to avoid TypeScript errors
+  const userName = (user as any)?.username || "";
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -48,30 +55,30 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo Section */}
           <Link href="/">
-            <a className="flex items-center space-x-1">
+            <span className="flex items-center space-x-1 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
               </svg>
               <span className="font-heading font-bold text-xl text-primary">{t('app_name')}</span>
-            </a>
+            </span>
           </Link>
           
           {/* Navigation - Desktop */}
           <nav className="hidden md:flex space-x-8">
             <Link href="/">
-              <a className={`font-medium ${location === '/' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition`}>
+              <span className={`font-medium ${location === '/' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_home')}
-              </a>
+              </span>
             </Link>
             <Link href="/#how-it-works">
-              <a className="font-medium text-gray-600 hover:text-primary transition">
+              <span className="font-medium text-gray-600 hover:text-primary transition cursor-pointer">
                 {t('nav_how_it_works')}
-              </a>
+              </span>
             </Link>
             <Link href="/faq">
-              <a className={`font-medium ${location === '/faq' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition`}>
+              <span className={`font-medium ${location === '/faq' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_faq')}
-              </a>
+              </span>
             </Link>
             <a href="#" className="font-medium text-gray-600 hover:text-primary transition">
               {t('nav_support')}
@@ -112,7 +119,7 @@ const Header = () => {
                   <DropdownMenuContent>
                     <DropdownMenuItem>
                       <Link href="/dashboard">
-                        <a className="w-full">{t('nav_dashboard')}</a>
+                        <span className="w-full cursor-pointer">{t('nav_dashboard')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -126,9 +133,9 @@ const Header = () => {
                 </DropdownMenu>
               ) : (
                 <Link href="/auth">
-                  <a className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block">
                     {t('nav_sign_in')}
-                  </a>
+                  </span>
                 </Link>
               )}
             </div>
@@ -148,20 +155,20 @@ const Header = () => {
           <div className="md:hidden pb-4">
             <nav className="flex flex-col space-y-3">
               <Link href="/">
-                <a className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_home')}</a>
+                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_home')}</span>
               </Link>
               <Link href="/#how-it-works">
-                <a className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_how_it_works')}</a>
+                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_how_it_works')}</span>
               </Link>
               <Link href="/faq">
-                <a className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_faq')}</a>
+                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_faq')}</span>
               </Link>
-              <a href="#" className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_support')}</a>
+              <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_support')}</span>
               
               {isLoggedIn ? (
                 <>
                   <Link href="/dashboard">
-                    <a className="font-medium text-gray-600 hover:text-primary transition py-2">{t('nav_dashboard')}</a>
+                    <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_dashboard')}</span>
                   </Link>
                   <button 
                     onClick={() => logoutMutation.mutate()}
@@ -173,9 +180,9 @@ const Header = () => {
                 </>
               ) : (
                 <Link href="/auth">
-                  <a className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block">
                     {t('nav_sign_in')}
-                  </a>
+                  </span>
                 </Link>
               )}
             </nav>

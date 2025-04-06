@@ -80,12 +80,12 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <AuthProvider>
-          <BookingProvider>
+        <BookingProvider>
+          <AuthProvider>
             <Router />
             <Toaster />
-          </BookingProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </BookingProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );

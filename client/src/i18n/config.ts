@@ -3,12 +3,20 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { supportedLanguages } from './languages';
 import enTranslation from './translations/en';
+import esTranslation from './translations/es';
+import arTranslation from './translations/ar';
 
 // Add all the languages initial resources
 const resources = {
   en: {
     translation: enTranslation
   },
+  es: {
+    translation: esTranslation
+  },
+  ar: {
+    translation: arTranslation
+  }
   // Other languages will be loaded dynamically
 };
 
@@ -35,20 +43,27 @@ export const loadLanguageAsync = async (language: string) => {
   }
 
   try {
-    // Here we'd normally fetch these from a server
-    // For simplicity, we'll just implement English completely
-    // and then simulate loading other languages
     console.log(`Loading language: ${language}`);
     
-    // In a real app, this would be:
-    // const module = await import(`./translations/${language}.ts`);
-    // i18n.addResourceBundle(language, 'translation', module.default);
+    // For languages that we've already imported at compile time,
+    // we just mark them as resolved
+    if (['en', 'es', 'ar'].includes(language)) {
+      return Promise.resolve();
+    }
     
-    // For now, we'll just report that we loaded it
-    i18n.addResourceBundle(language, 'translation', {
-      ...enTranslation,
-      language_name: supportedLanguages[language].nativeName
-    });
+    // For other languages, we would dynamically import them
+    // In a real production app, we might fetch these from the server
+    // or use dynamic imports like this:
+    try {
+      const module = await import(`./translations/${language}.ts`);
+      i18n.addResourceBundle(language, 'translation', module.default);
+    } catch (e) {
+      // Fallback - create a basic translation with just the language name
+      i18n.addResourceBundle(language, 'translation', {
+        ...enTranslation,
+        language_name: supportedLanguages[language].nativeName
+      });
+    }
     
     return Promise.resolve();
   } catch (error) {
