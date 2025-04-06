@@ -227,7 +227,7 @@ export default {
   chat_initiated: 'Chat Initiated',
   chat_initiated_description: 'A support agent will connect with you shortly.',
   contact_info: 'Contact Information',
-  phone: 'Phone',
+  phone_contact: 'Phone',
   location: 'Location',
   company_address: 'Egypt Street, Suite 2300, Cairo, Egypt',
   business_hours: 'Business Hours',

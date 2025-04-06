@@ -26,8 +26,8 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
     isLoading,
     refetch,
   } = useQuery<Airport[]>({
-    queryKey: [`/api/airports/search?query=${searchTerm}&lang=${language}`],
-    enabled: searchTerm.length >= 2,
+    queryKey: [`/api/airports/search?q=${searchTerm}&lang=${language}`],
+    enabled: true, // Always enabled to allow empty queries to return all airports
   });
 
   // Handle outside click to close dropdown
@@ -49,13 +49,9 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
     const value = e.target.value;
     setDisplayValue(value);
     setSearchTerm(value);
-
-    if (value.length >= 2) {
-      setIsOpen(true);
-      refetch();
-    } else {
-      setIsOpen(false);
-    }
+    
+    setIsOpen(true);
+    refetch();
   };
 
   // Handle selection of an airport
@@ -78,7 +74,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
           placeholder={placeholder}
           value={displayValue}
           onChange={handleInputChange}
-          onFocus={() => searchTerm.length >= 2 && setIsOpen(true)}
+          onFocus={() => setIsOpen(true)}
         />
 
         {/* Results dropdown */}

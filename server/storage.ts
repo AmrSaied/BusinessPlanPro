@@ -45,6 +45,7 @@ export interface IStorage {
   getAirport(id: number): Promise<Airport | undefined>;
   getAirportByIataCode(iataCode: string): Promise<Airport | undefined>;
   searchAirports(query: string): Promise<Airport[]>;
+  getAllAirports(limit?: number): Promise<Airport[]>;
   createAirport(airport: InsertAirport): Promise<Airport>;
   
   // Booking-Passenger operations
@@ -224,7 +225,9 @@ export class MemStorage implements IStorage {
       hotelReservation: insertBooking.hotelReservation ?? null,
       insuranceLetter: insertBooking.insuranceLetter ?? null,
       specialRequests: insertBooking.specialRequests ?? null,
-      contactPhone: insertBooking.contactPhone ?? null
+      contactPhone: insertBooking.contactPhone ?? null,
+      paymentId: insertBooking.paymentId ?? null,
+      travelPurpose: insertBooking.travelPurpose
     };
     this.bookings.set(id, booking);
     return booking;
@@ -251,6 +254,10 @@ export class MemStorage implements IStorage {
   }
   
   async searchAirports(query: string): Promise<Airport[]> {
+    if (!query || query.trim() === '') {
+      return this.getAllAirports(10);
+    }
+    
     const lowerQuery = query.toLowerCase();
     
     // First try exact matches on country
@@ -270,6 +277,11 @@ export class MemStorage implements IStorage {
         airport.city.toLowerCase().includes(lowerQuery) ||
         airport.country.toLowerCase().includes(lowerQuery)
     ).slice(0, 10); // Limit to 10 results
+  }
+  
+  async getAllAirports(limit?: number): Promise<Airport[]> {
+    const airports = Array.from(this.airports.values());
+    return limit ? airports.slice(0, limit) : airports;
   }
   
   async createAirport(insertAirport: InsertAirport): Promise<Airport> {

@@ -30,11 +30,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/airports/search", async (req: Request, res: Response) => {
     const query = req.query.q as string;
     
-    if (!query) {
-      return res.status(400).json({ error: "Search query is required" });
-    }
-    
     try {
+      // Return all airports if no query provided (limited to 20)
+      if (!query || query.trim() === '') {
+        const allAirports = await storage.getAllAirports(20);
+        return res.json(allAirports);
+      }
+      
       const airports = await storage.searchAirports(query);
       res.json(airports);
     } catch (err) {

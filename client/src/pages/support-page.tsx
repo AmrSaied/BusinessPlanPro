@@ -129,7 +129,7 @@ const SupportPage = () => {
                 <div className="flex items-start">
                   <Phone className="h-6 w-6 mr-4 mt-1" />
                   <div>
-                    <h4 className="font-medium mb-1">{t('phone')}</h4>
+                    <h4 className="font-medium mb-1">{t('phone_contact')}</h4>
                     <p className="opacity-90">+201113284428, +201501685555</p>
                   </div>
                 </div>

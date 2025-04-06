@@ -161,7 +161,7 @@ export class DatabaseStorage implements IStorage {
 
   async searchAirports(query: string): Promise<Airport[]> {
     if (!query || query.trim() === '') {
-      return [];
+      return this.getAllAirports(10);
     }
     
     const lowerQuery = query.toLowerCase();
@@ -188,6 +188,13 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .limit(10);
+  }
+  
+  async getAllAirports(limit?: number): Promise<Airport[]> {
+    if (limit) {
+      return await db.select().from(airports).limit(limit);
+    }
+    return await db.select().from(airports);
   }
 
   async createAirport(insertAirport: InsertAirport): Promise<Airport> {
