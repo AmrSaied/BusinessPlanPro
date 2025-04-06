@@ -451,6 +451,67 @@ export class MemStorage implements IStorage {
         longitude: -46.4731,
         timezone: "America/Sao_Paulo",
         localName: { "en": "São Paulo–Guarulhos International Airport", "pt": "Aeroporto Internacional de São Paulo-Guarulhos" }
+      },
+      // Add more airports for better user experience
+      {
+        iataCode: "LAX",
+        icaoCode: "KLAX",
+        name: "Los Angeles International Airport",
+        city: "Los Angeles",
+        country: "United States",
+        countryCode: "US",
+        latitude: 33.9416,
+        longitude: -118.4085,
+        timezone: "America/Los_Angeles",
+        localName: { "en": "LAX Airport" }
+      },
+      {
+        iataCode: "CAI",
+        icaoCode: "HECA",
+        name: "Cairo International Airport",
+        city: "Cairo",
+        country: "Egypt",
+        countryCode: "EG",
+        latitude: 30.1219,
+        longitude: 31.4050,
+        timezone: "Africa/Cairo",
+        localName: { "en": "Cairo International Airport", "ar": "مطار القاهرة الدولي" }
+      },
+      {
+        iataCode: "IST",
+        icaoCode: "LTFM",
+        name: "Istanbul Airport",
+        city: "Istanbul",
+        country: "Turkey",
+        countryCode: "TR",
+        latitude: 41.2608,
+        longitude: 28.7439,
+        timezone: "Europe/Istanbul",
+        localName: { "en": "Istanbul Airport", "tr": "İstanbul Havalimanı" }
+      },
+      {
+        iataCode: "SIN",
+        icaoCode: "WSSS",
+        name: "Singapore Changi Airport",
+        city: "Singapore",
+        country: "Singapore",
+        countryCode: "SG",
+        latitude: 1.3644,
+        longitude: 103.9915,
+        timezone: "Asia/Singapore",
+        localName: { "en": "Changi Airport" }
+      },
+      {
+        iataCode: "AMS",
+        icaoCode: "EHAM",
+        name: "Amsterdam Airport Schiphol",
+        city: "Amsterdam",
+        country: "Netherlands",
+        countryCode: "NL",
+        latitude: 52.3086,
+        longitude: 4.7639,
+        timezone: "Europe/Amsterdam",
+        localName: { "en": "Schiphol Airport", "nl": "Luchthaven Schiphol" }
       }
     ];
     

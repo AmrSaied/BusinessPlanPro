@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { AirportData, FlightData } from './aviation-types';
-import { InsertAirport, Airport, InsertFlight, Flight, airports } from '@shared/schema';
+import { AirportData, FlightData } from '../services/aviation-types';
+import { InsertAirport, Airport, InsertFlight, Flight, airports as airportsTable } from '@shared/schema';
 import { db } from '../db';
 
 /**
@@ -161,7 +161,7 @@ export class AviationStackService {
           };
           
           // Insert into database - note we need to handle each airport individually
-          await db.insert(airports).values(insertAirport).onConflictDoNothing({ target: airports.iataCode });
+          await db.insert(airportsTable).values(insertAirport).onConflictDoNothing();
           inserted++;
         } catch (error) {
           console.error(`Error inserting airport ${airport.iataCode}:`, error);
