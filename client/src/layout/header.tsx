@@ -110,9 +110,11 @@ const Header = () => {
                 {t('nav_faq')}
               </span>
             </Link>
-            <a href="#" className="font-medium text-gray-600 hover:text-primary transition">
-              {t('nav_support')}
-            </a>
+            <Link href="/support">
+              <span className={`font-medium ${location === '/support' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
+                {t('nav_support')}
+              </span>
+            </Link>
           </nav>
           
           {/* Language and Account Section */}
@@ -127,15 +129,15 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48">
-                {Object.entries(languages).map(([code, { nativeName, flag }]) => (
+                {Object.entries(languages || {}).map(([code, lang]: [string, any]) => (
                   <DropdownMenuItem 
                     key={code} 
                     onClick={() => changeLanguage(code)}
                     className={code === currentLanguage ? "bg-primary/10" : ""}
                   >
                     <div className="flex items-center w-full">
-                      <span className="mr-2 text-lg">{flag}</span> 
-                      <span>{nativeName}</span>
+                      <span className="mr-2 text-lg">{lang.flag}</span> 
+                      <span>{lang.nativeName}</span>
                       {code === currentLanguage && (
                         <span className="ml-auto">✓</span>
                       )}
@@ -203,7 +205,9 @@ const Header = () => {
               <Link href="/faq">
                 <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_faq')}</span>
               </Link>
-              <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_support')}</span>
+              <Link href="/support">
+                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_support')}</span>
+              </Link>
               
               {isLoggedIn ? (
                 <>

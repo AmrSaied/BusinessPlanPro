@@ -16,6 +16,7 @@ import ConfirmationPage from "@/pages/confirmation-page";
 import FaqPage from "@/pages/faq-page";
 import UserDashboard from "@/pages/user-dashboard";
 import AuthPage from "@/pages/auth-page";
+import SupportPage from "@/pages/support-page";
 import MainLayout from "./layout/main-layout";
 
 function Router() {
@@ -57,6 +58,11 @@ function Router() {
       <Route path="/faq" component={() => (
         <MainLayout>
           <FaqPage />
+        </MainLayout>
+      )} />
+      <Route path="/support" component={() => (
+        <MainLayout>
+          <SupportPage />
         </MainLayout>
       )} />
       <ProtectedRoute 

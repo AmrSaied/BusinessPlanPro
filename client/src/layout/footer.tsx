@@ -89,7 +89,9 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_contact')}</span>
+                <Link href="/support">
+                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_contact')}</span>
+                </Link>
               </li>
             </ul>
           </div>
@@ -110,13 +112,13 @@ const Footer = () => {
           <div>
             <h3 className="font-heading font-semibold text-lg mb-4">{t('languages')}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              {Object.entries(languages).map(([code, { nativeName }]) => (
+              {Object.entries(languages || {}).map(([code, lang]: [string, any]) => (
                 <button 
                   key={code}
                   onClick={() => changeLanguage(code)}
                   className="text-left text-gray-400 hover:text-white transition"
                 >
-                  {nativeName}
+                  {lang.nativeName}
                 </button>
               ))}
             </div>
