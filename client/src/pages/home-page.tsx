@@ -1,7 +1,10 @@
+import { useLanguage } from '@/context/language-context';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
+import { useBooking } from '@/context/booking-context';
 import { Button } from '@/components/ui/button';
-import FlightSearchForm from '@/components/ui/flight-search-form';
+import FlightSearchForm from '@/components/search/flight-search-form';
+import { FlightSearch } from '@shared/schema';
 import { 
   CheckCircle, 
   Zap, 
@@ -12,6 +15,16 @@ import {
 
 const HomePage = () => {
   const { t } = useTranslation();
+  const [_, setLocation] = useLocation();
+  const { setSearchParams } = useBooking();
+  
+  const handleSearchSubmit = (data: FlightSearch) => {
+    console.log('Search submitted:', data);
+    // Update the booking context with search parameters
+    setSearchParams(data);
+    // Navigate to the flight selection page
+    setLocation('/flights');
+  };
   
   // Hero Section
   const Hero = () => (
@@ -95,7 +108,7 @@ const HomePage = () => {
   const FlightSearch = () => (
     <section id="flight-search" className="py-12 bg-white">
       <div className="container mx-auto px-4">
-        <FlightSearchForm className="max-w-4xl mx-auto" />
+        <FlightSearchForm onSubmit={handleSearchSubmit} />
       </div>
     </section>
   );

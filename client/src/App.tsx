@@ -54,7 +54,11 @@ function Router() {
           </MainLayout>
         )}
       </Route>
-      <Route path="/auth" component={AuthPage} />
+      <Route path="/auth" component={() => (
+        <MainLayout>
+          <AuthPage />
+        </MainLayout>
+      )} />
       <Route path="/faq" component={() => (
         <MainLayout>
           <FaqPage />
@@ -85,8 +89,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Router />
+      <LanguageProvider>
+        <AuthProvider>
+          <BookingProvider>
+            <Toaster />
+            <Router />
+          </BookingProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

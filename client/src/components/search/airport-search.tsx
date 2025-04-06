@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
-import { useTranslation } from "@/hooks/use-translation";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/context/language-context";
 import { Airport } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 
@@ -14,7 +15,8 @@ interface AirportSearchProps {
 }
 
 const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSearchProps) => {
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [displayValue, setDisplayValue] = useState(value || "");
@@ -27,7 +29,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
     isLoading,
     refetch,
   } = useQuery<Airport[]>({
-    queryKey: [`/api/airports/search?q=${searchTerm}&lang=${language}`],
+    queryKey: [`/api/airports/search?q=${searchTerm}&lang=${currentLanguage}`],
     enabled: isOpen, // Only fetch when dropdown is open
   });
 

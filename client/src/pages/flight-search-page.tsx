@@ -1,8 +1,21 @@
-import { useTranslation } from 'react-i18next';
-import FlightSearchForm from '@/components/ui/flight-search-form';
+import { useLocation } from 'wouter';
+import { useTranslation } from '@/hooks/use-translation';
+import { useBooking } from '@/context/booking-context';
+import FlightSearchForm from '@/components/search/flight-search-form';
+import { FlightSearch } from '@shared/schema';
 
 const FlightSearchPage = () => {
   const { t } = useTranslation();
+  const [_, setLocation] = useLocation();
+  const { setSearchParams } = useBooking();
+  
+  const handleSearchSubmit = (data: FlightSearch) => {
+    console.log('Search submitted:', data);
+    // Update the booking context with search parameters
+    setSearchParams(data);
+    // Navigate to the flight selection page
+    setLocation('/flights');
+  };
   
   return (
     <section className="py-12 bg-gray-50">
@@ -14,7 +27,7 @@ const FlightSearchPage = () => {
           </p>
         </div>
         
-        <FlightSearchForm className="max-w-4xl mx-auto" />
+        <FlightSearchForm onSubmit={handleSearchSubmit} />
       </div>
     </section>
   );

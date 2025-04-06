@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState, useEffect } from "react";
-import { Language, getTranslation } from "../../server/i18n/translations";
+import { Language, getTranslation, availableLanguages, detectBrowserLanguage } from "@/i18n";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "./use-auth";
 
 type TranslationContextType = {
@@ -11,18 +11,7 @@ type TranslationContextType = {
   availableLanguages: { code: Language; name: string }[];
 };
 
-const availableLanguages = [
-  { code: 'en' as Language, name: 'English' },
-  { code: 'es' as Language, name: 'Español' },
-  { code: 'fr' as Language, name: 'Français' },
-  { code: 'de' as Language, name: 'Deutsch' },
-  { code: 'zh' as Language, name: '中文' },
-  { code: 'ar' as Language, name: 'العربية' },
-  { code: 'ru' as Language, name: 'Русский' },
-  { code: 'pt' as Language, name: 'Português' },
-  { code: 'hi' as Language, name: 'हिन्दी' },
-  { code: 'ja' as Language, name: '日本語' }
-];
+// Using availableLanguages imported from @/i18n
 
 export const TranslationContext = createContext<TranslationContextType | null>(null);
 
@@ -33,14 +22,11 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   // Detect browser language on initial load
   useEffect(() => {
     // If user has a language preference, use that
-    if (user?.language) {
-      setLanguageState(user.language as Language);
+    if (user?.preferredLanguage) {
+      setLanguageState(user.preferredLanguage as Language);
     } else {
       // Otherwise detect from browser
-      const browserLang = navigator.language.split('-')[0] as Language;
-      if (availableLanguages.some(lang => lang.code === browserLang)) {
-        setLanguageState(browserLang);
-      }
+      setLanguageState(detectBrowserLanguage());
     }
   }, [user]);
 
