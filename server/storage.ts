@@ -151,6 +151,11 @@ export class MemStorage implements IStorage {
   ): Promise<Flight[]> {
     let flights = Array.from(this.flights.values());
     
+    // If no params provided, return all flights (useful for backup data)
+    if (!departureAirport && !arrivalAirport && !departureDate) {
+      return flights;
+    }
+    
     if (departureAirport) {
       flights = flights.filter(f => f.departureAirport === departureAirport);
     }
