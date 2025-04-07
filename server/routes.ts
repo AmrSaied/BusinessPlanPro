@@ -13,14 +13,14 @@ import { randomBytes } from "crypto";
 import { FlightService } from "./services/flight-service";
 import { TicketService } from "./services/ticket-service";
 import { PaymentService } from "./services/payment-service";
-import { AviationStackService } from "./services/aviation-stack-service";
+import { AmadeusService } from "./services/amadeus-service";
 import { setupAuth } from "./auth";
 
 // Initialize services
 const flightService = new FlightService(storage);
 const ticketService = new TicketService(storage);
 const paymentService = new PaymentService();
-const aviationService = new AviationStackService();
+const aviationService = new AmadeusService(storage);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
@@ -43,18 +43,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         airports = await storage.searchAirports(query);
       }
       
-      // If we don't have enough airports in our database, try fetching from AviationStack
+      // If we don't have enough airports in our database, try fetching from Amadeus API
       if (airports.length < 5) {
         try {
-          console.log('Fetching airports from AviationStack API...');
-          const aviationStackAirports = query 
+          console.log('Fetching airports from Amadeus API...');
+          const amadeusAirports = query 
             ? await aviationService.searchAirports(query)
             : await aviationService.getAllAirports(20);
           
           // If we got results from API, return those instead
-          if (aviationStackAirports && aviationStackAirports.length > 0) {
+          if (amadeusAirports && amadeusAirports.length > 0) {
             // Store the fetched airports in our database for future use
-            for (const airport of aviationStackAirports) {
+            for (const airport of amadeusAirports) {
               if (airport.iataCode) {
                 try {
                   const exists = await storage.getAirportByIataCode(airport.iataCode);
@@ -78,10 +78,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             }
             
-            return res.json(aviationStackAirports);
+            return res.json(amadeusAirports);
           }
         } catch (apiError) {
-          console.error('Error fetching from AviationStack API:', apiError);
+          console.error('Error fetching from Amadeus API:', apiError);
           // Fall back to our database results if API fails
         }
       }
@@ -107,26 +107,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         searchParams.tripType
       );
       
-      // If we don't have enough flights in our database, try fetching from AviationStack
+      // If we don't have enough flights in our database, try fetching from Amadeus API
       if (flights.outbound.length < 3) {
         try {
-          console.log('Fetching flights from AviationStack API...');
-          const apiParams: any = {
-            departureAirport: searchParams.origin,
-            arrivalAirport: searchParams.destination
-          };
+          console.log('Fetching flights from Amadeus API...');
           
-          if (searchParams.departureDate) {
-            // Format date for API if needed
-            apiParams.departureDate = searchParams.departureDate;
-          }
-          
-          const aviationStackFlights = await aviationService.searchFlights(apiParams);
+          // Convert our search params to match Amadeus API format
+          const amadeusFlights = await aviationService.searchFlights(searchParams);
           
           // If we got results from the API, use those instead
-          if (aviationStackFlights && aviationStackFlights.length > 0) {
+          if (amadeusFlights && amadeusFlights.length > 0) {
             // Store the fetched flights in our database for future use
-            for (const flight of aviationStackFlights) {
+            for (const flight of amadeusFlights) {
               try {
                 // Create flight in database if it doesn't exist (based on flight number and dates)
                 // Note: In a real app, we'd need to check for duplicate flight numbers for the same date
@@ -152,12 +144,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Format response to match the expected structure from FlightService
             return res.json({
-              outbound: aviationStackFlights,
+              outbound: amadeusFlights,
               return: [] 
             });
           }
         } catch (apiError) {
-          console.error('Error fetching from AviationStack API:', apiError);
+          console.error('Error fetching from Amadeus API:', apiError);
           // Fall back to our database results if API fails
         }
       }
