@@ -287,29 +287,76 @@ export class AmadeusService {
   /**
    * Fetch popular airports and store them in the database
    */
-  async seedAirports(): Promise<void> {
+  async seedAirports(limit: number = 100): Promise<number> {
     if (!this.amadeus) {
       console.log('Amadeus API client not initialized, skipping airport seeding');
-      return;
+      return 0;
     }
     
     try {
-      console.log('Seeding airports from Amadeus API...');
-      const response = await this.amadeus.referenceData.locations.get({
-        subType: 'AIRPORT',
-        sort: 'analytics.travelers.score',
-        page: { limit: 50 }
-      });
+      console.log(`Seeding airports from Amadeus API with limit ${limit}...`);
+      
+      // Make multiple requests to get more airports if needed
+      let airportsAdded = 0;
+      const batchSize = 50; // Amadeus API typically limits to 50 per request
+      const iterations = Math.ceil(limit / batchSize);
+      
+      for (let i = 0; i < iterations; i++) {
+        if (airportsAdded >= limit) break;
+        
+        // Calculate remaining number to fetch
+        const remaining = limit - airportsAdded;
+        const currentBatchSize = Math.min(batchSize, remaining);
+        
+        try {
+          console.log(`Fetching batch ${i+1}/${iterations} with size ${currentBatchSize}...`);
+          
+          const response = await this.amadeus.referenceData.locations.get({
+            subType: 'AIRPORT',
+            sort: 'analytics.travelers.score',
+            page: { limit: currentBatchSize, offset: i * batchSize }
+          });
 
-      if (response.result && response.result.data && response.result.data.length > 0) {
-        for (const airportData of response.result.data) {
-          const airport = this.mapToAirport(airportData);
-          await this.storage.createAirport(airport);
+          if (response.result && response.result.data && response.result.data.length > 0) {
+            let batchAdded = 0;
+            
+            for (const airportData of response.result.data) {
+              try {
+                const airport = this.mapToAirport(airportData);
+                
+                // Check if airport already exists before creating
+                const existingAirport = await this.storage.getAirportByIataCode(airport.iataCode);
+                if (!existingAirport) {
+                  await this.storage.createAirport(airport);
+                  batchAdded++;
+                  airportsAdded++;
+                }
+              } catch (err) {
+                console.error(`Error processing airport: ${err}`);
+              }
+            }
+            
+            console.log(`Added ${batchAdded} new airports from batch ${i+1}`);
+          } else {
+            console.log(`No airports returned in batch ${i+1}, stopping`);
+            break;
+          }
+        } catch (batchError) {
+          console.error(`Error in batch ${i+1}:`, batchError);
+          // Continue with next batch
         }
-        console.log(`Seeded ${response.result.data.length} airports from Amadeus API`);
+        
+        // Add a small delay between batches to avoid rate limiting
+        if (i < iterations - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       }
+      
+      console.log(`Seeding complete. Added a total of ${airportsAdded} new airports`);
+      return airportsAdded;
     } catch (error) {
       console.error('Error seeding airports from Amadeus API:', error);
+      return 0;
     }
   }
 

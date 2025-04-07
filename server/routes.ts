@@ -28,6 +28,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // API routes
 
+  // Seed airports from Amadeus API or fallback to major airports
+  app.post("/api/admin/seed-airports", async (req: Request, res: Response) => {
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
+      const force = req.query.force === 'true';
+      
+      // Get existing airport count
+      const existingAirports = await storage.getAllAirports();
+      const initialCount = existingAirports.length;
+      
+      // Call Amadeus service to seed airports with the specified limit
+      let airportsAdded = await aviationService.seedAirports(limit);
+      
+      // If Amadeus API doesn't work, or if force flag is true, seed major airports
+      if (airportsAdded === 0 || force) {
+        console.log('Seeding major airports fallback data...');
+        
+        // Get pre-defined list of major airports
+        const majorAirports = getMajorAirports();
+        
+        // Add each major airport if it doesn't exist
+        let manuallyAdded = 0;
+        for (const airport of majorAirports) {
+          try {
+            const exists = await storage.getAirportByIataCode(airport.iataCode);
+            if (!exists) {
+              await storage.createAirport(airport);
+              manuallyAdded++;
+            }
+          } catch (error) {
+            console.error(`Error adding airport ${airport.iataCode}:`, error);
+          }
+        }
+        
+        console.log(`Added ${manuallyAdded} major airports from fallback data`);
+        airportsAdded += manuallyAdded;
+      }
+      
+      // Get new airport count
+      const updatedAirports = await storage.getAllAirports();
+      const newCount = updatedAirports.length;
+      
+      res.json({ 
+        success: true, 
+        message: `Seeded airports successfully`,
+        initialCount,
+        newCount,
+        added: newCount - initialCount
+      });
+    } catch (err) {
+      console.error("Error seeding airports:", err);
+      res.status(500).json({ error: "Failed to seed airports" });
+    }
+  });
+
   // Airport search
   app.get("/api/airports/search", async (req: Request, res: Response) => {
     const query = req.query.q as string;
@@ -393,4 +448,369 @@ function generateBookingReference(): string {
   const randomNum = Math.floor(100000 + Math.random() * 900000);
   
   return `${prefix}${randomNum}`;
+}
+
+// Function to get a list of major international airports
+function getMajorAirports(): Array<InsertAirport> {
+  return [
+    // Middle East
+    {
+      iataCode: "CAI",
+      icaoCode: "HECA",
+      name: "Cairo International Airport",
+      city: "Cairo",
+      country: "Egypt",
+      countryCode: "EG",
+      latitude: 30.1219,
+      longitude: 31.4056,
+      timezone: "Africa/Cairo",
+      localName: { "en": "Cairo International Airport", "ar": "مطار القاهرة الدولي" }
+    },
+    {
+      iataCode: "DXB",
+      icaoCode: "OMDB",
+      name: "Dubai International Airport",
+      city: "Dubai",
+      country: "United Arab Emirates",
+      countryCode: "AE",
+      latitude: 25.2528,
+      longitude: 55.3644,
+      timezone: "Asia/Dubai",
+      localName: { "en": "Dubai International Airport", "ar": "مطار دبي الدولي" }
+    },
+    {
+      iataCode: "DOH",
+      icaoCode: "OTHH",
+      name: "Hamad International Airport",
+      city: "Doha",
+      country: "Qatar",
+      countryCode: "QA",
+      latitude: 25.2733,
+      longitude: 51.6081,
+      timezone: "Asia/Qatar",
+      localName: { "en": "Hamad International Airport", "ar": "مطار حمد الدولي" }
+    },
+    {
+      iataCode: "AUH",
+      icaoCode: "OMAA",
+      name: "Abu Dhabi International Airport",
+      city: "Abu Dhabi",
+      country: "United Arab Emirates",
+      countryCode: "AE",
+      latitude: 24.4281,
+      longitude: 54.6506,
+      timezone: "Asia/Dubai",
+      localName: { "en": "Abu Dhabi International Airport", "ar": "مطار أبوظبي الدولي" }
+    },
+    {
+      iataCode: "IST",
+      icaoCode: "LTFM",
+      name: "Istanbul Airport",
+      city: "Istanbul",
+      country: "Turkey",
+      countryCode: "TR",
+      latitude: 41.2608,
+      longitude: 28.7419,
+      timezone: "Europe/Istanbul",
+      localName: { "en": "Istanbul Airport", "tr": "İstanbul Havalimanı" }
+    },
+    {
+      iataCode: "RUH",
+      icaoCode: "OERK",
+      name: "King Khalid International Airport",
+      city: "Riyadh",
+      country: "Saudi Arabia",
+      countryCode: "SA",
+      latitude: 24.9633,
+      longitude: 46.7019,
+      timezone: "Asia/Riyadh",
+      localName: { "en": "King Khalid International Airport", "ar": "مطار الملك خالد الدولي" }
+    },
+    {
+      iataCode: "JED",
+      icaoCode: "OEJN",
+      name: "King Abdulaziz International Airport",
+      city: "Jeddah",
+      country: "Saudi Arabia",
+      countryCode: "SA",
+      latitude: 21.6805,
+      longitude: 39.1553,
+      timezone: "Asia/Riyadh",
+      localName: { "en": "King Abdulaziz International Airport", "ar": "مطار الملك عبدالعزيز الدولي" }
+    },
+    
+    // Europe
+    {
+      iataCode: "LHR",
+      icaoCode: "EGLL",
+      name: "Heathrow Airport",
+      city: "London",
+      country: "United Kingdom",
+      countryCode: "GB",
+      latitude: 51.4694,
+      longitude: -0.4502,
+      timezone: "Europe/London",
+      localName: { "en": "Heathrow Airport" }
+    },
+    {
+      iataCode: "CDG",
+      icaoCode: "LFPG",
+      name: "Charles de Gaulle Airport",
+      city: "Paris",
+      country: "France",
+      countryCode: "FR",
+      latitude: 49.0097,
+      longitude: 2.5479,
+      timezone: "Europe/Paris",
+      localName: { "en": "Charles de Gaulle Airport", "fr": "Aéroport Paris-Charles-de-Gaulle" }
+    },
+    {
+      iataCode: "FRA",
+      icaoCode: "EDDF",
+      name: "Frankfurt Airport",
+      city: "Frankfurt",
+      country: "Germany",
+      countryCode: "DE",
+      latitude: 50.0379,
+      longitude: 8.5622,
+      timezone: "Europe/Berlin",
+      localName: { "en": "Frankfurt Airport", "de": "Flughafen Frankfurt am Main" }
+    },
+    {
+      iataCode: "AMS",
+      icaoCode: "EHAM",
+      name: "Amsterdam Airport Schiphol",
+      city: "Amsterdam",
+      country: "Netherlands",
+      countryCode: "NL",
+      latitude: 52.3086,
+      longitude: 4.7639,
+      timezone: "Europe/Amsterdam",
+      localName: { "en": "Amsterdam Airport Schiphol", "nl": "Luchthaven Schiphol" }
+    },
+    {
+      iataCode: "MAD",
+      icaoCode: "LEMD",
+      name: "Adolfo Suárez Madrid–Barajas Airport",
+      city: "Madrid",
+      country: "Spain",
+      countryCode: "ES",
+      latitude: 40.4983,
+      longitude: -3.5676,
+      timezone: "Europe/Madrid",
+      localName: { "en": "Adolfo Suárez Madrid–Barajas Airport", "es": "Aeropuerto Adolfo Suárez Madrid-Barajas" }
+    },
+    
+    // Asia
+    {
+      iataCode: "HKG",
+      icaoCode: "VHHH",
+      name: "Hong Kong International Airport",
+      city: "Hong Kong",
+      country: "Hong Kong",
+      countryCode: "HK",
+      latitude: 22.3080,
+      longitude: 113.9185,
+      timezone: "Asia/Hong_Kong",
+      localName: { "en": "Hong Kong International Airport", "zh": "香港國際機場" }
+    },
+    {
+      iataCode: "SIN",
+      icaoCode: "WSSS",
+      name: "Singapore Changi Airport",
+      city: "Singapore",
+      country: "Singapore",
+      countryCode: "SG",
+      latitude: 1.3644,
+      longitude: 103.9915,
+      timezone: "Asia/Singapore",
+      localName: { "en": "Singapore Changi Airport" }
+    },
+    {
+      iataCode: "NRT",
+      icaoCode: "RJAA",
+      name: "Narita International Airport",
+      city: "Tokyo",
+      country: "Japan",
+      countryCode: "JP",
+      latitude: 35.7719,
+      longitude: 140.3929,
+      timezone: "Asia/Tokyo",
+      localName: { "en": "Narita International Airport", "ja": "成田国際空港" }
+    },
+    {
+      iataCode: "KUL",
+      icaoCode: "WMKK",
+      name: "Kuala Lumpur International Airport",
+      city: "Kuala Lumpur",
+      country: "Malaysia",
+      countryCode: "MY",
+      latitude: 2.7456,
+      longitude: 101.7099,
+      timezone: "Asia/Kuala_Lumpur",
+      localName: { "en": "Kuala Lumpur International Airport", "ms": "Lapangan Terbang Antarabangsa Kuala Lumpur" }
+    },
+    {
+      iataCode: "DEL",
+      icaoCode: "VIDP",
+      name: "Indira Gandhi International Airport",
+      city: "New Delhi",
+      country: "India",
+      countryCode: "IN",
+      latitude: 28.5562,
+      longitude: 77.1000,
+      timezone: "Asia/Kolkata",
+      localName: { "en": "Indira Gandhi International Airport", "hi": "इंदिरा गांधी अंतर्राष्ट्रीय हवाई अड्डा" }
+    },
+    {
+      iataCode: "BKK",
+      icaoCode: "VTBS",
+      name: "Suvarnabhumi Airport",
+      city: "Bangkok",
+      country: "Thailand",
+      countryCode: "TH",
+      latitude: 13.6900,
+      longitude: 100.7501,
+      timezone: "Asia/Bangkok",
+      localName: { "en": "Suvarnabhumi Airport", "th": "ท่าอากาศยานสุวรรณภูมิ" }
+    },
+    
+    // North America
+    {
+      iataCode: "JFK",
+      icaoCode: "KJFK",
+      name: "John F. Kennedy International Airport",
+      city: "New York",
+      country: "United States",
+      countryCode: "US",
+      latitude: 40.6413,
+      longitude: -73.7781,
+      timezone: "America/New_York",
+      localName: { "en": "John F. Kennedy International Airport" }
+    },
+    {
+      iataCode: "LAX",
+      icaoCode: "KLAX",
+      name: "Los Angeles International Airport",
+      city: "Los Angeles",
+      country: "United States",
+      countryCode: "US",
+      latitude: 33.9416,
+      longitude: -118.4085,
+      timezone: "America/Los_Angeles",
+      localName: { "en": "Los Angeles International Airport" }
+    },
+    {
+      iataCode: "ORD",
+      icaoCode: "KORD",
+      name: "O'Hare International Airport",
+      city: "Chicago",
+      country: "United States",
+      countryCode: "US",
+      latitude: 41.9742,
+      longitude: -87.9073,
+      timezone: "America/Chicago",
+      localName: { "en": "O'Hare International Airport" }
+    },
+    {
+      iataCode: "YYZ",
+      icaoCode: "CYYZ",
+      name: "Toronto Pearson International Airport",
+      city: "Toronto",
+      country: "Canada",
+      countryCode: "CA",
+      latitude: 43.6777,
+      longitude: -79.6248,
+      timezone: "America/Toronto",
+      localName: { "en": "Toronto Pearson International Airport", "fr": "Aéroport international Pearson de Toronto" }
+    },
+    {
+      iataCode: "MEX",
+      icaoCode: "MMMX",
+      name: "Mexico City International Airport",
+      city: "Mexico City",
+      country: "Mexico",
+      countryCode: "MX",
+      latitude: 19.4363,
+      longitude: -99.0721,
+      timezone: "America/Mexico_City",
+      localName: { "en": "Mexico City International Airport", "es": "Aeropuerto Internacional de la Ciudad de México" }
+    },
+    
+    // South America
+    {
+      iataCode: "GRU",
+      icaoCode: "SBGR",
+      name: "São Paulo/Guarulhos International Airport",
+      city: "São Paulo",
+      country: "Brazil",
+      countryCode: "BR",
+      latitude: -23.4356,
+      longitude: -46.4731,
+      timezone: "America/Sao_Paulo",
+      localName: { "en": "São Paulo/Guarulhos International Airport", "pt": "Aeroporto Internacional de São Paulo/Guarulhos" }
+    },
+    {
+      iataCode: "BOG",
+      icaoCode: "SKBO",
+      name: "El Dorado International Airport",
+      city: "Bogotá",
+      country: "Colombia",
+      countryCode: "CO",
+      latitude: 4.7016,
+      longitude: -74.1469,
+      timezone: "America/Bogota",
+      localName: { "en": "El Dorado International Airport", "es": "Aeropuerto Internacional El Dorado" }
+    },
+    {
+      iataCode: "SCL",
+      icaoCode: "SCEL",
+      name: "Santiago International Airport",
+      city: "Santiago",
+      country: "Chile",
+      countryCode: "CL",
+      latitude: -33.3930,
+      longitude: -70.7858,
+      timezone: "America/Santiago",
+      localName: { "en": "Santiago International Airport", "es": "Aeropuerto Internacional Arturo Merino Benítez" }
+    },
+    
+    // Africa
+    {
+      iataCode: "JNB",
+      icaoCode: "FAJS",
+      name: "O. R. Tambo International Airport",
+      city: "Johannesburg",
+      country: "South Africa",
+      countryCode: "ZA",
+      latitude: -26.1367,
+      longitude: 28.2411,
+      timezone: "Africa/Johannesburg",
+      localName: { "en": "O. R. Tambo International Airport" }
+    },
+    {
+      iataCode: "CPT",
+      icaoCode: "FACT",
+      name: "Cape Town International Airport",
+      city: "Cape Town",
+      country: "South Africa",
+      countryCode: "ZA",
+      latitude: -33.9649,
+      longitude: 18.6020,
+      timezone: "Africa/Johannesburg",
+      localName: { "en": "Cape Town International Airport" }
+    },
+    {
+      iataCode: "ADD",
+      icaoCode: "HAAB",
+      name: "Addis Ababa Bole International Airport",
+      city: "Addis Ababa",
+      country: "Ethiopia",
+      countryCode: "ET",
+      latitude: 8.9778,
+      longitude: 38.7994,
+      timezone: "Africa/Addis_Ababa",
+      localName: { "en": "Addis Ababa Bole International Airport", "am": "አዲስ አበባ ቦሌ ዓለም አቀፍ አውሮፕላን ማረፊያ" }
+    }
+  ];
 }
