@@ -30,23 +30,38 @@ const FlightSelectionPage = () => {
     }
   }, [bookingData.searchParams, navigate]);
   
-  // Flight search query
+  // Flight search query - use dynamic query key based on search params
   const {
     data: flightResults,
     isLoading,
     isError,
     error
   } = useQuery<{ outbound: Flight[], return?: Flight[] }>({
-    queryKey: ['/api/flights/search'],
+    queryKey: [
+      '/api/flights/search', 
+      bookingData.searchParams?.origin, 
+      bookingData.searchParams?.destination,
+      bookingData.searchParams?.departureDate,
+      bookingData.searchParams?.returnDate,
+      bookingData.searchParams?.tripType
+    ],
     queryFn: async () => {
       if (!bookingData.searchParams) {
         throw new Error('No search parameters');
       }
       
-      const res = await apiRequest('POST', '/api/flights/search', bookingData.searchParams);
+      // Add a timestamp to force a fresh result every time
+      const searchWithTimestamp = {
+        ...bookingData.searchParams,
+        _timestamp: new Date().getTime()
+      };
+      
+      const res = await apiRequest('POST', '/api/flights/search', searchWithTimestamp);
       return res.json();
     },
     enabled: !!bookingData.searchParams,
+    refetchOnWindowFocus: false, // Don't refetch when window regains focus
+    refetchOnMount: true, // Always refetch when component mounts
   });
   
   // Handle flight selection
@@ -112,16 +127,21 @@ const FlightSelectionPage = () => {
                 <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
                   <div className="flex flex-wrap gap-4 text-sm">
                     <div className="font-medium">
-                      {bookingData.searchParams.departureAirport} → {bookingData.searchParams.arrivalAirport}
+                      {bookingData.searchParams.originDisplay || bookingData.searchParams.origin} → {bookingData.searchParams.destinationDisplay || bookingData.searchParams.destination}
                     </div>
                     <div>
-                      {bookingData.searchParams.departureDate}
-                      {bookingData.searchParams.returnDate && ` - ${bookingData.searchParams.returnDate}`}
+                      {bookingData.searchParams.departureDate 
+                        ? new Date(bookingData.searchParams.departureDate).toLocaleDateString() 
+                        : t('flexible_dates')}
+                      {bookingData.searchParams.returnDate && ` - ${new Date(bookingData.searchParams.returnDate).toLocaleDateString()}`}
                     </div>
                     <div>
                       {bookingData.searchParams.passengers} {bookingData.searchParams.passengers === 1 
                         ? t('passenger_singular') 
                         : t('passengers_plural')}
+                    </div>
+                    <div className="text-primary">
+                      {t(`purpose_${bookingData.searchParams.travelPurpose}`)}
                     </div>
                   </div>
                 </div>
