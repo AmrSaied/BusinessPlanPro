@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { BookingProvider } from "./context/booking-context";
 import { LanguageProvider } from "./context/language-context";
 import { AuthProvider } from "./hooks/use-auth";
+import { TranslationProvider } from "./hooks/use-translation";
 import { ProtectedRoute } from "./lib/protected-route";
 import ElectronAppWrapper from "@/components/desktop/electron-app-wrapper";
 import { isElectron } from "@/lib/environment";
@@ -99,10 +100,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AuthProvider>
-          <BookingProvider>
-            <Toaster />
-            <Router />
-          </BookingProvider>
+          <TranslationProvider>
+            <BookingProvider>
+              <Toaster />
+              <Router />
+            </BookingProvider>
+          </TranslationProvider>
         </AuthProvider>
       </LanguageProvider>
     </QueryClientProvider>

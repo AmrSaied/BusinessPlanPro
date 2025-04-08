@@ -1,5 +1,5 @@
 import { useLocation } from 'wouter';
-import { useTranslation } from '@/hooks/use-translation';
+import { useTranslation } from 'react-i18next';
 import { useBooking } from '@/context/booking-context';
 import FlightSearchForm from '@/components/search/flight-search-form';
 import { FlightSearch } from '@shared/schema';
