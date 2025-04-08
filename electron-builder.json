@@ -1,0 +1,30 @@
+{
+  "appId": "com.fastdummyticket.app",
+  "productName": "FastDummyTicket",
+  "directories": {
+    "output": "electron-dist"
+  },
+  "files": [
+    "dist/**/*",
+    "electron.js",
+    "preload.js",
+    "generated-icon.png"
+  ],
+  "mac": {
+    "category": "public.app-category.travel",
+    "icon": "generated-icon.png",
+    "target": ["dmg", "zip"]
+  },
+  "win": {
+    "icon": "generated-icon.png",
+    "target": ["nsis"]
+  },
+  "linux": {
+    "icon": "generated-icon.png",
+    "target": ["AppImage", "deb"]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}

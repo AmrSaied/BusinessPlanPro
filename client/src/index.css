@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Electron-specific styles */
+.drag-region {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+.electron-title-bar {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.electron-window-controls button {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
 @layer base {
   :root {
     --background: 0 0% 98%;

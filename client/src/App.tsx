@@ -6,6 +6,8 @@ import { BookingProvider } from "./context/booking-context";
 import { LanguageProvider } from "./context/language-context";
 import { AuthProvider } from "./hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
+import ElectronAppWrapper from "@/components/desktop/electron-app-wrapper";
+import { isElectron } from "@/lib/environment";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import FlightSearchPage from "@/pages/flight-search-page";
@@ -87,7 +89,7 @@ function Router() {
 }
 
 function App() {
-  return (
+  const appContent = (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AuthProvider>
@@ -99,6 +101,14 @@ function App() {
       </LanguageProvider>
     </QueryClientProvider>
   );
+
+  // If running in Electron, wrap with ElectronAppWrapper
+  if (isElectron()) {
+    return <ElectronAppWrapper>{appContent}</ElectronAppWrapper>;
+  }
+
+  // Otherwise, just return the regular web app
+  return appContent;
 }
 
 export default App;
