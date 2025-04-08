@@ -41,12 +41,12 @@ const HomePage = () => {
               {t('hero_subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="#flight-search">
+              <Link href="/search">
                 <Button className="bg-amber-500 text-primary-900 px-6 py-3 rounded-md font-medium text-center hover:bg-amber-400 transition shadow-lg">
                   {t('hero_cta')}
                 </Button>
               </Link>
-              <Link href="#how-it-works">
+              <Link href="/how-it-works">
                 <Button variant="outline" className="border-white bg-white/20 hover:bg-white/30 px-6 py-3 text-white">
                   {t('hero_how_it_works')}
                 </Button>
