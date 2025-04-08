@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
@@ -364,6 +364,21 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
       onSubmit(validPassengers, contactInfo, specialRequests);
     }
   };
+  
+  // Pre-fill first passenger with first saved passenger if available
+  useEffect(() => {
+    if (savedPassengers && savedPassengers.length > 0 && passengers.length > 0) {
+      // Only pre-fill if passenger data is empty (to avoid overwriting user input)
+      const firstPassenger = passengers[0];
+      const isEmpty = !firstPassenger.firstName && 
+                      !firstPassenger.lastName && 
+                      !firstPassenger.passportNumber;
+      
+      if (isEmpty) {
+        loadSavedPassenger(0, savedPassengers[0]);
+      }
+    }
+  }, [savedPassengers]);
   
   return (
     <div>

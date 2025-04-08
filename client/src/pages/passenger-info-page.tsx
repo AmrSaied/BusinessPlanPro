@@ -121,10 +121,30 @@ const PassengerInfoPage = () => {
     );
   }
   
+  // Show loading spinner while fetching saved passengers
+  if (user && isLoadingSavedPassengers) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Loading passenger data</h2>
+          <p className="text-gray-600 mb-6">Please wait while we retrieve your saved passenger information...</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
+          {user && savedPassengers && savedPassengers.length > 0 && (
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6 p-5">
+              <h3 className="font-heading font-semibold text-lg mb-4">{t('saved_passengers')}</h3>
+              <p className="text-gray-600 mb-3">{t('saved_passengers_info')}</p>
+            </div>
+          )}
+          
           <PassengerForm 
             passengerCount={bookingData.searchParams?.passengers || 1}
             onSubmit={handleSubmitForm}
