@@ -92,9 +92,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // First try to get airports from our database
       let airports;
       
-      // Return all airports if no query provided (limited to 20)
+      // Return all airports if no query provided (increased limit to 100)
       if (!query || query.trim() === '') {
-        airports = await storage.getAllAirports(20);
+        airports = await storage.getAllAirports(100);
       } else {
         airports = await storage.searchAirports(query);
       }
