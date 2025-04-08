@@ -24,9 +24,9 @@ const loginSchema = z.object({
 // Registration form schema
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string(),
+  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   preferredLanguage: z.string().optional(),
@@ -119,223 +119,221 @@ function AuthPage() {
   };
 
   return (
-    <MainLayout>
-      <div className="container flex flex-col md:flex-row px-4 py-8 gap-8">
-        {/* Left side - Auth forms */}
-        <div className="w-full md:w-1/2">
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as "login" | "register")}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
-            </TabsList>
+    <div className="container flex flex-col md:flex-row px-4 py-8 gap-8">
+      {/* Left side - Auth forms */}
+      <div className="w-full md:w-1/2">
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as "login" | "register")}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="login">Login</TabsTrigger>
+            <TabsTrigger value="register">Register</TabsTrigger>
+          </TabsList>
 
-            {/* Login Tab */}
-            <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Login to your account</CardTitle>
-                  <CardDescription>
-                    Enter your credentials to access your account
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...loginForm}>
-                    <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                      <FormField
-                        control={loginForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter your username" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={loginForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="Enter your password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={loginMutation.isPending}
-                      >
-                        {loginMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Logging in...
-                          </>
-                        ) : (
-                          "Login"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <Separator />
-                  <div className="text-sm text-muted-foreground text-center">
-                    Don't have an account?{" "}
+          {/* Login Tab */}
+          <TabsContent value="login">
+            <Card>
+              <CardHeader>
+                <CardTitle>Login to your account</CardTitle>
+                <CardDescription>
+                  Enter your credentials to access your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your username" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Enter your password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <Button
-                      variant="link"
-                      className="p-0"
-                      onClick={() => setActiveTab("register")}
+                      type="submit"
+                      className="w-full"
+                      disabled={loginMutation.isPending}
                     >
-                      Register
+                      {loginMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Logging in...
+                        </>
+                      ) : (
+                        "Login"
+                      )}
                     </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </TabsContent>
+                  </form>
+                </Form>
+              </CardContent>
+              <CardFooter className="flex flex-col space-y-4">
+                <Separator />
+                <div className="text-sm text-muted-foreground text-center">
+                  Don't have an account?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0"
+                    onClick={() => setActiveTab("register")}
+                  >
+                    Register
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          </TabsContent>
 
-            {/* Register Tab */}
-            <TabsContent value="register">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Create an account</CardTitle>
-                  <CardDescription>
-                    Sign up to save your bookings and track your tickets
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...registerForm}>
-                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                      <FormField
-                        control={registerForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Choose a username" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input type="email" placeholder="Enter your email" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="Create a password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="Confirm your password" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button
-                        type="submit"
-                        className="w-full"
-                        disabled={registerMutation.isPending}
-                      >
-                        {registerMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating account...
-                          </>
-                        ) : (
-                          "Register"
-                        )}
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4">
-                  <Separator />
-                  <div className="text-sm text-muted-foreground text-center">
-                    Already have an account?{" "}
+          {/* Register Tab */}
+          <TabsContent value="register">
+            <Card>
+              <CardHeader>
+                <CardTitle>Create an account</CardTitle>
+                <CardDescription>
+                  Sign up to save your bookings and track your tickets
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...registerForm}>
+                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                    <FormField
+                      control={registerForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Choose a username" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registerForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input type="email" placeholder="Enter your email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registerForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Create a password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registerForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Confirm your password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <Button
-                      variant="link"
-                      className="p-0"
-                      onClick={() => setActiveTab("login")}
+                      type="submit"
+                      className="w-full"
+                      disabled={registerMutation.isPending}
                     >
-                      Login
+                      {registerMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        "Register"
+                      )}
                     </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+                  </form>
+                </Form>
+              </CardContent>
+              <CardFooter className="flex flex-col space-y-4">
+                <Separator />
+                <div className="text-sm text-muted-foreground text-center">
+                  Already have an account?{" "}
+                  <Button
+                    variant="link"
+                    className="p-0"
+                    onClick={() => setActiveTab("login")}
+                  >
+                    Login
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
 
-        {/* Right side - Hero section */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center">
-          <div className="bg-primary/5 p-8 rounded-lg">
-            <h2 className="text-3xl font-bold mb-4">Welcome to FastDummyTicket</h2>
-            <p className="mb-6 text-muted-foreground">
-              Create an account to enjoy these benefits:
-            </p>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-                <span>Save your favorite routes and destinations</span>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-                <span>Retrieve and reuse your past booking information</span>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-                <span>Access your tickets anytime from your account</span>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-                <span>Get email notifications about your bookings</span>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-                <span>Manage your visa application documents in one place</span>
-              </li>
-            </ul>
-          </div>
+      {/* Right side - Hero section */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center">
+        <div className="bg-primary/5 p-8 rounded-lg">
+          <h2 className="text-3xl font-bold mb-4">Welcome to FastDummyTicket</h2>
+          <p className="mb-6 text-muted-foreground">
+            Create an account to enjoy these benefits:
+          </p>
+          <ul className="space-y-3">
+            <li className="flex items-start">
+              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
+              <span>Save your favorite routes and destinations</span>
+            </li>
+            <li className="flex items-start">
+              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
+              <span>Retrieve and reuse your past booking information</span>
+            </li>
+            <li className="flex items-start">
+              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
+              <span>Access your tickets anytime from your account</span>
+            </li>
+            <li className="flex items-start">
+              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
+              <span>Get email notifications about your bookings</span>
+            </li>
+            <li className="flex items-start">
+              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
+              <span>Manage your visa application documents in one place</span>
+            </li>
+          </ul>
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 }
 

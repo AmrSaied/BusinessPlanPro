@@ -13,13 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Menu, Globe, ChevronDown, User, LogOut } from 'lucide-react';
 import { User as SelectUser } from '@shared/schema';
 
-// Try to import useAuth but handle situations where the provider is not available
-let useAuth: any;
-try {
-  useAuth = require('@/hooks/use-auth').useAuth;
-} catch (error) {
-  useAuth = () => ({ user: null });
-}
+// Import useAuth from hooks
+import { useAuth } from '@/hooks/use-auth';
 
 const Header = () => {
   const [location] = useLocation();
