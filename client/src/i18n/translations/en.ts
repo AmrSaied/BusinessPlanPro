@@ -32,7 +32,41 @@ export default {
   
   // How it works section
   how_it_works_title: 'How FastDummyTicket Works',
-  how_it_works_subtitle: 'Get your verifiable flight reservation in 4 simple steps - it\'s fast, easy, and secure',
+  how_it_works_subtitle: 'Our streamlined process makes it easy to get the flight reservation you need for your visa application',
+  
+  how_step1_title: 'Search',
+  how_step1_description: 'Enter your travel details, including origin, destination, and travel dates',
+  
+  how_step2_title: 'Select',
+  how_step2_description: 'Choose from available flights that match your travel requirements',
+  
+  how_step3_title: 'Pay',
+  how_step3_description: 'Make a secure payment using credit card or PayPal',
+  
+  how_step4_title: 'Receive',
+  how_step4_description: 'Get your verifiable flight reservation ticket delivered to your email',
+  
+  how_step5_title: 'Apply',
+  how_step5_description: 'Submit your visa application with your flight reservation',
+  
+  how_benefits_title: 'Benefits of Our Service',
+  
+  how_benefit1_title: 'Official-Looking Tickets',
+  how_benefit1_description: 'Our tickets appear exactly like actual flight reservations with real PNR codes',
+  
+  how_benefit2_title: 'Embassy Accepted',
+  how_benefit2_description: 'Accepted by embassies and consulates worldwide for visa applications',
+  
+  how_benefit3_title: 'Money-Saving',
+  how_benefit3_description: 'Avoid paying for expensive refundable tickets just for your visa application',
+  
+  how_tips_title: 'Tips for Visa Applicants',
+  
+  how_tip1: 'Apply for your visa at least 4-6 weeks before your intended travel date',
+  how_tip2: 'Ensure your passport has at least six months of validity beyond your planned return date',
+  how_tip3: 'Include a detailed itinerary along with your flight reservation during application',
+  how_tip4: 'Check the specific visa requirements for your destination country before applying',
+  
   step_1_title: 'Search Your Route',
   step_1_text: 'Select your origin, destination, and travel dates',
   step_2_title: 'Select a Flight',

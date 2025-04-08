@@ -4,6 +4,7 @@ import { Link, useLocation } from 'wouter';
 import { useBooking } from '@/context/booking-context';
 import { Button } from '@/components/ui/button';
 import FlightSearchForm from '@/components/search/flight-search-form';
+import HowItWorksSection from '@/components/sections/how-it-works-section';
 import { FlightSearch } from '@shared/schema';
 import { 
   CheckCircle, 
@@ -115,45 +116,8 @@ const HomePage = () => {
   
   // How It Works Section
   const HowItWorks = () => (
-    <section id="how-it-works" className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="font-heading text-3xl font-bold text-gray-800 mb-4">{t('how_it_works_title')}</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            {t('how_it_works_subtitle')}
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Step 1 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4">1</div>
-            <h3 className="font-heading font-semibold text-xl mb-3">{t('step_1_title')}</h3>
-            <p className="text-gray-600">{t('step_1_text')}</p>
-          </div>
-          
-          {/* Step 2 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4">2</div>
-            <h3 className="font-heading font-semibold text-xl mb-3">{t('step_2_title')}</h3>
-            <p className="text-gray-600">{t('step_2_text')}</p>
-          </div>
-          
-          {/* Step 3 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4">3</div>
-            <h3 className="font-heading font-semibold text-xl mb-3">{t('step_3_title')}</h3>
-            <p className="text-gray-600">{t('step_3_text')}</p>
-          </div>
-          
-          {/* Step 4 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-xl font-bold mb-4">4</div>
-            <h3 className="font-heading font-semibold text-xl mb-3">{t('step_4_title')}</h3>
-            <p className="text-gray-600">{t('step_4_text')}</p>
-          </div>
-        </div>
-      </div>
+    <section id="how-it-works">
+      <HowItWorksSection />
     </section>
   );
   
