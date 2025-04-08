@@ -5,6 +5,7 @@ import { useBooking } from '@/context/booking-context';
 import { Button } from '@/components/ui/button';
 import FlightSearchForm from '@/components/search/flight-search-form';
 import HowItWorksSection from '@/components/sections/how-it-works-section';
+import GetTicketWidget from '@/components/ui/get-ticket-widget';
 import { FlightSearch } from '@shared/schema';
 import { 
   CheckCircle, 
@@ -213,37 +214,13 @@ const HomePage = () => {
   const GetYourTicket = () => (
     <section className="py-16 bg-gradient-to-r from-primary-600 to-primary-700 text-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="font-heading text-3xl font-bold mb-4">{t('get_ticket_now_title')}</h2>
-          <p className="text-xl opacity-90 max-w-3xl mx-auto">{t('get_ticket_now_subtitle')}</p>
+        <div className="text-center mb-6">
+          <h2 className="font-heading text-3xl font-bold mb-4 text-white">{t('get_ticket_now_title')}</h2>
+          <p className="text-xl opacity-90 max-w-3xl mx-auto text-white/90">{t('get_ticket_now_subtitle')}</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <div className="text-3xl font-bold text-amber-300 mb-3">✓</div>
-            <h3 className="text-xl font-bold mb-2">{t('get_ticket_now_feature1_title')}</h3>
-            <p className="text-white/80">{t('get_ticket_now_feature1_text')}</p>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <div className="text-3xl font-bold text-amber-300 mb-3">✓</div>
-            <h3 className="text-xl font-bold mb-2">{t('get_ticket_now_feature2_title')}</h3>
-            <p className="text-white/80">{t('get_ticket_now_feature2_text')}</p>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
-            <div className="text-3xl font-bold text-amber-300 mb-3">✓</div>
-            <h3 className="text-xl font-bold mb-2">{t('get_ticket_now_feature3_title')}</h3>
-            <p className="text-white/80">{t('get_ticket_now_feature3_text')}</p>
-          </div>
-        </div>
-        
-        <div className="text-center">
-          <Link href="/search">
-            <Button className="bg-amber-500 hover:bg-amber-400 text-primary-900 px-8 py-3 text-lg font-medium rounded-md">
-              {t('get_ticket_now_button')}
-            </Button>
-          </Link>
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-6">
+          <GetTicketWidget variant="default" />
         </div>
       </div>
     </section>

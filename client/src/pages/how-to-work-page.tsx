@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import GetTicketWidget from '@/components/ui/get-ticket-widget';
 
 const HowToWorkPage = () => {
   const { t } = useTranslation();
@@ -92,20 +93,7 @@ const HowToWorkPage = () => {
             </div>
             
             {/* Simple Inline CTA */}
-            <div className="bg-blue-50 rounded-lg p-4 my-8">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-700">{t('get_ticket_now_title')}</h3>
-                  <p className="text-gray-600 mt-1">{t('get_ticket_now_description')}</p>
-                </div>
-                <Link href="/search">
-                  <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
-                    {t('get_ticket_now_button')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            <GetTicketWidget variant="inline" />
           </section>
           
           <section className="mb-8">
@@ -154,44 +142,8 @@ const HowToWorkPage = () => {
           </section>
           
           {/* Bottom CTA */}
-          <div className="bg-blue-600 text-white rounded-lg p-6 mb-8">
-            <div className="text-center mb-4">
-              <h2 className="text-2xl font-bold">{t('get_ticket_now_title')}</h2>
-              <p className="mt-2">{t('get_ticket_now_subtitle')}</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="flex items-start gap-2">
-                <div className="text-blue-200 text-xl">✓</div>
-                <div>
-                  <h4 className="font-medium">{t('get_ticket_now_feature1_title')}</h4>
-                  <p className="text-sm text-blue-100">{t('get_ticket_now_feature1_text')}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <div className="text-blue-200 text-xl">✓</div>
-                <div>
-                  <h4 className="font-medium">{t('get_ticket_now_feature2_title')}</h4>
-                  <p className="text-sm text-blue-100">{t('get_ticket_now_feature2_text')}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <div className="text-blue-200 text-xl">✓</div>
-                <div>
-                  <h4 className="font-medium">{t('get_ticket_now_feature3_title')}</h4>
-                  <p className="text-sm text-blue-100">{t('get_ticket_now_feature3_text')}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <Link href="/search">
-                <Button className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-2">
-                  {t('get_ticket_now_button')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
+          <div className="mb-8">
+            <GetTicketWidget variant="default" className="shadow-lg" />
           </div>
         </div>
       </div>

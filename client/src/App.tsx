@@ -74,7 +74,7 @@ function Router() {
       )} />
       <Route path="/how-it-works" component={() => (
         <MainLayout>
-          <HomePage />
+          <HowToWorkPage />
         </MainLayout>
       )} />
       <ProtectedRoute 
