@@ -13,8 +13,8 @@ export default {
   nav_logout: 'Log Out',
   
   // Home page
-  hero_title: 'Quick Flight Reservations for Visa Applications',
-  hero_subtitle: 'Get verifiable flight reservations within minutes for your visa application, immigration, or passport renewal.',
+  hero_title: 'Get verifiable flight reservations within minutes for your visa application, immigration, or passport renewal.',
+  hero_subtitle: 'Perfect for visa applications, immigration documents, or passport renewals - trusted by thousands of travelers worldwide.',
   hero_cta: 'Get Your Ticket Now',
   hero_how_it_works: 'How It Works',
   
