@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import GetTicketWidget from '@/components/ui/get-ticket-widget';
+import { Link } from 'wouter';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const HowToWorkPage = () => {
   const { t } = useTranslation();
@@ -7,26 +9,26 @@ const HowToWorkPage = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-heading font-bold mb-6">{t('how_to_work_title')}</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('how_to_work_title')}</h1>
         
-        <div className="prose prose-blue max-w-none">
+        <div className="max-w-none">
           <section className="mb-8">
-            <h2 className="text-2xl font-heading font-semibold mb-4">{t('how_to_work_introduction_title')}</h2>
-            <p>{t('how_to_work_introduction_text')}</p>
+            <h2 className="text-2xl font-semibold mb-4">{t('how_to_work_introduction_title')}</h2>
+            <p className="mb-4">{t('how_to_work_introduction_text')}</p>
           </section>
           
           <section className="mb-8">
-            <h2 className="text-2xl font-heading font-semibold mb-4">{t('how_to_work_visa_app_title')}</h2>
-            <p>{t('how_to_work_visa_app_text1')}</p>
-            <p>{t('how_to_work_visa_app_text2')}</p>
+            <h2 className="text-2xl font-semibold mb-4">{t('how_to_work_visa_app_title')}</h2>
+            <p className="mb-4">{t('how_to_work_visa_app_text1')}</p>
+            <p className="mb-4">{t('how_to_work_visa_app_text2')}</p>
             
-            <div className="bg-primary-50 border-l-4 border-primary p-4 my-6">
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
               <h3 className="font-semibold text-lg mb-2">{t('how_to_work_visa_app_tip_title')}</h3>
               <p>{t('how_to_work_visa_app_tip_text')}</p>
             </div>
             
-            <h3 className="text-xl font-heading font-semibold mt-6 mb-3">{t('how_to_work_documents_needed_title')}</h3>
-            <ul className="list-disc pl-6 space-y-2">
+            <h3 className="text-xl font-semibold mt-6 mb-3">{t('how_to_work_documents_needed_title')}</h3>
+            <ul className="list-disc pl-6 space-y-2 mb-4">
               <li>{t('how_to_work_documents_needed_item1')}</li>
               <li>{t('how_to_work_documents_needed_item2')}</li>
               <li>{t('how_to_work_documents_needed_item3')}</li>
@@ -36,11 +38,11 @@ const HowToWorkPage = () => {
           </section>
           
           <section className="mb-8">
-            <h2 className="text-2xl font-heading font-semibold mb-4">{t('how_to_work_using_our_system_title')}</h2>
+            <h2 className="text-2xl font-semibold mb-4">{t('how_to_work_using_our_system_title')}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="border border-gray-200 rounded-lg p-6">
-                <h3 className="text-xl font-heading font-semibold mb-3">{t('how_to_work_step1_title')}</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('how_to_work_step1_title')}</h3>
                 <ol className="list-decimal pl-6 space-y-2">
                   <li>{t('how_to_work_step1_item1')}</li>
                   <li>{t('how_to_work_step1_item2')}</li>
@@ -49,7 +51,7 @@ const HowToWorkPage = () => {
               </div>
               
               <div className="border border-gray-200 rounded-lg p-6">
-                <h3 className="text-xl font-heading font-semibold mb-3">{t('how_to_work_step2_title')}</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('how_to_work_step2_title')}</h3>
                 <ol className="list-decimal pl-6 space-y-2">
                   <li>{t('how_to_work_step2_item1')}</li>
                   <li>{t('how_to_work_step2_item2')}</li>
@@ -60,7 +62,7 @@ const HowToWorkPage = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border border-gray-200 rounded-lg p-6">
-                <h3 className="text-xl font-heading font-semibold mb-3">{t('how_to_work_step3_title')}</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('how_to_work_step3_title')}</h3>
                 <ol className="list-decimal pl-6 space-y-2">
                   <li>{t('how_to_work_step3_item1')}</li>
                   <li>{t('how_to_work_step3_item2')}</li>
@@ -69,7 +71,7 @@ const HowToWorkPage = () => {
               </div>
               
               <div className="border border-gray-200 rounded-lg p-6">
-                <h3 className="text-xl font-heading font-semibold mb-3">{t('how_to_work_step4_title')}</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('how_to_work_step4_title')}</h3>
                 <ol className="list-decimal pl-6 space-y-2">
                   <li>{t('how_to_work_step4_item1')}</li>
                   <li>{t('how_to_work_step4_item2')}</li>
@@ -80,83 +82,118 @@ const HowToWorkPage = () => {
           </section>
           
           <section className="mb-8">
-            <h2 className="text-2xl font-heading font-semibold mb-4">{t('how_to_work_embassy_submission_title')}</h2>
-            <p>{t('how_to_work_embassy_submission_text1')}</p>
-            <p>{t('how_to_work_embassy_submission_text2')}</p>
+            <h2 className="text-2xl font-semibold mb-4">{t('how_to_work_embassy_submission_title')}</h2>
+            <p className="mb-4">{t('how_to_work_embassy_submission_text1')}</p>
+            <p className="mb-4">{t('how_to_work_embassy_submission_text2')}</p>
             
             <div className="bg-amber-50 border-l-4 border-amber-500 p-4 my-6">
               <h3 className="font-semibold text-lg mb-2">{t('how_to_work_embassy_submission_warning_title')}</h3>
               <p>{t('how_to_work_embassy_submission_warning_text')}</p>
             </div>
             
-            <GetTicketWidget variant="inline" className="mt-8" />
-          </section>
-          
-          <section className="mb-8">
-            <h2 className="text-2xl font-heading font-semibold mb-4">{t('how_to_work_faq_title')}</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-xl font-heading font-semibold">{t('how_to_work_faq_q1')}</h3>
-                <p>{t('how_to_work_faq_a1')}</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-heading font-semibold">{t('how_to_work_faq_q2')}</h3>
-                <p>{t('how_to_work_faq_a2')}</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-heading font-semibold">{t('how_to_work_faq_q3')}</h3>
-                <p>{t('how_to_work_faq_a3')}</p>
-              </div>
-              
-              <div>
-                <h3 className="text-xl font-heading font-semibold">{t('how_to_work_faq_q4')}</h3>
-                <p>{t('how_to_work_faq_a4')}</p>
+            {/* Simple Inline CTA */}
+            <div className="bg-blue-50 rounded-lg p-4 my-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-700">{t('get_ticket_now_title')}</h3>
+                  <p className="text-gray-600 mt-1">{t('get_ticket_now_description')}</p>
+                </div>
+                <Link href="/search">
+                  <Button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
+                    {t('get_ticket_now_button')}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </section>
           
-          <section>
-            <h2 className="text-2xl font-heading font-semibold mb-4">{t('how_to_work_contact_title')}</h2>
-            <p>{t('how_to_work_contact_text')}</p>
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">{t('how_to_work_faq_title')}</h2>
+            
+            <div className="space-y-4">
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-xl font-semibold">{t('how_to_work_faq_q1')}</h3>
+                <p className="mt-2">{t('how_to_work_faq_a1')}</p>
+              </div>
+              
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-xl font-semibold">{t('how_to_work_faq_q2')}</h3>
+                <p className="mt-2">{t('how_to_work_faq_a2')}</p>
+              </div>
+              
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-xl font-semibold">{t('how_to_work_faq_q3')}</h3>
+                <p className="mt-2">{t('how_to_work_faq_a3')}</p>
+              </div>
+              
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-xl font-semibold">{t('how_to_work_faq_q4')}</h3>
+                <p className="mt-2">{t('how_to_work_faq_a4')}</p>
+              </div>
+            </div>
+          </section>
+          
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold mb-4">{t('how_to_work_contact_title')}</h2>
+            <p className="mb-4">{t('how_to_work_contact_text')}</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div className="border border-gray-200 rounded-lg p-6">
-                <h3 className="text-xl font-heading font-semibold mb-3">{t('how_to_work_contact_email_title')}</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('how_to_work_contact_email_title')}</h3>
                 <p>{t('how_to_work_contact_email_text')}</p>
                 <p className="font-medium mt-2">support@fastdummyticket.com</p>
               </div>
               
               <div className="border border-gray-200 rounded-lg p-6">
-                <h3 className="text-xl font-heading font-semibold mb-3">{t('how_to_work_contact_phone_title')}</h3>
+                <h3 className="text-xl font-semibold mb-3">{t('how_to_work_contact_phone_title')}</h3>
                 <p>{t('how_to_work_contact_phone_text')}</p>
                 <p className="font-medium mt-2">+201113284428</p>
               </div>
             </div>
           </section>
           
-          <section className="mt-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-2">
-                <h2 className="text-2xl font-heading font-semibold mb-4">{t('get_ticket_now_title')}</h2>
-                <p className="mb-6">{t('get_ticket_now_description')}</p>
-                <p className="text-gray-700">
-                  {t('get_ticket_now_subtitle')}
-                </p>
+          {/* Bottom CTA */}
+          <div className="bg-blue-600 text-white rounded-lg p-6 mb-8">
+            <div className="text-center mb-4">
+              <h2 className="text-2xl font-bold">{t('get_ticket_now_title')}</h2>
+              <p className="mt-2">{t('get_ticket_now_subtitle')}</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="flex items-start gap-2">
+                <div className="text-blue-200 text-xl">✓</div>
+                <div>
+                  <h4 className="font-medium">{t('get_ticket_now_feature1_title')}</h4>
+                  <p className="text-sm text-blue-100">{t('get_ticket_now_feature1_text')}</p>
+                </div>
               </div>
-              <div className="md:col-span-1">
-                <GetTicketWidget />
+              <div className="flex items-start gap-2">
+                <div className="text-blue-200 text-xl">✓</div>
+                <div>
+                  <h4 className="font-medium">{t('get_ticket_now_feature2_title')}</h4>
+                  <p className="text-sm text-blue-100">{t('get_ticket_now_feature2_text')}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <div className="text-blue-200 text-xl">✓</div>
+                <div>
+                  <h4 className="font-medium">{t('get_ticket_now_feature3_title')}</h4>
+                  <p className="text-sm text-blue-100">{t('get_ticket_now_feature3_text')}</p>
+                </div>
               </div>
             </div>
-          </section>
+            
+            <div className="text-center">
+              <Link href="/search">
+                <Button className="bg-white text-blue-700 hover:bg-blue-50 px-8 py-2">
+                  {t('get_ticket_now_button')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      {/* Floating CTA for mobile */}
-      <div className="md:hidden">
-        <GetTicketWidget variant="floating" />
       </div>
     </div>
   );
