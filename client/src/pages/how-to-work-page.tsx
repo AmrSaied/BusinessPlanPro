@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import GetTicketWidget from '@/components/ui/get-ticket-widget';
 
 const HowToWorkPage = () => {
   const { t } = useTranslation();
@@ -87,6 +88,8 @@ const HowToWorkPage = () => {
               <h3 className="font-semibold text-lg mb-2">{t('how_to_work_embassy_submission_warning_title')}</h3>
               <p>{t('how_to_work_embassy_submission_warning_text')}</p>
             </div>
+            
+            <GetTicketWidget variant="inline" className="mt-8" />
           </section>
           
           <section className="mb-8">
@@ -133,7 +136,27 @@ const HowToWorkPage = () => {
               </div>
             </div>
           </section>
+          
+          <section className="mt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="md:col-span-2">
+                <h2 className="text-2xl font-heading font-semibold mb-4">{t('get_ticket_now_title')}</h2>
+                <p className="mb-6">{t('get_ticket_now_description')}</p>
+                <p className="text-gray-700">
+                  {t('get_ticket_now_subtitle')}
+                </p>
+              </div>
+              <div className="md:col-span-1">
+                <GetTicketWidget />
+              </div>
+            </div>
+          </section>
         </div>
+      </div>
+      
+      {/* Floating CTA for mobile */}
+      <div className="md:hidden">
+        <GetTicketWidget variant="floating" />
       </div>
     </div>
   );

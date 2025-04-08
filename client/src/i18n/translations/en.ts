@@ -377,5 +377,21 @@ export default {
   how_to_work_contact_email_text: 'Send us an email and we\'ll get back to you as soon as possible.',
   
   how_to_work_contact_phone_title: 'Phone Support',
-  how_to_work_contact_phone_text: 'Our team is available to help you with any technical or booking issues.'
+  how_to_work_contact_phone_text: 'Our team is available to help you with any technical or booking issues.',
+  
+  // Get Ticket Widget
+  get_ticket_now_title: 'Ready to Create Your Flight Reservation?',
+  get_ticket_now_subtitle: 'Get your visa-ready flight reservation in minutes',
+  get_ticket_now_description: 'Quick, easy, and embassy-accepted flight reservations for your visa application.',
+  get_ticket_now_button: 'Get Your Ticket Now',
+  get_ticket_now_floating_text: 'Create your verifiable flight reservation in under 5 minutes.',
+  
+  get_ticket_now_feature1_title: 'Embassy Verified',
+  get_ticket_now_feature1_text: 'All reservations include verifiable PNR codes and airline references.',
+  
+  get_ticket_now_feature2_title: 'Quick Delivery',
+  get_ticket_now_feature2_text: 'Receive your ticket via email in as little as 5 minutes.',
+  
+  get_ticket_now_feature3_title: 'Money-Back Guarantee',
+  get_ticket_now_feature3_text: 'If your reservation is not accepted, we offer a full refund.'
 };
