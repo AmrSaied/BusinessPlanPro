@@ -471,6 +471,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user data (only for authenticated users)
+  app.get("/api/users/:userId", async (req: Request, res: Response) => {
+    try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+      
+      // Check if the user is trying to access their own data
+      const userId = parseInt(req.params.userId);
+      if (req.user.id !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access' });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      // Remove sensitive information
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      res.status(500).json({ error: "Failed to fetch user data" });
+    }
+  });
+
   // Get saved passengers for a user (only for authenticated users)
   app.get("/api/users/:userId/passengers", async (req: Request, res: Response) => {
     try {
@@ -535,6 +563,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("Error saving passenger:", err);
       res.status(500).json({ error: "Failed to save passenger" });
+    }
+  });
+  
+  // Update user contact information
+  app.patch("/api/users/:userId/contact", async (req: Request, res: Response) => {
+    try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+      
+      // Check if the user is trying to access their own data
+      const userId = parseInt(req.params.userId);
+      if (req.user.id !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access' });
+      }
+      
+      const { phone, preferredEmail } = req.body;
+      
+      // Update user with contact information
+      const updatedUser = await storage.updateUser(userId, {
+        phone,
+        preferredEmail
+      });
+      
+      // Remove sensitive fields before returning
+      if (updatedUser) {
+        const { password, ...userWithoutPassword } = updatedUser;
+        res.json(userWithoutPassword);
+      } else {
+        res.status(404).json({ error: "Failed to update user" });
+      }
+    } catch (err) {
+      console.error("Error updating user contact info:", err);
+      res.status(500).json({ error: "Failed to update contact information" });
     }
   });
 

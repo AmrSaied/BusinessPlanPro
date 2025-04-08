@@ -10,6 +10,8 @@ export const users = pgTable("users", {
   email: text("email").notNull(),
   firstName: text("first_name"),
   lastName: text("last_name"),
+  phone: text("phone"),
+  preferredEmail: text("preferred_email"),
   preferredLanguage: text("preferred_language").default("en"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -20,6 +22,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
   firstName: true,
   lastName: true,
+  phone: true,
+  preferredEmail: true,
   preferredLanguage: true,
 });
 

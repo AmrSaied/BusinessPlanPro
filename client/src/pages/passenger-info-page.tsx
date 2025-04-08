@@ -70,11 +70,36 @@ const PassengerInfoPage = () => {
       });
     }
   });
+  
+  // Mutation to save contact info
+  const saveContactInfoMutation = useMutation({
+    mutationFn: async (contactData: { phone: string; preferredEmail: string }) => {
+      const res = await apiRequest(
+        "PATCH", 
+        `/api/users/${user?.id}/contact`,
+        contactData
+      );
+      return await res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Contact info saved',
+        description: 'Your contact information has been saved to your account',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error saving contact info',
+        description: error.message || 'An error occurred while saving your contact information',
+        variant: "destructive",
+      });
+    }
+  });
 
   // Handle form submission
   const handleSubmitForm = (
     passengerData: InsertPassenger[], 
-    contactInfo: { email: string; phone?: string },
+    contactInfo: { email: string; phone?: string; saveInfo?: boolean },
     specialRequests?: string
   ) => {
     setPassengers(passengerData);
@@ -100,6 +125,14 @@ const PassengerInfoPage = () => {
           });
         }
       });
+      
+      // Save contact info if requested
+      if (contactInfo.saveInfo && contactInfo.phone) {
+        saveContactInfoMutation.mutate({
+          phone: contactInfo.phone,
+          preferredEmail: contactInfo.email
+        });
+      }
     }
     
     navigate('/payment');

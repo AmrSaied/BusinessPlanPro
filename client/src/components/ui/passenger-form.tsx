@@ -22,7 +22,7 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 
 interface PassengerFormProps {
   passengerCount: number;
-  onSubmit: (passengers: InsertPassenger[], contactInfo: { email: string; phone?: string }, specialRequests?: string) => void;
+  onSubmit: (passengers: InsertPassenger[], contactInfo: { email: string; phone?: string; saveInfo?: boolean }, specialRequests?: string) => void;
   savedPassengers?: Passenger[];
 }
 
@@ -45,7 +45,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
   
   const [contactInfo, setContactInfo] = useState({
     email: '',
-    phone: ''
+    phone: '',
+    saveInfo: false
   });
   
   const [specialRequests, setSpecialRequests] = useState('');
@@ -380,6 +381,29 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     }
   }, [savedPassengers]);
   
+  // Pre-fill contact information if user has it saved
+  useEffect(() => {
+    if (savedPassengers !== undefined && savedPassengers.length > 0) {
+      // Get user from first passenger (all passengers belong to same user)
+      const firstPassenger = savedPassengers[0];
+      if (firstPassenger.userId) {
+        // Fetch user data to get preferred contact info
+        fetch(`/api/users/${firstPassenger.userId}`)
+          .then(res => res.json())
+          .then(userData => {
+            if (userData.phone || userData.preferredEmail) {
+              setContactInfo(prevInfo => ({
+                ...prevInfo,
+                phone: userData.phone || prevInfo.phone,
+                email: userData.preferredEmail || prevInfo.email
+              }));
+            }
+          })
+          .catch(err => console.error('Error fetching user contact info:', err));
+      }
+    }
+  }, [savedPassengers]);
+  
   return (
     <div>
       <div className="mb-6">
@@ -695,6 +719,27 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               )}
             </div>
           </div>
+          
+          {/* Save contact information checkbox - only show if user is authenticated */}
+          {savedPassengers !== undefined && (
+            <div className="mt-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="save-contact-info" 
+                  checked={!!contactInfo.saveInfo}
+                  onCheckedChange={(checked: CheckedState) => 
+                    setContactInfo({ ...contactInfo, saveInfo: checked === true })
+                  }
+                />
+                <label 
+                  htmlFor="save-contact-info"
+                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {t('save_contact_info')}
+                </label>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       

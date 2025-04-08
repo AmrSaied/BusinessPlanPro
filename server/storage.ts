@@ -132,6 +132,8 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       firstName: insertUser.firstName ?? null,
       lastName: insertUser.lastName ?? null,
+      phone: insertUser.phone ?? null,
+      preferredEmail: insertUser.preferredEmail ?? null,
       preferredLanguage: insertUser.preferredLanguage ?? "en" 
     };
     
