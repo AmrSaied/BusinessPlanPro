@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -12,12 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { InsertPassenger } from '@shared/schema';
+import { InsertPassenger, Passenger } from '@shared/schema';
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 interface PassengerFormProps {
   passengerCount: number;
   onSubmit: (passengers: InsertPassenger[], contactInfo: { email: string; phone?: string }, specialRequests?: string) => void;
-  savedPassengers?: InsertPassenger[];
+  savedPassengers?: Passenger[];
 }
 
 const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: PassengerFormProps) => {
@@ -84,9 +90,14 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     setPassengers(updatedPassengers);
   };
   
-  const loadSavedPassenger = (index: number, savedPassenger: InsertPassenger) => {
+  const loadSavedPassenger = (index: number, savedPassenger: Passenger) => {
     const updatedPassengers = [...passengers];
-    updatedPassengers[index] = { ...savedPassenger, userId: undefined };
+    // Take fields from the saved passenger but omit the id and userId
+    const { id, userId, ...passengerData } = savedPassenger;
+    updatedPassengers[index] = { 
+      ...passengerData,
+      isSaved: true
+    };
     setPassengers(updatedPassengers);
   };
   
@@ -317,15 +328,42 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              {/* Date of Birth */}
+              {/* Date of Birth with Datepicker */}
               <div>
                 <Label htmlFor={`dateOfBirth-${index}`}>{t('date_of_birth')}</Label>
-                <Input
-                  id={`dateOfBirth-${index}`}
-                  value={passenger.dateOfBirth}
-                  onChange={(e) => updatePassenger(index, 'dateOfBirth', e.target.value)}
-                  placeholder="DD/MM/YYYY"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id={`dateOfBirth-${index}`}
+                      variant="outline"
+                      className={cn(
+                        "w-full text-left font-normal flex justify-between items-center",
+                        !passenger.dateOfBirth && "text-muted-foreground",
+                        errors[`passenger${index}`]?.dateOfBirth && "border-red-500"
+                      )}
+                    >
+                      {passenger.dateOfBirth ? format(new Date(passenger.dateOfBirth.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      <CalendarIcon className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      captionLayout="dropdown-buttons"
+                      fromYear={1920}
+                      toYear={new Date().getFullYear()}
+                      defaultMonth={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
+                      selected={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const formattedDate = format(date, "dd/MM/yyyy");
+                          updatePassenger(index, 'dateOfBirth', formattedDate);
+                        }
+                      }}
+                      disabled={(date) => date > new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
                 {errors[`passenger${index}`]?.dateOfBirth && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].dateOfBirth}</p>
                 )}
@@ -345,15 +383,42 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 )}
               </div>
               
-              {/* Passport Expiry */}
+              {/* Passport Expiry with Datepicker */}
               <div>
                 <Label htmlFor={`passportExpiry-${index}`}>{t('passport_expiry')}</Label>
-                <Input
-                  id={`passportExpiry-${index}`}
-                  value={passenger.passportExpiry}
-                  onChange={(e) => updatePassenger(index, 'passportExpiry', e.target.value)}
-                  placeholder="DD/MM/YYYY"
-                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id={`passportExpiry-${index}`}
+                      variant="outline"
+                      className={cn(
+                        "w-full text-left font-normal flex justify-between items-center",
+                        !passenger.passportExpiry && "text-muted-foreground",
+                        errors[`passenger${index}`]?.passportExpiry && "border-red-500"
+                      )}
+                    >
+                      {passenger.passportExpiry ? format(new Date(passenger.passportExpiry.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      <CalendarIcon className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      captionLayout="dropdown-buttons"
+                      fromYear={new Date().getFullYear()}
+                      toYear={new Date().getFullYear() + 20}
+                      defaultMonth={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : new Date()}
+                      selected={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const formattedDate = format(date, "dd/MM/yyyy");
+                          updatePassenger(index, 'passportExpiry', formattedDate);
+                        }
+                      }}
+                      disabled={(date) => date < new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
                 {errors[`passenger${index}`]?.passportExpiry && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].passportExpiry}</p>
                 )}
@@ -364,8 +429,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id={`save-passenger-${index}`} 
-                  checked={passenger.isSaved}
-                  onCheckedChange={(checked) => updatePassenger(index, 'isSaved', checked)}
+                  checked={!!passenger.isSaved}
+                  onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
                 />
                 <label 
                   htmlFor={`save-passenger-${index}`}
