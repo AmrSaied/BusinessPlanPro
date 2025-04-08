@@ -58,11 +58,7 @@ function Router() {
           </MainLayout>
         )}
       </Route>
-      <Route path="/auth" component={() => (
-        <MainLayout>
-          <AuthPage />
-        </MainLayout>
-      )} />
+      <Route path="/auth" component={AuthPage} />
       <Route path="/faq" component={() => (
         <MainLayout>
           <FaqPage />

@@ -73,7 +73,10 @@ const Header = () => {
   const isLoggedIn = !!user;
   
   // Get userName safely with type assertion to avoid TypeScript errors
-  const userName = (user as any)?.username || "";
+  const userName = user?.username || "";
+  
+  // Debug login state
+  console.log("Auth state in header:", { isLoggedIn, userName, userId: user?.id });
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);

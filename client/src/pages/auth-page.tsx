@@ -39,10 +39,13 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 function AuthPage() {
+  console.log("Auth page component rendering");
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const { toast } = useToast();
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
+  
+  console.log("Auth page - current user:", user ? `ID: ${user.id}, Username: ${user.username}` : "Not logged in");
 
   // Redirect to home if already logged in
   if (user) {
@@ -121,7 +124,7 @@ function AuthPage() {
         {/* Left side - Auth forms */}
         <div className="w-full md:w-1/2">
           <Tabs
-            defaultValue={activeTab}
+            value={activeTab}
             onValueChange={(value) => setActiveTab(value as "login" | "register")}
             className="w-full"
           >
