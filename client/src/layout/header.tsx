@@ -100,8 +100,8 @@ const Header = () => {
                 {t('nav_home')}
               </span>
             </Link>
-            <Link href="/how-it-works">
-              <span className={`font-medium ${location === '/how-it-works' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
+            <Link href="/#how-it-works">
+              <span className="font-medium text-gray-600 hover:text-primary transition cursor-pointer">
                 {t('nav_how_it_works')}
               </span>
             </Link>
@@ -199,7 +199,7 @@ const Header = () => {
               <Link href="/">
                 <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_home')}</span>
               </Link>
-              <Link href="/how-it-works">
+              <Link href="/#how-it-works">
                 <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_how_it_works')}</span>
               </Link>
               <Link href="/faq">
