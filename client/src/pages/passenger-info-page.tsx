@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useBooking } from '@/context/booking-context';
+import { useAuth } from '@/hooks/use-auth';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import PassengerForm from '@/components/ui/passenger-form';
-import { InsertPassenger } from '@shared/schema';
+import { InsertPassenger, Passenger } from '@shared/schema';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const PassengerInfoPage = () => {
   const { t } = useTranslation();
@@ -25,15 +28,49 @@ const PassengerInfoPage = () => {
     }
   }, [bookingData.selectedFlight, bookingData.options, navigate]);
   
-  // Get saved passengers (in a real app, this would be from a logged-in user's account)
+  // Get authenticated user
+  const { user } = useAuth();
+  
+  // Get saved passengers only if the user is authenticated
   const {
     data: savedPassengers,
     isLoading: isLoadingSavedPassengers
-  } = useQuery<InsertPassenger[]>({
-    queryKey: ['/api/users/1/passengers'], // Using a mock user ID of 1
-    enabled: false, // Disabled for now - would be enabled if user is logged in
+  } = useQuery<Passenger[]>({
+    queryKey: [`/api/users/${user?.id}/passengers`],
+    enabled: !!user, // Only enable the query if user is authenticated
   });
   
+  // Toast notifications
+  const { toast } = useToast();
+  
+  // Mutation to save a passenger to the user's account
+  const savePassengerMutation = useMutation({
+    mutationFn: async (passenger: InsertPassenger) => {
+      const res = await apiRequest(
+        "POST", 
+        `/api/users/${user?.id}/passengers`, 
+        passenger
+      );
+      return await res.json();
+    },
+    onSuccess: () => {
+      // Invalidate saved passengers query to refresh the list
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${user?.id}/passengers`] });
+      toast({
+        title: 'Passenger saved',
+        description: 'The passenger has been saved to your account',
+      });
+    },
+    onError: (err: Error) => {
+      console.error('Error saving passenger:', err);
+      toast({
+        title: 'Error saving passenger',
+        description: err.message,
+        variant: 'destructive',
+      });
+    }
+  });
+
   // Handle form submission
   const handleSubmitForm = (
     passengerData: InsertPassenger[], 
@@ -43,6 +80,16 @@ const PassengerInfoPage = () => {
     setPassengers(passengerData);
     setContactInfo(contactInfo);
     setSpecialRequests(specialRequests || '');
+    
+    // If the user is authenticated, save any passengers marked to be saved
+    if (user) {
+      passengerData.forEach(passenger => {
+        if (passenger.isSaved) {
+          savePassengerMutation.mutate(passenger);
+        }
+      });
+    }
+    
     navigate('/payment');
   };
   

@@ -471,16 +471,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get saved passengers for a user
+  // Get saved passengers for a user (only for authenticated users)
   app.get("/api/users/:userId/passengers", async (req: Request, res: Response) => {
     try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+      
+      // Check if the user is trying to access their own data
       const userId = parseInt(req.params.userId);
+      if (req.user.id !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access' });
+      }
       
       const passengers = await storage.getPassengersByUserId(userId);
       res.json(passengers.filter(p => p.isSaved));
     } catch (err) {
       console.error("Error fetching saved passengers:", err);
       res.status(500).json({ error: "Failed to fetch passengers" });
+    }
+  });
+  
+  // Save passenger for a user (only for authenticated users)
+  app.post("/api/users/:userId/passengers", async (req: Request, res: Response) => {
+    try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+      
+      // Check if the user is trying to access their own data
+      const userId = parseInt(req.params.userId);
+      if (req.user.id !== userId) {
+        return res.status(403).json({ error: 'Unauthorized access' });
+      }
+      
+      // Ensure the passenger has the user's ID and is marked as saved
+      const passengerData = {
+        ...req.body,
+        userId: userId,
+        isSaved: true
+      };
+      
+      const passenger = await storage.createPassenger(passengerData);
+      res.status(201).json(passenger);
+    } catch (err) {
+      console.error("Error saving passenger:", err);
+      res.status(500).json({ error: "Failed to save passenger" });
     }
   });
 

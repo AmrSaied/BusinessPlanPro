@@ -425,21 +425,24 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
             </div>
             
-            <div className="mt-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id={`save-passenger-${index}`} 
-                  checked={!!passenger.isSaved}
-                  onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
-                />
-                <label 
-                  htmlFor={`save-passenger-${index}`}
-                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {t('save_passenger')}
-                </label>
+            {/* Save passenger checkbox - only show if user is authenticated */}
+            {savedPassengers && savedPassengers.length > 0 && (
+              <div className="mt-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`save-passenger-${index}`} 
+                    checked={!!passenger.isSaved}
+                    onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
+                  />
+                  <label 
+                    htmlFor={`save-passenger-${index}`}
+                    className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {t('save_passenger')}
+                  </label>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       ))}
