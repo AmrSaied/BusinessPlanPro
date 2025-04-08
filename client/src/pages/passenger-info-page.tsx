@@ -85,7 +85,19 @@ const PassengerInfoPage = () => {
     if (user) {
       passengerData.forEach(passenger => {
         if (passenger.isSaved) {
-          savePassengerMutation.mutate(passenger);
+          // Check if this is an existing saved passenger
+          const existingSavedPassenger = savedPassengers?.find(
+            p => p.passportNumber === passenger.passportNumber && 
+                 p.firstName === passenger.firstName && 
+                 p.lastName === passenger.lastName
+          );
+          
+          // If it exists, we should update rather than create a new one
+          // But for now, we'll just create a new one since the API doesn't support updates yet
+          savePassengerMutation.mutate({
+            ...passenger,
+            userId: user.id
+          });
         }
       });
     }

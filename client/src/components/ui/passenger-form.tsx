@@ -413,23 +413,35 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               {t('passenger_number')} {index + 1}
             </h3>
             
-            {/* Saved passenger selector - shown only if saved passengers exist */}
-            {savedPassengers.length > 0 && (
-              <Select onValueChange={(value) => {
-                const savedPassenger = savedPassengers.find(p => p.id === parseInt(value));
-                if (savedPassenger) {
-                  loadSavedPassenger(index, savedPassenger);
-                }
-              }}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Load saved passenger" />
+            {/* Saved passenger selector - shown only if user is authenticated */}
+            {savedPassengers !== undefined && (
+              <Select 
+                onValueChange={(value) => {
+                  const savedPassenger = savedPassengers.find(p => p.id === parseInt(value));
+                  if (savedPassenger) {
+                    loadSavedPassenger(index, savedPassenger);
+                  }
+                }}
+                disabled={savedPassengers.length === 0}
+              >
+                <SelectTrigger className="w-[220px]">
+                  <SelectValue placeholder={savedPassengers.length > 0 ? 
+                    "Load saved passenger" : 
+                    "No saved passengers yet"} 
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  {savedPassengers.map((savedPassenger) => (
-                    <SelectItem key={savedPassenger.id} value={savedPassenger.id?.toString() || ''}>
-                      {savedPassenger.firstName} {savedPassenger.lastName}
+                  {savedPassengers.length > 0 ? (
+                    savedPassengers.map((savedPassenger) => (
+                      <SelectItem key={savedPassenger.id} value={savedPassenger.id?.toString() || ''}>
+                        {savedPassenger.firstName} {savedPassenger.lastName}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="none" disabled>
+                      Save a passenger to select it later
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             )}
@@ -608,8 +620,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
             </div>
             
-            {/* Save passenger checkbox - only show if user is authenticated */}
-            {savedPassengers && savedPassengers.length > 0 && (
+            {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
+            {savedPassengers !== undefined && (
               <div className="mt-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox 

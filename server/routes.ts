@@ -507,6 +507,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: 'Unauthorized access' });
       }
       
+      // Check if passenger with similar details already exists
+      const existingPassengers = await storage.getPassengersByUserId(userId);
+      const similarPassenger = existingPassengers.find(p => 
+        p.passportNumber === req.body.passportNumber && 
+        p.firstName === req.body.firstName && 
+        p.lastName === req.body.lastName
+      );
+      
+      // If a similar passenger exists and is saved, return that
+      if (similarPassenger && similarPassenger.isSaved) {
+        return res.status(200).json({
+          ...similarPassenger,
+          message: 'Using existing passenger record'
+        });
+      }
+      
       // Ensure the passenger has the user's ID and is marked as saved
       const passengerData = {
         ...req.body,
