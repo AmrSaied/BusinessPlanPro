@@ -19,6 +19,7 @@ import FaqPage from "@/pages/faq-page";
 import UserDashboard from "@/pages/user-dashboard";
 import AuthPage from "@/pages/auth-page";
 import SupportPage from "@/pages/support-page";
+import HowToWorkPage from "@/pages/how-to-work-page";
 import MainLayout from "./layout/main-layout";
 
 function Router() {
@@ -69,6 +70,11 @@ function Router() {
       <Route path="/support" component={() => (
         <MainLayout>
           <SupportPage />
+        </MainLayout>
+      )} />
+      <Route path="/how-it-works" component={() => (
+        <MainLayout>
+          <HowToWorkPage />
         </MainLayout>
       )} />
       <ProtectedRoute 

@@ -305,5 +305,77 @@ export default {
   error_server: 'Server error, please try again',
   error_invalid_card: 'Invalid card information',
   error_payment_failed: 'Payment failed. Please try again.',
-  error_fields: 'Please fill in all required fields'
+  error_fields: 'Please fill in all required fields',
+  
+  // How To Work page
+  how_to_work_title: 'How to Use FastDummyTicket for Visa Applications',
+  
+  how_to_work_introduction_title: 'Introduction to Flight Reservations for Visa Applications',
+  how_to_work_introduction_text: 'Many embassies and consulates require proof of return travel when applying for a visa. Our service provides verifiable flight reservations that satisfy this requirement without the need to purchase expensive refundable tickets.',
+  
+  how_to_work_visa_app_title: 'Understanding Visa Application Requirements',
+  how_to_work_visa_app_text1: 'When applying for a visa, immigration authorities want to ensure that you intend to return to your home country after your visit. A flight reservation is one of the key documents that demonstrates this intention.',
+  how_to_work_visa_app_text2: 'Our flight reservations include all the necessary details that visa officers look for, including a verifiable PNR (Passenger Name Record) code, flight numbers, dates, and passenger information.',
+  
+  how_to_work_visa_app_tip_title: 'Important Tip',
+  how_to_work_visa_app_tip_text: 'Always check the specific requirements for the country you\'re applying to. Some consulates may have different documentation requirements or formats they prefer.',
+  
+  how_to_work_documents_needed_title: 'Documents Typically Required for a Visa Application',
+  how_to_work_documents_needed_item1: 'Valid passport with at least 6 months validity',
+  how_to_work_documents_needed_item2: 'Completed visa application form',
+  how_to_work_documents_needed_item3: 'Flight reservation (provided by our service)',
+  how_to_work_documents_needed_item4: 'Hotel reservation or accommodation proof',
+  how_to_work_documents_needed_item5: 'Travel insurance (if required)',
+  
+  how_to_work_using_our_system_title: 'Using Our System: Step-by-Step Guide',
+  
+  how_to_work_step1_title: 'Step 1: Search for Flights',
+  how_to_work_step1_item1: 'Enter your departure and arrival airports',
+  how_to_work_step1_item2: 'Select your travel dates that align with your visa application',
+  how_to_work_step1_item3: 'Choose your purpose of travel and trip type (one-way or round-trip)',
+  
+  how_to_work_step2_title: 'Step 2: Select a Flight and Options',
+  how_to_work_step2_item1: 'Choose from available flights with real flight numbers',
+  how_to_work_step2_item2: 'Select additional options like express processing or editable ticket',
+  how_to_work_step2_item3: 'Review the total price and selected services',
+  
+  how_to_work_step3_title: 'Step 3: Enter Passenger Information',
+  how_to_work_step3_item1: 'Provide details exactly as they appear on your passport',
+  how_to_work_step3_item2: 'Include contact information for ticket delivery',
+  how_to_work_step3_item3: 'Add any special requests or notes for your reservation',
+  
+  how_to_work_step4_title: 'Step 4: Payment and Delivery',
+  how_to_work_step4_item1: 'Select your preferred payment method (credit card or PayPal)',
+  how_to_work_step4_item2: 'Complete the secure payment process',
+  how_to_work_step4_item3: 'Receive your verifiable flight reservation via email',
+  
+  how_to_work_embassy_submission_title: 'Submitting Your Reservation to the Embassy',
+  how_to_work_embassy_submission_text1: 'When submitting your flight reservation to the embassy, print a high-quality copy of the PDF we provide. Our tickets are designed to look exactly like actual airline reservations.',
+  how_to_work_embassy_submission_text2: 'The reservation includes a verifiable PNR code that embassy officials can check through standard airline verification systems if needed.',
+  
+  how_to_work_embassy_submission_warning_title: 'Important Note',
+  how_to_work_embassy_submission_warning_text: 'Our flight reservations are for visa application purposes only and are not actual flight tickets. If your visa is approved and you plan to travel, you will need to purchase actual flight tickets.',
+  
+  how_to_work_faq_title: 'Frequently Asked Questions',
+  
+  how_to_work_faq_q1: 'How long is my flight reservation valid?',
+  how_to_work_faq_a1: 'Our standard flight reservations are valid for 2 weeks from the date of issue, which is sufficient for most visa applications. If you need a longer validity period, you can select our extended validity option.',
+  
+  how_to_work_faq_q2: 'Can I make changes to my reservation after purchase?',
+  how_to_work_faq_a2: 'Yes, if you purchased the Editable Ticket option. Otherwise, changes require a small administration fee. Contact our support team for assistance with modifications.',
+  
+  how_to_work_faq_q3: 'Are these reservations accepted by all embassies and consulates?',
+  how_to_work_faq_a3: 'Our flight reservations are accepted by most embassies and consulates worldwide. They include all the necessary information and appear exactly like regular flight bookings in the airline\'s system.',
+  
+  how_to_work_faq_q4: 'How quickly will I receive my reservation?',
+  how_to_work_faq_a4: 'Standard delivery is within 30 minutes, but most customers receive their reservations within 5-10 minutes. For urgent needs, our Express Processing option guarantees delivery within 5 minutes.',
+  
+  how_to_work_contact_title: 'Need Help?',
+  how_to_work_contact_text: 'If you have any questions or need assistance with your reservation, our support team is available 24/7 to help you.',
+  
+  how_to_work_contact_email_title: 'Email Support',
+  how_to_work_contact_email_text: 'Send us an email and we\'ll get back to you as soon as possible.',
+  
+  how_to_work_contact_phone_title: 'Phone Support',
+  how_to_work_contact_phone_text: 'Our team is available to help you with any technical or booking issues.'
 };
