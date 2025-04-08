@@ -27,6 +27,9 @@ const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  preferredLanguage: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -64,6 +67,9 @@ function AuthPage() {
       email: "",
       password: "",
       confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      preferredLanguage: "en",
     },
   });
 
@@ -84,7 +90,14 @@ function AuthPage() {
   // Handle registration form submission
   const onRegisterSubmit = async (values: RegisterFormValues) => {
     try {
+      console.log("Submitting registration form with values:", {
+        username: values.username,
+        email: values.email,
+        hasPassword: !!values.password
+      });
+      
       const { confirmPassword, ...userData } = values;
+      
       await registerMutation.mutateAsync(userData);
       toast({
         title: "Success",
@@ -92,7 +105,13 @@ function AuthPage() {
       });
       navigate("/");
     } catch (error) {
-      // Error is handled by the mutation's onError callback
+      console.error("Registration error in component:", error);
+      // Show error toast in addition to the one from the mutation
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
     }
   };
 

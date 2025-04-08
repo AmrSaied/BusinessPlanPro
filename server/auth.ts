@@ -84,34 +84,52 @@ export function setupAuth(app: Express) {
   // Registration endpoint
   app.post("/api/register", async (req, res) => {
     try {
+      console.log("Registration attempt with data:", { 
+        username: req.body.username,
+        email: req.body.email,
+        hasPassword: !!req.body.password
+      });
+      
       // Validate request body
       const result = insertUserSchema.safeParse(req.body);
       if (!result.success) {
+        console.log("Validation error:", result.error.format());
         return res.status(400).json({ message: "Invalid registration data", errors: result.error.format() });
       }
 
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
+        console.log("Username already exists:", req.body.username);
         return res.status(400).json({ message: "Username already exists" });
       }
 
       // Check if email already exists
       const existingEmail = await storage.getUserByEmail(req.body.email);
       if (existingEmail) {
+        console.log("Email already exists:", req.body.email);
         return res.status(400).json({ message: "Email already in use" });
       }
 
       // Hash password and create user
       const hashedPassword = await hashPassword(req.body.password);
       const userData = { ...req.body, password: hashedPassword };
+      console.log("Creating user with data:", { 
+        username: userData.username,
+        email: userData.email,
+        hasHashedPassword: !!userData.password
+      });
+      
       const newUser = await storage.createUser(userData);
+      console.log("User created successfully:", newUser.id);
 
       // Log the user in automatically
       req.login(newUser, (err) => {
         if (err) {
+          console.error("Error logging in after registration:", err);
           return res.status(500).json({ message: "Error logging in after registration" });
         }
+        console.log("User logged in after registration:", newUser.id);
         return res.status(201).json(newUser);
       });
     } catch (error) {

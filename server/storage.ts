@@ -117,6 +117,14 @@ export class MemStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    console.log("Creating user in storage with data:", {
+      username: insertUser.username,
+      email: insertUser.email,
+      hasPassword: !!insertUser.password,
+      firstName: insertUser.firstName,
+      lastName: insertUser.lastName,
+    });
+    
     const id = this.currentUserId++;
     const user: User = { 
       ...insertUser, 
@@ -124,10 +132,17 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       firstName: insertUser.firstName ?? null,
       lastName: insertUser.lastName ?? null,
-      preferredLanguage: insertUser.preferredLanguage ?? null 
+      preferredLanguage: insertUser.preferredLanguage ?? "en" 
     };
-    this.users.set(id, user);
-    return user;
+    
+    try {
+      this.users.set(id, user);
+      console.log("User created successfully with ID:", id);
+      return user;
+    } catch (error) {
+      console.error("Error creating user in storage:", error);
+      throw error;
+    }
   }
   
   async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
@@ -613,7 +628,7 @@ export class MemStorage implements IStorage {
 import { DatabaseStorage } from './db-storage';
 
 // Select the storage implementation based on environment
-const USE_DATABASE = process.env.DATABASE_URL !== undefined;
+const USE_DATABASE = false; // Temporarily using in-memory storage for debugging
 
 export const storage = USE_DATABASE 
   ? new DatabaseStorage() 
