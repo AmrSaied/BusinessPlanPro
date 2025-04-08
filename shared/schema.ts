@@ -136,10 +136,11 @@ export const flightSearchSchema = z.object({
 export const paymentSchema = z.object({
   amount: z.number().positive(),
   currency: z.string().default("USD"),
-  cardNumber: z.string().min(16).max(16),
-  cardExpiry: z.string().min(5).max(5),
-  cardCvc: z.string().min(3).max(4),
-  cardHolderName: z.string().min(1),
+  paymentMethod: z.enum(["card", "paypal"]),
+  cardNumber: z.string().min(16).max(16).optional(),
+  cardExpiry: z.string().min(5).max(5).optional(),
+  cardCvc: z.string().min(3).max(4).optional(),
+  cardHolderName: z.string().min(1).optional(),
 });
 
 // Export all types

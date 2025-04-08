@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/select';
 import { Flight, Payment } from '@shared/schema';
 import { Loader2 } from 'lucide-react';
+import PaymentMethodSelector from './payment-method-selector';
+import { SiPaypal } from 'react-icons/si';
 
 interface PaymentFormProps {
   flight: Flight;
@@ -35,9 +37,12 @@ const PaymentForm = ({
 }: PaymentFormProps) => {
   const { t } = useTranslation();
   
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+  
   const [paymentData, setPaymentData] = useState<Partial<Payment>>({
     amount: totalPrice,
     currency: 'USD',
+    paymentMethod: 'card',
     cardNumber: '',
     cardExpiry: '',
     cardCvc: '',
@@ -99,61 +104,73 @@ const PaymentForm = ({
     const newErrors: Record<string, string> = {};
     let isValid = true;
     
-    // Validate card information
-    if (!paymentData.cardNumber) {
-      newErrors.cardNumber = t('error_required');
-      isValid = false;
-    } else if (!/^\d{16}$/.test(paymentData.cardNumber)) {
-      newErrors.cardNumber = t('error_invalid_card');
-      isValid = false;
-    }
-    
-    if (!paymentData.cardExpiry) {
-      newErrors.cardExpiry = t('error_required');
-      isValid = false;
-    } else if (!/^\d{2}\/\d{2}$/.test(paymentData.cardExpiry)) {
-      newErrors.cardExpiry = t('error_date_format');
-      isValid = false;
-    }
-    
-    if (!paymentData.cardCvc) {
-      newErrors.cardCvc = t('error_required');
-      isValid = false;
-    } else if (!/^\d{3,4}$/.test(paymentData.cardCvc)) {
-      newErrors.cardCvc = t('error_invalid_card');
-      isValid = false;
-    }
-    
-    if (!paymentData.cardHolderName) {
-      newErrors.cardHolderName = t('error_required');
-      isValid = false;
-    }
-    
-    // Validate billing address
-    if (!billingAddress.country) {
-      newErrors.address_country = t('error_required');
-      isValid = false;
-    }
-    
-    if (!billingAddress.address) {
-      newErrors.address_address = t('error_required');
-      isValid = false;
-    }
-    
-    if (!billingAddress.city) {
-      newErrors.address_city = t('error_required');
-      isValid = false;
-    }
-    
-    if (!billingAddress.postalCode) {
-      newErrors.address_postalCode = t('error_required');
-      isValid = false;
+    // For PayPal payment, we don't validate card information
+    if (paymentMethod === 'card') {
+      // Validate card information
+      if (!paymentData.cardNumber) {
+        newErrors.cardNumber = t('error_required');
+        isValid = false;
+      } else if (!/^\d{16}$/.test(paymentData.cardNumber)) {
+        newErrors.cardNumber = t('error_invalid_card');
+        isValid = false;
+      }
+      
+      if (!paymentData.cardExpiry) {
+        newErrors.cardExpiry = t('error_required');
+        isValid = false;
+      } else if (!/^\d{2}\/\d{2}$/.test(paymentData.cardExpiry)) {
+        newErrors.cardExpiry = t('error_date_format');
+        isValid = false;
+      }
+      
+      if (!paymentData.cardCvc) {
+        newErrors.cardCvc = t('error_required');
+        isValid = false;
+      } else if (!/^\d{3,4}$/.test(paymentData.cardCvc)) {
+        newErrors.cardCvc = t('error_invalid_card');
+        isValid = false;
+      }
+      
+      if (!paymentData.cardHolderName) {
+        newErrors.cardHolderName = t('error_required');
+        isValid = false;
+      }
+      
+      // Validate billing address
+      if (!billingAddress.country) {
+        newErrors.address_country = t('error_required');
+        isValid = false;
+      }
+      
+      if (!billingAddress.address) {
+        newErrors.address_address = t('error_required');
+        isValid = false;
+      }
+      
+      if (!billingAddress.city) {
+        newErrors.address_city = t('error_required');
+        isValid = false;
+      }
+      
+      if (!billingAddress.postalCode) {
+        newErrors.address_postalCode = t('error_required');
+        isValid = false;
+      }
     }
     
     setErrors(newErrors);
     return isValid;
   };
   
+  const handlePaymentMethodChange = (method: 'card' | 'paypal') => {
+    setPaymentMethod(method);
+    setPaymentData({
+      ...paymentData,
+      paymentMethod: method
+    });
+    setErrors({});
+  };
+
   const handleSubmit = () => {
     if (validateForm() && !isProcessing) {
       onPaymentComplete(paymentData as Payment);
@@ -209,6 +226,29 @@ const PaymentForm = ({
             </div>
             
             <div className="p-5">
+              {/* Payment Method Selector */}
+              <div className="mb-6">
+                <PaymentMethodSelector 
+                  selectedMethod={paymentMethod}
+                  onSelectMethod={handlePaymentMethodChange}
+                />
+              </div>
+
+              {/* PayPal Information - Only show if PayPal payment method is selected */}
+              {paymentMethod === 'paypal' && (
+                <div className="my-8 text-center">
+                  <p className="mb-4 text-gray-600">{t('select_paypal_description')}</p>
+                  <div className="flex justify-center">
+                    <SiPaypal className="h-12 w-16 text-[#003087]" />
+                  </div>
+                  <p className="mt-4 text-sm text-gray-500">
+                    {t('paypal_redirect_notice')}
+                  </p>
+                </div>
+              )}
+              
+              {/* Card Information - Only show if card payment method is selected */}
+              {paymentMethod === 'card' && (
               <div className="mb-6">
                 <h4 className="font-medium text-gray-800 mb-4">{t('card_info')}</h4>
                 <div className="space-y-4">
@@ -274,76 +314,80 @@ const PaymentForm = ({
                   </div>
                 </div>
               </div>
+              )}
               
-              <div>
-                <h4 className="font-medium text-gray-800 mb-4">{t('billing_address')}</h4>
-                <div className="space-y-4">
-                  {/* Country */}
-                  <div>
-                    <Label htmlFor="billing-country">{t('country')}</Label>
-                    <Select
-                      value={billingAddress.country}
-                      onValueChange={(value) => handleAddressChange('country', value)}
-                    >
-                      <SelectTrigger id="billing-country">
-                        <SelectValue placeholder={t('select_country')} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country) => (
-                          <SelectItem key={country.value} value={country.value}>{country.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.address_country && (
-                      <p className="text-red-500 text-sm mt-1">{errors.address_country}</p>
-                    )}
-                  </div>
-                  
-                  {/* Address */}
-                  <div>
-                    <Label htmlFor="billing-address">{t('address')}</Label>
-                    <Input
-                      id="billing-address"
-                      value={billingAddress.address}
-                      onChange={(e) => handleAddressChange('address', e.target.value)}
-                      placeholder="123 Main St, Apt 4B"
-                    />
-                    {errors.address_address && (
-                      <p className="text-red-500 text-sm mt-1">{errors.address_address}</p>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* City */}
+              {/* Billing Address - Only show if card payment method is selected */}
+              {paymentMethod === 'card' && (
+                <div>
+                  <h4 className="font-medium text-gray-800 mb-4">{t('billing_address')}</h4>
+                  <div className="space-y-4">
+                    {/* Country */}
                     <div>
-                      <Label htmlFor="billing-city">{t('city')}</Label>
-                      <Input
-                        id="billing-city"
-                        value={billingAddress.city}
-                        onChange={(e) => handleAddressChange('city', e.target.value)}
-                        placeholder="New York"
-                      />
-                      {errors.address_city && (
-                        <p className="text-red-500 text-sm mt-1">{errors.address_city}</p>
+                      <Label htmlFor="billing-country">{t('country')}</Label>
+                      <Select
+                        value={billingAddress.country}
+                        onValueChange={(value) => handleAddressChange('country', value)}
+                      >
+                        <SelectTrigger id="billing-country">
+                          <SelectValue placeholder={t('select_country')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem key={country.value} value={country.value}>{country.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.address_country && (
+                        <p className="text-red-500 text-sm mt-1">{errors.address_country}</p>
                       )}
                     </div>
                     
-                    {/* Postal Code */}
+                    {/* Address */}
                     <div>
-                      <Label htmlFor="billing-postal">{t('postal_code')}</Label>
+                      <Label htmlFor="billing-address">{t('address')}</Label>
                       <Input
-                        id="billing-postal"
-                        value={billingAddress.postalCode}
-                        onChange={(e) => handleAddressChange('postalCode', e.target.value)}
-                        placeholder="10001"
+                        id="billing-address"
+                        value={billingAddress.address}
+                        onChange={(e) => handleAddressChange('address', e.target.value)}
+                        placeholder="123 Main St, Apt 4B"
                       />
-                      {errors.address_postalCode && (
-                        <p className="text-red-500 text-sm mt-1">{errors.address_postalCode}</p>
+                      {errors.address_address && (
+                        <p className="text-red-500 text-sm mt-1">{errors.address_address}</p>
                       )}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* City */}
+                      <div>
+                        <Label htmlFor="billing-city">{t('city')}</Label>
+                        <Input
+                          id="billing-city"
+                          value={billingAddress.city}
+                          onChange={(e) => handleAddressChange('city', e.target.value)}
+                          placeholder="New York"
+                        />
+                        {errors.address_city && (
+                          <p className="text-red-500 text-sm mt-1">{errors.address_city}</p>
+                        )}
+                      </div>
+                      
+                      {/* Postal Code */}
+                      <div>
+                        <Label htmlFor="billing-postal">{t('postal_code')}</Label>
+                        <Input
+                          id="billing-postal"
+                          value={billingAddress.postalCode}
+                          onChange={(e) => handleAddressChange('postalCode', e.target.value)}
+                          placeholder="10001"
+                        />
+                        {errors.address_postalCode && (
+                          <p className="text-red-500 text-sm mt-1">{errors.address_postalCode}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
