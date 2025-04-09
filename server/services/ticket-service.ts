@@ -40,8 +40,7 @@ export class TicketService {
         departureTime: "10:00 AM",
         arrivalTime: "12:30 PM",
         duration: "02:30",
-        basePrice: booking.totalPrice,
-        createdAt: new Date()
+        basePrice: booking.totalPrice
       };
     }
     
@@ -61,8 +60,7 @@ export class TicketService {
         passportNumber: "P12345678",
         passportExpiry: "2030-01-01",
         dateOfBirth: "1990-01-01",
-        isSaved: false,
-        createdAt: new Date()
+        isSaved: false
       }];
     }
     
@@ -71,18 +69,18 @@ export class TicketService {
       ticketNumber: `TKT${booking.bookingReference}`,
       bookingReference: booking.bookingReference,
       flight: {
-        airlineName: flight.airlineName,
-        airlineCode: flight.airlineCode,
-        flightNumber: flight.flightNumber,
-        departureAirport: flight.departureAirport,
-        departureCity: flight.departureCity,
-        departureCountry: flight.departureCountry,
-        arrivalAirport: flight.arrivalAirport,
-        arrivalCity: flight.arrivalCity,
-        arrivalCountry: flight.arrivalCountry,
-        departureTime: flight.departureTime,
-        arrivalTime: flight.arrivalTime,
-        duration: flight.duration,
+        airlineName: flight!.airlineName,
+        airlineCode: flight!.airlineCode,
+        flightNumber: flight!.flightNumber,
+        departureAirport: flight!.departureAirport,
+        departureCity: flight!.departureCity,
+        departureCountry: flight!.departureCountry,
+        arrivalAirport: flight!.arrivalAirport,
+        arrivalCity: flight!.arrivalCity,
+        arrivalCountry: flight!.arrivalCountry,
+        departureTime: flight!.departureTime,
+        arrivalTime: flight!.arrivalTime,
+        duration: flight!.duration,
       },
       passengers: passengers.map(p => ({
         title: p.title,

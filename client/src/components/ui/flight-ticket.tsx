@@ -129,11 +129,11 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             <div className="flex space-x-4 text-sm">
               <div className="hidden md:flex items-center">
                 <Mail className="h-4 w-4 mr-1" />
-                <span>support@{flight.airlineName.toLowerCase().replace(/\s+/g, '')}.com</span>
+                <span>www.{flight.airlineName.toLowerCase().replace(/\s+/g, '')}.com</span>
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-1" />
-                <span>+1-800-FLY-{flight.airlineCode}</span>
+                <span>+1-800-{flight.airlineCode}-{flight.flightNumber}</span>
               </div>
             </div>
           </div>
@@ -567,7 +567,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             <div className="text-center md:text-right">
               <div className="text-gray-300 text-sm">{t('ticket_disclaimer')}</div>
               <div className="text-gray-400 text-xs mt-1">
-                © {new Date().getFullYear()} FastDummyTicket - {t('not_valid_for_travel')}
+                © {new Date().getFullYear()} Global Air Travel Services - {t('not_valid_for_travel')}
               </div>
             </div>
           </div>
@@ -575,8 +575,8 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           <div className="mt-4 pt-4 border-t border-gray-700 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-400">
             <div>
               <div className="text-gray-300 font-medium mb-1">Customer Support</div>
-              <div>support@fastdummyticket.com</div>
-              <div>+1-800-DUMMY-TKT</div>
+              <div>www.globalairtravel.com</div>
+              <div>+1-800-AIR-TRVL</div>
             </div>
             
             <div>
@@ -593,7 +593,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             
             <div>
               <div className="text-gray-300 font-medium mb-1">Issuer</div>
-              <div>FastDummyTicket Services Ltd.</div>
+              <div>Global Air Travel Services Ltd.</div>
               <div>123 Booking Street, London</div>
             </div>
           </div>
