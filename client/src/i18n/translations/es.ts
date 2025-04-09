@@ -118,6 +118,7 @@ export default {
   email_placeholder: 'Para entrega del boleto',
   phone: 'Número de Teléfono',
   phone_placeholder: 'Con código de país',
+  save_contact_info: 'Guardar número de teléfono y correo electrónico',
   special_requests_title: 'Peticiones Especiales',
   special_requests_placeholder: 'Cualquier requisito especial o notas para su reserva',
   continue_payment: 'Continuar a Pago',

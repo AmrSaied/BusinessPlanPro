@@ -118,6 +118,7 @@ export default {
   email_placeholder: 'لتسليم التذكرة',
   phone: 'رقم الهاتف',
   phone_placeholder: 'مع رمز البلد',
+  save_contact_info: 'حفظ رقم الهاتف والبريد الإلكتروني',
   special_requests_title: 'طلبات خاصة',
   special_requests_placeholder: 'أي متطلبات خاصة أو ملاحظات لحجزك',
   continue_payment: 'المتابعة إلى الدفع',

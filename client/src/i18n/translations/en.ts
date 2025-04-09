@@ -152,6 +152,7 @@ export default {
   email_placeholder: 'For ticket delivery',
   phone: 'Phone Number',
   phone_placeholder: 'With country code',
+  save_contact_info: 'Save phone number and email',
   special_requests_title: 'Special Requests',
   special_requests_placeholder: 'Any special requirements or notes for your reservation',
   continue_payment: 'Continue to Payment',
