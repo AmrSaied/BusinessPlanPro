@@ -34,7 +34,7 @@ const HomePage = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0 md:pr-8">
-            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-black">
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white drop-shadow-md">
               {t('hero_title')}
             </h1>
             <p className="text-lg md:text-xl opacity-90 mb-8">
