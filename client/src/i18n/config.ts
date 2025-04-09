@@ -5,6 +5,13 @@ import { supportedLanguages } from './languages';
 import enTranslation from './translations/en';
 import esTranslation from './translations/es';
 import arTranslation from './translations/ar';
+import frTranslation from './translations/fr';
+import deTranslation from './translations/de';
+import zhTranslation from './translations/zh';
+import ruTranslation from './translations/ru';
+import ptTranslation from './translations/pt';
+import hiTranslation from './translations/hi';
+import jaTranslation from './translations/ja';
 
 // Add all the languages initial resources
 const resources = {
@@ -16,8 +23,28 @@ const resources = {
   },
   ar: {
     translation: arTranslation
+  },
+  fr: {
+    translation: frTranslation
+  },
+  de: {
+    translation: deTranslation
+  },
+  zh: {
+    translation: zhTranslation
+  },
+  ru: {
+    translation: ruTranslation
+  },
+  pt: {
+    translation: ptTranslation
+  },
+  hi: {
+    translation: hiTranslation
+  },
+  ja: {
+    translation: jaTranslation
   }
-  // Other languages will be loaded dynamically
 };
 
 i18n
@@ -47,7 +74,7 @@ export const loadLanguageAsync = async (language: string) => {
     
     // For languages that we've already imported at compile time,
     // we just mark them as resolved
-    if (['en', 'es', 'ar'].includes(language)) {
+    if (['en', 'es', 'ar', 'fr', 'de', 'zh', 'ru', 'pt', 'hi', 'ja'].includes(language)) {
       return Promise.resolve();
     }
     
