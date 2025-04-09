@@ -350,6 +350,12 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
       isValid = false;
     }
     
+    // Phone is optional, but if provided should have a valid format
+    if (contactInfo.phone && !/^[\d\+\-\s\(\)\.]+$/.test(contactInfo.phone)) {
+      contactErrors.phone = t('error_phone');
+      isValid = false;
+    }
+    
     if (Object.keys(contactErrors).length > 0) {
       newErrors.contact = contactErrors;
     }
@@ -360,6 +366,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
   
   const handleSubmit = () => {
     if (validateForm()) {
+      // Add logging to debug contactInfo
+      console.log('Submitting passenger form with contactInfo:', contactInfo);
+      
       // Convert passengers to proper type and submit
       const validPassengers = passengers as InsertPassenger[];
       onSubmit(validPassengers, contactInfo, specialRequests);

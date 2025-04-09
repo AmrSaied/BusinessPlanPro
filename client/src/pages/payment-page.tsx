@@ -75,6 +75,9 @@ const PaymentPage = () => {
     }
     
     try {
+      // Log contact info to debug
+      console.log('Creating booking with contact info:', JSON.stringify(bookingData.contactInfo));
+      
       // First create the booking
       const bookingToCreate: InsertBooking = {
         userId: 1, // Mock user ID
@@ -88,7 +91,7 @@ const PaymentPage = () => {
         hotelReservation: bookingData.options.hotelReservation,
         insuranceLetter: bookingData.options.insuranceLetter,
         contactEmail: bookingData.contactInfo.email,
-        contactPhone: bookingData.contactInfo.phone,
+        contactPhone: bookingData.contactInfo.phone || '', // Ensure contactPhone is never undefined
         travelPurpose: bookingData.searchParams?.travelPurpose || 'visa',
         specialRequests: bookingData.specialRequests,
       };
@@ -142,6 +145,9 @@ const PaymentPage = () => {
         return;
       }
       
+      // Log contact info to debug
+      console.log('Skip Payment: Creating booking with contact info:', JSON.stringify(bookingData.contactInfo));
+      
       // First create the booking
       const bookingToCreate: InsertBooking = {
         userId: 1, // Mock user ID
@@ -155,7 +161,7 @@ const PaymentPage = () => {
         hotelReservation: bookingData.options.hotelReservation,
         insuranceLetter: bookingData.options.insuranceLetter,
         contactEmail: bookingData.contactInfo.email,
-        contactPhone: bookingData.contactInfo.phone,
+        contactPhone: bookingData.contactInfo.phone || '', // Ensure contactPhone is never undefined
         travelPurpose: bookingData.searchParams?.travelPurpose || 'visa',
         specialRequests: bookingData.specialRequests,
       };
