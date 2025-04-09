@@ -14,6 +14,9 @@ import { Flight, Payment } from '@shared/schema';
 import { Loader2 } from 'lucide-react';
 import PaymentMethodSelector from './payment-method-selector';
 import { SiPaypal } from 'react-icons/si';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 interface PaymentFormProps {
   flight: Flight;
@@ -38,6 +41,7 @@ const PaymentForm = ({
   const { t } = useTranslation();
   
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal'>('card');
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
   
   const [paymentData, setPaymentData] = useState<Partial<Payment>>({
     amount: totalPrice,
@@ -58,18 +62,125 @@ const PaymentForm = ({
   
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  // Sample countries for billing address
+  // Comprehensive list of countries for billing address
   const countries = [
-    { value: 'us', label: 'United States' },
-    { value: 'gb', label: 'United Kingdom' },
-    { value: 'ca', label: 'Canada' },
+    { value: 'af', label: 'Afghanistan' },
+    { value: 'al', label: 'Albania' },
+    { value: 'dz', label: 'Algeria' },
+    { value: 'ar', label: 'Argentina' },
+    { value: 'am', label: 'Armenia' },
     { value: 'au', label: 'Australia' },
-    { value: 'fr', label: 'France' },
-    { value: 'de', label: 'Germany' },
-    { value: 'jp', label: 'Japan' },
+    { value: 'at', label: 'Austria' },
+    { value: 'az', label: 'Azerbaijan' },
+    { value: 'bh', label: 'Bahrain' },
+    { value: 'bd', label: 'Bangladesh' },
+    { value: 'by', label: 'Belarus' },
+    { value: 'be', label: 'Belgium' },
+    { value: 'bz', label: 'Belize' },
+    { value: 'bo', label: 'Bolivia' },
+    { value: 'ba', label: 'Bosnia and Herzegovina' },
+    { value: 'br', label: 'Brazil' },
+    { value: 'bg', label: 'Bulgaria' },
+    { value: 'kh', label: 'Cambodia' },
+    { value: 'cm', label: 'Cameroon' },
+    { value: 'ca', label: 'Canada' },
+    { value: 'cl', label: 'Chile' },
     { value: 'cn', label: 'China' },
+    { value: 'co', label: 'Colombia' },
+    { value: 'cr', label: 'Costa Rica' },
+    { value: 'hr', label: 'Croatia' },
+    { value: 'cu', label: 'Cuba' },
+    { value: 'cy', label: 'Cyprus' },
+    { value: 'cz', label: 'Czech Republic' },
+    { value: 'dk', label: 'Denmark' },
+    { value: 'do', label: 'Dominican Republic' },
+    { value: 'ec', label: 'Ecuador' },
+    { value: 'eg', label: 'Egypt' },
+    { value: 'sv', label: 'El Salvador' },
+    { value: 'ee', label: 'Estonia' },
+    { value: 'et', label: 'Ethiopia' },
+    { value: 'fi', label: 'Finland' },
+    { value: 'fr', label: 'France' },
+    { value: 'ge', label: 'Georgia' },
+    { value: 'de', label: 'Germany' },
+    { value: 'gh', label: 'Ghana' },
+    { value: 'gr', label: 'Greece' },
+    { value: 'gt', label: 'Guatemala' },
+    { value: 'hn', label: 'Honduras' },
+    { value: 'hk', label: 'Hong Kong' },
+    { value: 'hu', label: 'Hungary' },
+    { value: 'is', label: 'Iceland' },
     { value: 'in', label: 'India' },
-    { value: 'br', label: 'Brazil' }
+    { value: 'id', label: 'Indonesia' },
+    { value: 'ir', label: 'Iran' },
+    { value: 'iq', label: 'Iraq' },
+    { value: 'ie', label: 'Ireland' },
+    { value: 'il', label: 'Israel' },
+    { value: 'it', label: 'Italy' },
+    { value: 'jm', label: 'Jamaica' },
+    { value: 'jp', label: 'Japan' },
+    { value: 'jo', label: 'Jordan' },
+    { value: 'kz', label: 'Kazakhstan' },
+    { value: 'ke', label: 'Kenya' },
+    { value: 'kr', label: 'South Korea' },
+    { value: 'kw', label: 'Kuwait' },
+    { value: 'lv', label: 'Latvia' },
+    { value: 'lb', label: 'Lebanon' },
+    { value: 'ly', label: 'Libya' },
+    { value: 'lt', label: 'Lithuania' },
+    { value: 'lu', label: 'Luxembourg' },
+    { value: 'my', label: 'Malaysia' },
+    { value: 'mt', label: 'Malta' },
+    { value: 'mx', label: 'Mexico' },
+    { value: 'md', label: 'Moldova' },
+    { value: 'mc', label: 'Monaco' },
+    { value: 'mn', label: 'Mongolia' },
+    { value: 'me', label: 'Montenegro' },
+    { value: 'ma', label: 'Morocco' },
+    { value: 'np', label: 'Nepal' },
+    { value: 'nl', label: 'Netherlands' },
+    { value: 'nz', label: 'New Zealand' },
+    { value: 'ni', label: 'Nicaragua' },
+    { value: 'ng', label: 'Nigeria' },
+    { value: 'no', label: 'Norway' },
+    { value: 'om', label: 'Oman' },
+    { value: 'pk', label: 'Pakistan' },
+    { value: 'pa', label: 'Panama' },
+    { value: 'py', label: 'Paraguay' },
+    { value: 'pe', label: 'Peru' },
+    { value: 'ph', label: 'Philippines' },
+    { value: 'pl', label: 'Poland' },
+    { value: 'pt', label: 'Portugal' },
+    { value: 'pr', label: 'Puerto Rico' },
+    { value: 'qa', label: 'Qatar' },
+    { value: 'ro', label: 'Romania' },
+    { value: 'ru', label: 'Russia' },
+    { value: 'sa', label: 'Saudi Arabia' },
+    { value: 'rs', label: 'Serbia' },
+    { value: 'sg', label: 'Singapore' },
+    { value: 'sk', label: 'Slovakia' },
+    { value: 'si', label: 'Slovenia' },
+    { value: 'za', label: 'South Africa' },
+    { value: 'es', label: 'Spain' },
+    { value: 'lk', label: 'Sri Lanka' },
+    { value: 'se', label: 'Sweden' },
+    { value: 'ch', label: 'Switzerland' },
+    { value: 'sy', label: 'Syria' },
+    { value: 'tw', label: 'Taiwan' },
+    { value: 'th', label: 'Thailand' },
+    { value: 'tn', label: 'Tunisia' },
+    { value: 'tr', label: 'Turkey' },
+    { value: 'ua', label: 'Ukraine' },
+    { value: 'ae', label: 'United Arab Emirates' },
+    { value: 'gb', label: 'United Kingdom' },
+    { value: 'us', label: 'United States' },
+    { value: 'uy', label: 'Uruguay' },
+    { value: 'uz', label: 'Uzbekistan' },
+    { value: 've', label: 'Venezuela' },
+    { value: 'vn', label: 'Vietnam' },
+    { value: 'ye', label: 'Yemen' },
+    { value: 'zm', label: 'Zambia' },
+    { value: 'zw', label: 'Zimbabwe' }
   ];
   
   const handleInputChange = (field: string, value: string) => {
@@ -271,13 +382,35 @@ const PaymentForm = ({
                     {/* Card Expiry */}
                     <div>
                       <Label htmlFor="card-expiry">{t('card_expiry')}</Label>
-                      <Input
-                        id="card-expiry"
-                        value={paymentData.cardExpiry}
-                        onChange={(e) => handleInputChange('cardExpiry', e.target.value)}
-                        placeholder="MM/YY"
-                        maxLength={5}
-                      />
+                      <div className="relative">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="w-full justify-start text-left"
+                              id="card-expiry"
+                            >
+                              {expiryDate ? format(expiryDate, 'MM/yy') : <span className="text-muted-foreground">MM/YY</span>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={expiryDate}
+                              onSelect={(date) => {
+                                setExpiryDate(date);
+                                if (date) {
+                                  const formattedDate = format(date, 'MM/yy');
+                                  handleInputChange('cardExpiry', formattedDate);
+                                }
+                              }}
+                              fromMonth={new Date()}
+                              toMonth={new Date(new Date().setFullYear(new Date().getFullYear() + 10))}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
                       {errors.cardExpiry && (
                         <p className="text-red-500 text-sm mt-1">{errors.cardExpiry}</p>
                       )}
