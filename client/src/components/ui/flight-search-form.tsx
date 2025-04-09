@@ -22,7 +22,7 @@ const FlightSearchForm = ({ className }: FlightSearchFormProps) => {
   const { setSearchParams } = useBooking();
   
   // Form state
-  const [tripType, setTripType] = useState<'oneWay' | 'roundTrip'>('oneWay');
+  const [tripType, setTripType] = useState<'one-way' | 'round-trip'>('one-way'); // Set one-way as default
   const [origin, setOrigin] = useState('');
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destination, setDestination] = useState('');
@@ -70,7 +70,7 @@ const FlightSearchForm = ({ className }: FlightSearchFormProps) => {
       newErrors.departureDate = t('error_required');
     }
     
-    if (tripType === 'roundTrip' && !returnDate) {
+    if (tripType === 'round-trip' && !returnDate) {
       newErrors.returnDate = t('error_required');
     }
     
@@ -84,13 +84,15 @@ const FlightSearchForm = ({ className }: FlightSearchFormProps) => {
     }
     
     const searchParams: FlightSearch = {
-      departureAirport: origin,
-      arrivalAirport: destination,
+      origin: origin,
+      destination: destination,
       departureDate: departureDate ? format(departureDate, 'yyyy-MM-dd') : '',
       returnDate: returnDate ? format(returnDate, 'yyyy-MM-dd') : undefined,
       passengers,
       travelPurpose,
-      tripType
+      tripType,
+      originDisplay: originAirport ? `${originAirport.iataCode} - ${originAirport.name}` : origin,
+      destinationDisplay: destinationAirport ? `${destinationAirport.iataCode} - ${destinationAirport.name}` : destination
     };
     
     setSearchParams(searchParams);
@@ -108,16 +110,16 @@ const FlightSearchForm = ({ className }: FlightSearchFormProps) => {
         {/* Trip Type Selector */}
         <div className="flex mb-6 bg-gray-100 inline-flex rounded-lg p-1" role="group">
           <Button
-            variant={tripType === 'oneWay' ? 'default' : 'ghost'}
-            className={tripType === 'oneWay' ? 'bg-white shadow text-gray-800' : 'text-gray-600'}
-            onClick={() => setTripType('oneWay')}
+            variant={tripType === 'one-way' ? 'default' : 'ghost'}
+            className={tripType === 'one-way' ? 'bg-white shadow text-gray-800' : 'text-gray-600'}
+            onClick={() => setTripType('one-way')}
           >
             {t('one_way')}
           </Button>
           <Button
-            variant={tripType === 'roundTrip' ? 'default' : 'ghost'}
-            className={tripType === 'roundTrip' ? 'bg-white shadow text-gray-800' : 'text-gray-600'}
-            onClick={() => setTripType('roundTrip')}
+            variant={tripType === 'round-trip' ? 'default' : 'ghost'}
+            className={tripType === 'round-trip' ? 'bg-white shadow text-gray-800' : 'text-gray-600'}
+            onClick={() => setTripType('round-trip')}
           >
             {t('round_trip')}
           </Button>
@@ -180,7 +182,7 @@ const FlightSearchForm = ({ className }: FlightSearchFormProps) => {
           </div>
           
           {/* Return Date (hidden for one-way) */}
-          {tripType === 'roundTrip' && (
+          {tripType === 'round-trip' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">{t('return_date')}</label>
               <Popover>

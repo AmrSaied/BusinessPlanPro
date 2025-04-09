@@ -25,7 +25,7 @@ interface FlightSearchFormProps {
 
 const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) => {
   const { t } = useTranslation();
-  const [tripType, setTripType] = useState<"one-way" | "round-trip">("one-way");
+  const [tripType, setTripType] = useState<"one-way" | "round-trip">("one-way"); // Set one-way as default
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destinationAirport, setDestinationAirport] = useState<Airport | null>(null);
 
