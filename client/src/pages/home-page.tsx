@@ -30,24 +30,49 @@ const HomePage = () => {
   
   // Hero Section
   const Hero = () => (
-    <section className="bg-gradient-to-br from-primary-700 via-primary-600 to-primary-500 py-16 md:py-24">
-      <div className="container mx-auto px-4">
+    <section className="relative py-16 md:py-24 overflow-hidden bg-primary-700">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-0 w-full h-full bg-white">
+          <svg className="absolute top-0 left-0 w-full h-full" width="100%" height="100%" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.5"/>
+              </pattern>
+              <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
+                <rect width="100" height="100" fill="url(#smallGrid)"/>
+                <path d="M 100 0 L 0 0 0 100" fill="none" stroke="currentColor" strokeWidth="1" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+      </div>
+      
+      {/* Curved shape at bottom */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" className="w-full h-16 text-white fill-current">
+          <path d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z"></path>
+        </svg>
+      </div>
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0 md:pr-8">
-            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-primary-400 drop-shadow-md">
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white drop-shadow-md">
               {t('hero_title')}
             </h1>
-            <p className="text-lg md:text-xl text-black mb-8">
+            <p className="text-lg md:text-xl text-white text-opacity-90 mb-8">
               {t('hero_subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/search">
-                <Button className="bg-amber-500 text-primary-900 px-6 py-3 rounded-md font-medium text-center hover:bg-amber-400 transition shadow-lg">
+                <Button className="bg-amber-500 text-gray-900 px-6 py-3 rounded-md font-medium text-center hover:bg-amber-400 transition shadow-lg">
                   {t('hero_cta')}
                 </Button>
               </Link>
               <Link href="/how-it-works">
-                <Button variant="outline" className="border-primary-400 bg-white/20 hover:bg-white/30 px-6 py-3 text-primary-400">
+                <Button variant="outline" className="border-white bg-white/10 hover:bg-white/20 px-6 py-3 text-white">
                   {t('hero_how_it_works')}
                 </Button>
               </Link>
@@ -146,7 +171,7 @@ const HomePage = () => {
               </div>
             </div>
             <p className="text-gray-600 mb-4">
-              "I needed a flight reservation for my Schengen visa application urgently. FastDummyTicket delivered it within minutes, and my visa was approved!"
+              "I needed a flight reservation for my Schengen visa application urgently. Global Air Travel Services delivered it within minutes, and my visa was approved!"
             </p>
             <div className="flex items-center">
               <div className="h-10 w-10 rounded-full bg-primary-100 text-primary flex items-center justify-center font-medium mr-3">RM</div>
@@ -212,14 +237,38 @@ const HomePage = () => {
   
   // Get Your Ticket Now Section
   const GetYourTicket = () => (
-    <section className="py-16 bg-gradient-to-r from-primary-600 to-primary-700">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-6">
-          <h2 className="font-heading text-3xl font-bold mb-4 text-primary-400">{t('get_ticket_now_title')}</h2>
-          <p className="text-xl max-w-3xl mx-auto text-black">{t('get_ticket_now_subtitle')}</p>
+    <section className="py-16 relative overflow-hidden">
+      {/* Background with dots pattern */}
+      <div className="absolute inset-0 bg-primary-700 z-0">
+        <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
+          <pattern id="dots-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="rgba(255, 255, 255, 0.1)" />
+          </pattern>
+          <rect x="0" y="0" width="100%" height="100%" fill="url(#dots-pattern)" />
+        </svg>
+        
+        {/* Abstract wave shapes */}
+        <div className="absolute left-0 right-0 top-0 h-16">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-full text-white fill-current opacity-10 transform scale-150">
+            <path d="M0,224L60,208C120,192,240,160,360,165.3C480,171,600,213,720,213.3C840,213,960,171,1080,149.3C1200,128,1320,128,1380,128L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
+          </svg>
         </div>
         
-        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-6">
+        <div className="absolute left-0 right-0 bottom-0 h-32 transform -rotate-180">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-full text-white fill-current opacity-10 transform scale-150">
+            <path d="M0,224L60,208C120,192,240,160,360,165.3C480,171,600,213,720,213.3C840,213,960,171,1080,149.3C1200,128,1320,128,1380,128L1440,128L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"></path>
+          </svg>
+        </div>
+      </div>
+      
+      {/* Content */}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-8">
+          <h2 className="font-heading text-3xl font-bold mb-4 text-white">{t('get_ticket_now_title')}</h2>
+          <p className="text-xl max-w-3xl mx-auto text-white text-opacity-90">{t('get_ticket_now_subtitle')}</p>
+        </div>
+        
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl p-8 transform transition-all duration-300 hover:shadow-3xl">
           <GetTicketWidget variant="default" />
         </div>
       </div>
