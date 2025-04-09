@@ -32,10 +32,17 @@ export class FlightService {
       );
     }
     
-    return {
-      outbound: outboundFlights,
-      return: returnFlights
-    };
+    // For one-way trips, don't include the return property at all
+    if (tripType === "one-way") {
+      return {
+        outbound: outboundFlights
+      };
+    } else {
+      return {
+        outbound: outboundFlights,
+        return: returnFlights
+      };
+    }
   }
   
   async getFlightById(id: number): Promise<Flight | undefined> {

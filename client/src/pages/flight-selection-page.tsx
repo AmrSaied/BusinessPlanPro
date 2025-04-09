@@ -56,8 +56,11 @@ const FlightSelectionPage = () => {
         _timestamp: new Date().getTime()
       };
       
+      console.log('Searching flights with params:', searchWithTimestamp);
       const res = await apiRequest('POST', '/api/flights/search', searchWithTimestamp);
-      return res.json();
+      const data = await res.json();
+      console.log('Flight search response:', data);
+      return data;
     },
     enabled: !!bookingData.searchParams,
     refetchOnWindowFocus: false, // Don't refetch when window regains focus

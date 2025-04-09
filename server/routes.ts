@@ -199,10 +199,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Format response to match the expected structure from FlightService
             console.log(`Returning ${amadeusFlights.length} flights from Amadeus API`);
-            return res.json({
-              outbound: amadeusFlights,
-              return: [] 
-            });
+            // For one-way trips, we shouldn't include return flights
+            if (searchParams.tripType === 'one-way') {
+              return res.json({
+                outbound: amadeusFlights,
+                return: undefined
+              });
+            } else {
+              return res.json({
+                outbound: amadeusFlights,
+                return: [] // Empty array for round-trip when no return flights found
+              });
+            }
           } else {
             // If API failed or returned no results, generate sample flights
             console.log('No flights found in API, using database to find similar routes');
@@ -249,10 +257,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
               
               console.log(`Returning ${adaptedFlights.length} adapted flights for the requested route`);
-              return res.json({
-                outbound: adaptedFlights.slice(0, 5), // Limit to 5 flights
-                return: [] 
-              });
+              // For one-way trips, we shouldn't include return flights
+              if (searchParams.tripType === 'one-way') {
+                return res.json({
+                  outbound: adaptedFlights.slice(0, 5), // Limit to 5 flights
+                  return: undefined
+                });
+              } else {
+                return res.json({
+                  outbound: adaptedFlights.slice(0, 5), // Limit to 5 flights
+                  return: [] // Empty array for round-trip when no return flights found
+                });
+              }
             }
           }
         } catch (apiError) {
