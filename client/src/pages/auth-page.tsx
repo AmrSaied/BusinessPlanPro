@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useLocation } from "wouter";
 import MainLayout from "@/layout/main-layout";
 
@@ -41,6 +41,9 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 function AuthPage() {
   console.log("Auth page component rendering");
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
   const [_, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
@@ -163,9 +166,29 @@ function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Enter your password" {...field} />
-                          </FormControl>
+                          <div className="relative">
+                            <FormControl>
+                              <Input 
+                                type={showLoginPassword ? "text" : "password"}
+                                placeholder="Enter your password" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                              onClick={() => setShowLoginPassword(!showLoginPassword)}
+                              tabIndex={-1}
+                            >
+                              {showLoginPassword ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -247,9 +270,29 @@ function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Create a password" {...field} />
-                          </FormControl>
+                          <div className="relative">
+                            <FormControl>
+                              <Input 
+                                type={showRegisterPassword ? "text" : "password"} 
+                                placeholder="Create a password" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                              onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                              tabIndex={-1}
+                            >
+                              {showRegisterPassword ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -260,9 +303,29 @@ function AuthPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Confirm Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Confirm your password" {...field} />
-                          </FormControl>
+                          <div className="relative">
+                            <FormControl>
+                              <Input 
+                                type={showConfirmPassword ? "text" : "password"} 
+                                placeholder="Confirm your password" 
+                                {...field} 
+                              />
+                            </FormControl>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              tabIndex={-1}
+                            >
+                              {showConfirmPassword ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -305,7 +368,7 @@ function AuthPage() {
       {/* Right side - Hero section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center">
         <div className="bg-primary/5 p-8 rounded-lg">
-          <h2 className="text-3xl font-bold mb-4">Welcome to FastDummyTicket</h2>
+          <h2 className="text-3xl font-bold mb-4">Welcome to Global Air Travel Services</h2>
           <p className="mb-6 text-muted-foreground">
             Create an account to enjoy these benefits:
           </p>
