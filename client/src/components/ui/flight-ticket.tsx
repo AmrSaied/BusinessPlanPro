@@ -20,12 +20,15 @@ interface FlightDetails {
   departureAirport: string;
   departureCity: string;
   departureCountry: string;
+  departureTerminal?: string;
   arrivalAirport: string;
   arrivalCity: string;
   arrivalCountry: string;
+  arrivalTerminal?: string;
   departureTime: string;
   arrivalTime: string;
   duration: string;
+  aircraft?: string;
 }
 
 interface TicketOptions {
@@ -48,6 +51,11 @@ interface FlightTicketProps {
   status: string;
   issueDate: string;
   travelPurpose: string;
+  itinerary?: {
+    outbound: FlightDetails;
+    inbound?: FlightDetails;
+    connections?: FlightDetails[];
+  };
 }
 
 const FlightTicket: React.FC<FlightTicketProps> = ({
@@ -62,7 +70,8 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
   currency,
   status,
   issueDate,
-  travelPurpose
+  travelPurpose,
+  itinerary
 }) => {
   const { t } = useTranslation();
   const ticketRef = useRef<HTMLDivElement>(null);
@@ -76,6 +85,18 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         month: 'short',
         day: 'numeric'
       });
+    } catch (e) {
+      return dateString;
+    }
+  };
+  
+  // Format date specific for the ticket (Thu, Dec 12, 2024)
+  const formatTicketDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${dayNames[date.getDay()]}, ${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
     } catch (e) {
       return dateString;
     }
@@ -118,212 +139,131 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-lg p-0 max-w-4xl mx-auto">
       {/* PDF Generation Container */}
-      <div ref={ticketRef} className="ticket-container">
-        {/* Header - Airline Website-like Navigation */}
-        <div className="bg-gray-800 p-3 rounded-t-lg text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Plane className="h-6 w-6 mr-2 text-blue-400" />
-              <div className="text-lg font-bold tracking-wide">{flight.airlineName}</div>
-            </div>
-            <div className="flex space-x-4 text-sm">
-              <div className="hidden md:flex items-center">
-                <Mail className="h-4 w-4 mr-1" />
-                <span>www.{flight.airlineName.toLowerCase().replace(/\s+/g, '')}.com</span>
-              </div>
-              <div className="flex items-center">
-                <Phone className="h-4 w-4 mr-1" />
-                <span>+1-800-{flight.airlineCode}-{flight.flightNumber}</span>
-              </div>
-            </div>
+      <div ref={ticketRef} className="ticket-container text-gray-900">
+        {/* ViewTrip Header */}
+        <div className="bg-[#006699] p-3 text-white">
+          <div className="flex items-center">
+            <span className="text-xl font-bold">ViewTrip</span>
           </div>
         </div>
         
-        {/* Secondary Header - Booking Banner */}
-        <div className="bg-primary p-4 text-white flex justify-between items-center border-b-4 border-blue-700">
-          <div>
-            <h1 className="text-2xl font-bold">E-Ticket Confirmation</h1>
-            <p className="text-sm opacity-90">Thank you for booking with {flight.airlineName}</p>
-          </div>
-          <div className="text-right">
-            <div className="bg-white text-primary px-3 py-1 rounded font-mono inline-block">
-              <span className="opacity-70 text-xs mr-1">REF:</span>
-              <span className="font-bold">{bookingReference}</span>
-            </div>
-            <p className="text-xs mt-1 opacity-80">Issued: {formatDate(issueDate)}</p>
+        {/* My Trip Header */}
+        <div className="p-3 border-b border-gray-300">
+          <h1 className="text-xl font-medium">My Trip</h1>
+          <div className="flex items-center text-sm mt-1">
+            <p className="text-sm">
+              <span className="font-bold">
+                {formatTicketDate(issueDate)} - {flight.departureCity} ({flight.departureAirport}) to {flight.arrivalCity} ({flight.arrivalAirport}) - Confirmed
+              </span>
+              {status === 'confirmed' && 
+                <svg className="inline-block h-4 w-4 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>}
+            </p>
           </div>
         </div>
         
         {/* Main Ticket Content */}
-        <div className="p-6">
-          {/* Status Banner */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center">
-                <svg className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                {status === 'confirmed' ? 'Booking Confirmed' : status}
+        <div className="px-0">
+          {/* Airline & Flight Information */}
+          <div className="border-b border-gray-300">
+            <div className="flex items-start p-3">
+              <div className="bg-gray-100 text-gray-800 font-bold h-10 w-10 flex items-center justify-center rounded-full border border-gray-300 mr-3">
+                {flight.airlineCode}
               </div>
-            </div>
-            <div className="text-sm text-gray-500">
-              <span className="font-semibold">Ticket Number:</span> {ticketNumber}
+              <div>
+                <div className="font-bold">{flight.airlineName} ({flight.airlineCode}) {flight.flightNumber}</div>
+                <div className="text-xs text-gray-600">Confirmation Number: {bookingReference}</div>
+              </div>
             </div>
           </div>
           
-          {/* Flight Route Section */}
-          <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-xl font-bold">{flight.departureAirport}</div>
-              <div className="text-gray-500">{flight.departureCity}, {flight.departureCountry}</div>
-              <div className="mt-1 font-medium text-lg">{flight.departureTime}</div>
+          {/* Passengers Section */}
+          <div className="border-b border-gray-300 p-3">
+            <div className="font-bold uppercase text-xs mb-1">PASSENGERS</div>
+            {passengers.map((passenger, index) => (
+              <div key={index} className="text-sm">
+                {passenger.title}. {passenger.firstName} {passenger.lastName} MR
+              </div>
+            ))}
+          </div>
+          
+          {/* Airport Info Section */}
+          <div className="border-b border-gray-300 p-3">
+            <div className="font-bold uppercase text-xs mb-1">AIRPORT INFO</div>
+            <div className="text-sm mb-2">
+              <div>{flight.departureCity} Int'l Apt ({flight.departureAirport})</div>
+              {flight.departureTerminal && <div>Terminal {flight.departureTerminal}</div>}
             </div>
             
-            <div className="flex items-center justify-center">
-              <div className="w-full relative flex items-center justify-center">
-                <div className="border-t-2 border-gray-300 w-full"></div>
-                <div className="absolute bg-white px-4">
-                  <Plane className="text-primary h-6 w-6 transform rotate-90" />
-                </div>
-                <div className="absolute top-5 bg-white px-2 text-xs text-gray-500">
-                  {flight.duration}
-                </div>
-              </div>
+            <div className="text-sm mb-2">
+              <span className="block font-bold">to</span>
             </div>
             
-            <div className="text-center">
-              <div className="text-xl font-bold">{flight.arrivalAirport}</div>
-              <div className="text-gray-500">{flight.arrivalCity}, {flight.arrivalCountry}</div>
-              <div className="mt-1 font-medium text-lg">{flight.arrivalTime}</div>
+            <div className="text-sm">
+              <div>{flight.arrivalCity} Int'l Apt ({flight.arrivalAirport})</div>
+              <div>{flight.arrivalCity}, {flight.arrivalCountry}</div>
+              {flight.arrivalTerminal && <div>Terminal {flight.arrivalTerminal}</div>}
             </div>
           </div>
           
-          {/* Flight Details */}
-          <div className="mb-6">
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              {/* Flight Details Header */}
-              <div className="bg-blue-600 text-white p-3">
-                <div className="flex items-center">
-                  <Plane className="h-5 w-5 mr-2" />
-                  <h3 className="font-bold text-lg">{t('flight_details')}</h3>
-                </div>
-              </div>
-              
-              {/* Flight Details Content */}
-              <div className="p-4">
-                <div className="flex flex-col md:flex-row justify-between mb-4 pb-4 border-b border-gray-200">
-                  <div className="mb-2 md:mb-0">
-                    <div className="flex items-center">
-                      <div className="mr-3 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Plane className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Flight</div>
-                        <div className="font-medium text-lg">{flight.airlineCode} {flight.flightNumber}</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-2 md:mb-0">
-                    <div className="flex items-center">
-                      <div className="mr-3 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Date</div>
-                        <div className="font-medium">{formatDate(issueDate)}</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-2 md:mb-0">
-                    <div className="flex items-center">
-                      <div className="mr-3 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Clock className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Duration</div>
-                        <div className="font-medium">{flight.duration}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-500 mb-1">Class</div>
-                    <div className="font-medium">Economy</div>
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-500 mb-1">Seat</div>
-                    <div className="font-medium">Not Assigned</div>
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-500 mb-1">Baggage</div>
-                    <div className="font-medium">20kg</div>
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="text-sm text-gray-500 mb-1">Price</div>
-                    <div className="font-medium text-primary">{totalPrice.toFixed(2)} {currency}</div>
-                  </div>
-                </div>
-              </div>
+          {/* Flight Info Section */}
+          <div className="border-b border-gray-300 p-3">
+            <div className="font-bold uppercase text-xs mb-1">FLIGHT INFO</div>
+            <div className="text-sm mb-1">
+              <div>{flight.aircraft || 'Airbus A320-NEO'}</div>
+            </div>
+            
+            <div className="text-sm">
+              <div>Class Of Service: Economy</div>
             </div>
           </div>
           
-          {/* Passenger Information */}
-          <div className="mb-6">
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              {/* Passenger Header */}
-              <div className="bg-blue-600 text-white p-3">
-                <div className="flex items-center">
-                  <Users className="h-5 w-5 mr-2" />
-                  <h3 className="font-bold text-lg">{t('passenger_information')}</h3>
+          {/* Flight Times with Airplane Icon */}
+          <div className="border-b border-gray-300 bg-gray-50 p-3">
+            <div className="flex justify-between items-center">
+              <div className="flex-1">
+                <div className="uppercase text-sm font-bold">DEPART</div>
+                <div className="flex items-baseline">
+                  {/* Extract time from flight.departureTime which should be in format like "5:30 PM" */}
+                  {(() => {
+                    const parts = flight.departureTime.split(' ');
+                    if (parts.length >= 2) {
+                      return (
+                        <>
+                          <div className="text-2xl font-bold mr-1 mt-1">{parts[0]}</div>
+                          <div className="text-sm uppercase">{parts[1]}</div>
+                        </>
+                      );
+                    }
+                    return <div className="text-2xl font-bold">{flight.departureTime}</div>;
+                  })()}
                 </div>
+                <div className="text-xs">{flight.duration}</div>
               </div>
               
-              {/* Passenger List */}
-              <div className="divide-y divide-gray-200">
-                {passengers.map((passenger, index) => (
-                  <div key={index} className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center">
-                        <div className="mr-3 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                          <User className="h-5 w-5 text-blue-700" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-lg">
-                            {passenger.title}. {passenger.firstName} {passenger.lastName}
-                          </h4>
-                          <p className="text-sm text-gray-500">Passenger {index + 1}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        Adult
-                      </div>
-                    </div>
-                    
-                    <div className="ml-12 bg-gray-50 p-3 rounded-md grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-xs uppercase text-gray-500 font-semibold">Passport Number</div>
-                        <div className="font-mono text-sm font-medium">{passenger.passportNumber}</div>
-                      </div>
-                      
-                      <div>
-                        <div className="text-xs uppercase text-gray-500 font-semibold">Nationality</div>
-                        <div className="font-medium text-sm">{passenger.nationality}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-3 ml-12 text-xs text-gray-500">
-                      {t('identification_required')}
-                    </div>
-                  </div>
-                ))}
+              <div className="mx-2">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDIwSDJMMTAgMTBMNCA2TDYgNEwxMiA4TDE4IDRIMJMMTGGNI8gMTBMMjIgMjBIMTJaIiBmaWxsPSIjMDAwMDAwIi8+Cjwvc3ZnPgo=" className="w-6 h-6" alt="Airplane" />
+              </div>
+              
+              <div className="flex-1 text-right">
+                <div className="uppercase text-sm font-bold">ARRIVE</div>
+                <div className="flex items-baseline justify-end">
+                  {/* Extract time from flight.arrivalTime which should be in format like "10:45 PM" */}
+                  {(() => {
+                    const parts = flight.arrivalTime.split(' ');
+                    if (parts.length >= 2) {
+                      return (
+                        <>
+                          <div className="text-2xl font-bold mr-1 mt-1">{parts[0]}</div>
+                          <div className="text-sm uppercase">{parts[1]}</div>
+                        </>
+                      );
+                    }
+                    return <div className="text-2xl font-bold">{flight.arrivalTime}</div>;
+                  })()}
+                </div>
+                <div className="text-xs">+0</div>
               </div>
             </div>
           </div>
