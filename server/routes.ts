@@ -334,19 +334,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create booking
   app.post("/api/bookings", async (req: Request, res: Response) => {
     try {
+      console.log("Creating booking with data:", JSON.stringify(req.body));
       const bookingData = insertBookingSchema.parse(req.body);
+      console.log("After validation:", JSON.stringify(bookingData));
       
       // Generate a unique booking reference
       const bookingReference = generateBookingReference();
       
-      // Create the booking
+      // Force status to "confirmed" for the demo
+      // Create the booking with confirmed status
       const booking = await storage.createBooking({
         ...bookingData,
         bookingReference,
-        // Allow status to be confirmed directly for demo purposes
-        status: bookingData.status === "confirmed" ? "confirmed" : "pending"
+        status: "confirmed"  // Always confirm bookings for demo
       });
       
+      console.log("Created booking:", JSON.stringify(booking));
       res.status(201).json(booking);
     } catch (err) {
       if (err instanceof z.ZodError) {
