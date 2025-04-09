@@ -30,14 +30,14 @@ const HomePage = () => {
   
   // Hero Section
   const Hero = () => (
-    <section className="bg-gradient-to-br from-primary-700 via-primary-600 to-primary-500 text-white py-16 md:py-24">
+    <section className="bg-gradient-to-br from-primary-700 via-primary-600 to-primary-500 py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center">
           <div className="md:w-1/2 mb-10 md:mb-0 md:pr-8">
-            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white drop-shadow-md">
+            <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-amber-100 drop-shadow-md">
               {t('hero_title')}
             </h1>
-            <p className="text-lg md:text-xl opacity-90 mb-8">
+            <p className="text-lg md:text-xl text-white opacity-90 mb-8">
               {t('hero_subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -47,7 +47,7 @@ const HomePage = () => {
                 </Button>
               </Link>
               <Link href="/how-it-works">
-                <Button variant="outline" className="border-white bg-white/20 hover:bg-white/30 px-6 py-3 text-white">
+                <Button variant="outline" className="border-amber-200 bg-amber-200/10 hover:bg-amber-200/20 px-6 py-3 text-amber-200">
                   {t('hero_how_it_works')}
                 </Button>
               </Link>
@@ -212,11 +212,11 @@ const HomePage = () => {
   
   // Get Your Ticket Now Section
   const GetYourTicket = () => (
-    <section className="py-16 bg-gradient-to-r from-primary-600 to-primary-700 text-white">
+    <section className="py-16 bg-gradient-to-r from-primary-600 to-primary-700">
       <div className="container mx-auto px-4">
         <div className="text-center mb-6">
-          <h2 className="font-heading text-3xl font-bold mb-4 text-white">{t('get_ticket_now_title')}</h2>
-          <p className="text-xl opacity-90 max-w-3xl mx-auto text-white/90">{t('get_ticket_now_subtitle')}</p>
+          <h2 className="font-heading text-3xl font-bold mb-4 text-amber-100">{t('get_ticket_now_title')}</h2>
+          <p className="text-xl opacity-90 max-w-3xl mx-auto text-white">{t('get_ticket_now_subtitle')}</p>
         </div>
         
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-6">
