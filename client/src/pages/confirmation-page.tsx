@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { useBooking } from '@/context/booking-context';
 import { Button } from '@/components/ui/button';
+import FlightTicket from '@/components/ui/flight-ticket';
 import { 
   Download, 
   Printer,
@@ -17,6 +18,51 @@ interface ConfirmationPageProps {
   bookingId: string;
 }
 
+interface FlightDetails {
+  airlineName: string;
+  airlineCode: string;
+  flightNumber: string;
+  departureAirport: string;
+  departureCity: string;
+  departureCountry: string;
+  arrivalAirport: string;
+  arrivalCity: string;
+  arrivalCountry: string;
+  departureTime: string;
+  arrivalTime: string;
+  duration: string;
+}
+
+interface Passenger {
+  title: string;
+  firstName: string;
+  lastName: string;
+  nationality: string;
+  passportNumber: string;
+}
+
+interface TicketOptions {
+  expressProcessing: boolean;
+  editableTicket: boolean;
+  hotelReservation: boolean;
+  insuranceLetter: boolean;
+}
+
+interface TicketData {
+  ticketNumber: string;
+  bookingReference: string;
+  flight: FlightDetails;
+  passengers: Passenger[];
+  ticketOptions: TicketOptions;
+  contactEmail: string;
+  contactPhone: string;
+  totalPrice: number;
+  currency: string;
+  status: string;
+  issueDate: string;
+  travelPurpose: string;
+}
+
 const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
@@ -28,7 +74,7 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     isLoading,
     isError,
     error
-  } = useQuery({
+  } = useQuery<TicketData>({
     queryKey: [`/api/bookings/${bookingId}/ticket`],
     enabled: !!bookingId,
   });
@@ -149,134 +195,23 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
                 </div>
               </div>
               
-              {/* Booking Details */}
+              {/* Flight Ticket */}
               {ticketData && (
-                <div className="bg-white rounded-lg shadow-lg p-8">
-                  <h2 className="font-heading text-2xl font-semibold mb-6">
-                    {t('booking_details')}
-                  </h2>
-                  
-                  {/* Flight Details */}
-                  <div className="border-b border-gray-200 pb-6 mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="flex items-center">
-                        <div className="mr-4">
-                          <img 
-                            src={`https://logo.clearbit.com/${ticketData.flight.airlineName.toLowerCase().replace(/\s+/g, '')}.com`} 
-                            alt={ticketData.flight.airlineName} 
-                            className="h-10 w-10"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'https://via.placeholder.com/40?text=✈';
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <div className="font-medium text-lg">
-                            {ticketData.flight.airlineName} {ticketData.flight.flightNumber}
-                          </div>
-                          <div className="text-gray-600">
-                            {new Date().toLocaleDateString()}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <span className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                          {ticketData.status === 'confirmed' ? 'Confirmed' : ticketData.status}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col md:flex-row justify-between mt-6">
-                      <div className="text-center mb-4 md:mb-0">
-                        <div className="text-gray-600 text-sm">Departure</div>
-                        <div className="font-medium text-lg">{ticketData.flight.departureTime}</div>
-                        <div className="font-bold">{ticketData.flight.departureAirport}</div>
-                        <div className="text-sm text-gray-600">{ticketData.flight.departureCity}</div>
-                      </div>
-                      
-                      <div className="flex flex-col items-center mb-4 md:mb-0">
-                        <div className="text-gray-600 text-sm">{ticketData.flight.duration}</div>
-                        <div className="relative w-20 md:w-40 h-px bg-gray-300 my-2">
-                          <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-2 h-2 border-t-2 border-r-2 border-gray-300 rotate-45"></div>
-                        </div>
-                        <div className="text-xs text-gray-600">Direct</div>
-                      </div>
-                      
-                      <div className="text-center">
-                        <div className="text-gray-600 text-sm">Arrival</div>
-                        <div className="font-medium text-lg">{ticketData.flight.arrivalTime}</div>
-                        <div className="font-bold">{ticketData.flight.arrivalAirport}</div>
-                        <div className="text-sm text-gray-600">{ticketData.flight.arrivalCity}</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Passenger Details */}
-                  <div className="border-b border-gray-200 pb-6 mb-6">
-                    <h3 className="font-medium text-lg mb-4">Passenger Information</h3>
-                    
-                    {ticketData.passengers.map((passenger: any, index: number) => (
-                      <div key={index} className="mb-4 last:mb-0">
-                        <div className="font-medium">
-                          {passenger.title}. {passenger.firstName} {passenger.lastName}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Passport: {passenger.passportNumber} | Nationality: {passenger.nationality}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Price Details */}
-                  <div>
-                    <h3 className="font-medium text-lg mb-4">Price Details</h3>
-                    
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Base Fare</span>
-                        <span>${(ticketData.totalPrice * 0.7).toFixed(2)}</span>
-                      </div>
-                      
-                      {ticketData.ticketOptions.expressProcessing && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Express Processing</span>
-                          <span>$5.00</span>
-                        </div>
-                      )}
-                      
-                      {ticketData.ticketOptions.editableTicket && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Editable Ticket</span>
-                          <span>$8.00</span>
-                        </div>
-                      )}
-                      
-                      {ticketData.ticketOptions.hotelReservation && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Hotel Reservation</span>
-                          <span>$15.00</span>
-                        </div>
-                      )}
-                      
-                      {ticketData.ticketOptions.insuranceLetter && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Insurance Letter</span>
-                          <span>$10.00</span>
-                        </div>
-                      )}
-                      
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Taxes & Fees</span>
-                        <span>${(ticketData.totalPrice * 0.3).toFixed(2)}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between border-t border-gray-200 pt-4 font-bold">
-                      <span>Total</span>
-                      <span className="text-primary">${ticketData.totalPrice.toFixed(2)} {ticketData.currency}</span>
-                    </div>
-                  </div>
+                <div className="mb-8">
+                  <FlightTicket
+                    ticketNumber={ticketData.ticketNumber}
+                    bookingReference={ticketData.bookingReference}
+                    flight={ticketData.flight}
+                    passengers={ticketData.passengers}
+                    ticketOptions={ticketData.ticketOptions}
+                    contactEmail={ticketData.contactEmail}
+                    contactPhone={ticketData.contactPhone}
+                    totalPrice={ticketData.totalPrice}
+                    currency={ticketData.currency}
+                    status={ticketData.status}
+                    issueDate={ticketData.issueDate}
+                    travelPurpose={ticketData.travelPurpose}
+                  />
                 </div>
               )}
             </>
