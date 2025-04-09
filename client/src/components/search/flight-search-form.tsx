@@ -25,7 +25,7 @@ interface FlightSearchFormProps {
 
 const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) => {
   const { t } = useTranslation();
-  const [tripType, setTripType] = useState<"one-way" | "round-trip">("one-way"); // Set one-way as default
+  const [tripType, setTripType] = useState<"one-way" | "round-trip">("round-trip"); // Set round-trip as default
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destinationAirport, setDestinationAirport] = useState<Airport | null>(null);
 
@@ -43,7 +43,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
       departureDate: "",
       returnDate: undefined,
       passengers: 1,
-      tripType: "one-way",
+      tripType: "round-trip",
       travelPurpose: "visa"
     }
   });
