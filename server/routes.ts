@@ -343,7 +343,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const booking = await storage.createBooking({
         ...bookingData,
         bookingReference,
-        status: "pending" // Initial status
+        // Allow status to be confirmed directly for demo purposes
+        status: bookingData.status === "confirmed" ? "confirmed" : "pending"
       });
       
       res.status(201).json(booking);
