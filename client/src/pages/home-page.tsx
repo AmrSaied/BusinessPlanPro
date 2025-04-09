@@ -30,29 +30,29 @@ const HomePage = () => {
   
   // Hero Section
   const Hero = () => (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-primary-700 to-primary-600">
+    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-blue-900 to-blue-800">
       {/* Background decorative elements */}
       <div className="absolute inset-0">
         {/* White particles */}
-        <div className="absolute inset-0 bg-white opacity-20">
-          <svg className="absolute inset-0 w-full h-full opacity-50" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <div className="absolute inset-0 bg-white opacity-25">
+          <svg className="absolute inset-0 w-full h-full opacity-70" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="url(#starsPattern)" />
             <defs>
-              <pattern id="starsPattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
-                <circle cx="25" cy="25" r="1" fill="white" />
+              <pattern id="starsPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="20" cy="20" r="1.5" fill="white" />
               </pattern>
             </defs>
           </svg>
         </div>
         
         {/* Airplane silhouettes */}
-        <div className="absolute top-20 right-10 text-white opacity-20 transform rotate-12 scale-150">
+        <div className="absolute top-20 right-10 text-white opacity-40 transform rotate-12 scale-150 animate-pulse">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22 16.9L17.5 12.4V8.49999C17.5 8.19999 17.3 7.99999 17 7.99999H16C15.7 7.99999 15.5 8.19999 15.5 8.49999V10.4L13 7.89999V5.99999C13 4.29999 10.5 2.99999 9.5 2.99999C8.5 2.99999 6 4.29999 6 5.99999V7.89999L3.5 10.4V8.49999C3.5 8.19999 3.3 7.99999 3 7.99999H2C1.7 7.99999 1.5 8.19999 1.5 8.49999V12.4L7 16.9H1V18.9H10V17.9L12 15.9L14 17.9V18.9H23V16.9H22Z" fill="currentColor"/>
           </svg>
         </div>
         
-        <div className="absolute top-40 left-10 text-white opacity-10 transform -rotate-12 scale-125">
+        <div className="absolute top-40 left-10 text-white opacity-30 transform -rotate-12 scale-125 animate-pulse delay-700">
           <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M22 16.9L17.5 12.4V8.49999C17.5 8.19999 17.3 7.99999 17 7.99999H16C15.7 7.99999 15.5 8.19999 15.5 8.49999V10.4L13 7.89999V5.99999C13 4.29999 10.5 2.99999 9.5 2.99999C8.5 2.99999 6 4.29999 6 5.99999V7.89999L3.5 10.4V8.49999C3.5 8.19999 3.3 7.99999 3 7.99999H2C1.7 7.99999 1.5 8.19999 1.5 8.49999V12.4L7 16.9H1V18.9H10V17.9L12 15.9L14 17.9V18.9H23V16.9H22Z" fill="currentColor"/>
           </svg>
@@ -249,9 +249,9 @@ const HomePage = () => {
   const GetYourTicket = () => (
     <section className="py-16 relative overflow-hidden">
       {/* Decorative background elements */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-primary-800 via-primary-700 to-primary-600 z-0">
+      <div className="absolute inset-0 bg-gradient-to-tr from-blue-900 via-blue-800 to-blue-700 z-0">
         {/* White diagonal stripes */}
-        <div className="absolute inset-0 overflow-hidden opacity-10">
+        <div className="absolute inset-0 overflow-hidden opacity-20">
           <div className="absolute top-0 left-0 right-0 bottom-0 transform -skew-y-12">
             <div className="h-8 bg-white mb-12"></div>
             <div className="h-4 bg-white mb-12"></div>
@@ -264,7 +264,7 @@ const HomePage = () => {
         </div>
         
         {/* White dots overlay */}
-        <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 opacity-40">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <pattern id="white-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
               <circle cx="3" cy="3" r="1.5" fill="white" />
@@ -274,14 +274,14 @@ const HomePage = () => {
         </div>
         
         {/* Flying airplane animations */}
-        <div className="absolute top-20 right-10 text-white opacity-30 animate-pulse transform rotate-12">
+        <div className="absolute top-20 right-10 text-white opacity-50 animate-pulse transform rotate-12">
           <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9.4 10.5L4.8 6H13.2L17.7 10.5H9.4Z" fill="white"/>
             <path d="M19.9 11.4L18.2 6.9C18.1 6.7 17.9 6.5 17.6 6.5H2C1.5 6.5 1.1 7 1.2 7.5L3.4 15.1C3.5 15.5 3.9 15.8 4.3 15.8H9.9L9.5 21L12.8 15.8H21.4C22.2 15.8 22.7 14.9 22.3 14.2L19.9 11.4Z" fill="white"/>
           </svg>
         </div>
         
-        <div className="absolute top-1/2 left-8 text-white opacity-10 animate-pulse transform -rotate-12 delay-700">
+        <div className="absolute top-1/2 left-8 text-white opacity-25 animate-pulse transform -rotate-12 delay-700">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9.4 10.5L4.8 6H13.2L17.7 10.5H9.4Z" fill="white"/>
             <path d="M19.9 11.4L18.2 6.9C18.1 6.7 17.9 6.5 17.6 6.5H2C1.5 6.5 1.1 7 1.2 7.5L3.4 15.1C3.5 15.5 3.9 15.8 4.3 15.8H9.9L9.5 21L12.8 15.8H21.4C22.2 15.8 22.7 14.9 22.3 14.2L19.9 11.4Z" fill="white"/>
