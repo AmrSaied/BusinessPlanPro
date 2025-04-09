@@ -122,280 +122,331 @@ function AuthPage() {
   };
 
   return (
-    <div className="container flex flex-col md:flex-row px-4 py-8 gap-8">
-      {/* Left side - Auth forms */}
-      <div className="w-full md:w-1/2">
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as "login" | "register")}
-          className="w-full"
-        >
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="register">Register</TabsTrigger>
-          </TabsList>
-
-          {/* Login Tab */}
-          <TabsContent value="login">
-            <Card>
-              <CardHeader>
-                <CardTitle>Login to your account</CardTitle>
-                <CardDescription>
-                  Enter your credentials to access your account
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter your username" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input 
-                                type={showLoginPassword ? "text" : "password"}
-                                placeholder="Enter your password" 
-                                {...field} 
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
-                              onClick={() => setShowLoginPassword(!showLoginPassword)}
-                              tabIndex={-1}
-                            >
-                              {showLoginPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={loginMutation.isPending}
-                    >
-                      {loginMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Logging in...
-                        </>
-                      ) : (
-                        "Login"
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </CardContent>
-              <CardFooter className="flex flex-col space-y-4">
-                <Separator />
-                <div className="text-sm text-muted-foreground text-center">
-                  Don't have an account?{" "}
-                  <Button
-                    variant="link"
-                    className="p-0"
-                    onClick={() => setActiveTab("register")}
-                  >
-                    Register
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-
-          {/* Register Tab */}
-          <TabsContent value="register">
-            <Card>
-              <CardHeader>
-                <CardTitle>Create an account</CardTitle>
-                <CardDescription>
-                  Sign up to save your bookings and track your tickets
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                    <FormField
-                      control={registerForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Choose a username" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="Enter your email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input 
-                                type={showRegisterPassword ? "text" : "password"} 
-                                placeholder="Create a password" 
-                                {...field} 
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
-                              onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                              tabIndex={-1}
-                            >
-                              {showRegisterPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={registerForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input 
-                                type={showConfirmPassword ? "text" : "password"} 
-                                placeholder="Confirm your password" 
-                                {...field} 
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                              tabIndex={-1}
-                            >
-                              {showConfirmPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={registerMutation.isPending}
-                    >
-                      {registerMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating account...
-                        </>
-                      ) : (
-                        "Register"
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-              </CardContent>
-              <CardFooter className="flex flex-col space-y-4">
-                <Separator />
-                <div className="text-sm text-muted-foreground text-center">
-                  Already have an account?{" "}
-                  <Button
-                    variant="link"
-                    className="p-0"
-                    onClick={() => setActiveTab("login")}
-                  >
-                    Login
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Right side - Hero section */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center">
-        <div className="bg-primary/5 p-8 rounded-lg">
-          <h2 className="text-3xl font-bold mb-4">Welcome to Global Air Travel Services</h2>
-          <p className="mb-6 text-muted-foreground">
-            Create an account to enjoy these benefits:
-          </p>
-          <ul className="space-y-3">
-            <li className="flex items-start">
-              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-              <span>Save your favorite routes and destinations</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-              <span>Retrieve and reuse your past booking information</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-              <span>Access your tickets anytime from your account</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-              <span>Get email notifications about your bookings</span>
-            </li>
-            <li className="flex items-start">
-              <span className="bg-primary/20 rounded-full p-1 mr-2 text-primary">✓</span>
-              <span>Manage your visa application documents in one place</span>
-            </li>
-          </ul>
+    <div className="min-h-screen">
+      {/* Background with styling matching home page */}
+      <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-b from-blue-900 to-blue-800">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0">
+          {/* White particles */}
+          <div className="absolute inset-0 bg-white opacity-25">
+            <svg className="absolute inset-0 w-full h-full opacity-70" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100%" height="100%" fill="url(#starsPattern)" />
+              <defs>
+                <pattern id="starsPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="20" cy="20" r="1.5" fill="white" />
+                </pattern>
+              </defs>
+            </svg>
+          </div>
+          
+          {/* Airplane silhouettes */}
+          <div className="absolute top-20 right-10 text-white opacity-40 transform rotate-12 scale-150 animate-pulse">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 16.9L17.5 12.4V8.49999C17.5 8.19999 17.3 7.99999 17 7.99999H16C15.7 7.99999 15.5 8.19999 15.5 8.49999V10.4L13 7.89999V5.99999C13 4.29999 10.5 2.99999 9.5 2.99999C8.5 2.99999 6 4.29999 6 5.99999V7.89999L3.5 10.4V8.49999C3.5 8.19999 3.3 7.99999 3 7.99999H2C1.7 7.99999 1.5 8.19999 1.5 8.49999V12.4L7 16.9H1V18.9H10V17.9L12 15.9L14 17.9V18.9H23V16.9H22Z" fill="currentColor"/>
+            </svg>
+          </div>
+          
+          <div className="absolute top-40 left-10 text-white opacity-30 transform -rotate-12 scale-125 animate-pulse delay-700">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 16.9L17.5 12.4V8.49999C17.5 8.19999 17.3 7.99999 17 7.99999H16C15.7 7.99999 15.5 8.19999 15.5 8.49999V10.4L13 7.89999V5.99999C13 4.29999 10.5 2.99999 9.5 2.99999C8.5 2.99999 6 4.29999 6 5.99999V7.89999L3.5 10.4V8.49999C3.5 8.19999 3.3 7.99999 3 7.99999H2C1.7 7.99999 1.5 8.19999 1.5 8.49999V12.4L7 16.9H1V18.9H10V17.9L12 15.9L14 17.9V18.9H23V16.9H22Z" fill="currentColor"/>
+            </svg>
+          </div>
         </div>
-      </div>
+        
+        {/* Curved shape at bottom */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" className="w-full h-16 text-white fill-current">
+            <path d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z"></path>
+          </svg>
+        </div>
+      
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            {/* Left side - Auth forms */}
+            <div className="w-full md:w-1/2 backdrop-blur-sm bg-white/10 p-6 rounded-xl shadow-xl border border-white/20">
+              <div className="bg-white rounded-lg shadow-xl p-6">
+                <Tabs
+                  value={activeTab}
+                  onValueChange={(value) => setActiveTab(value as "login" | "register")}
+                  className="w-full"
+                >
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="login">Login</TabsTrigger>
+                    <TabsTrigger value="register">Register</TabsTrigger>
+                  </TabsList>
+
+                  {/* Login Tab */}
+                  <TabsContent value="login">
+                    <Card className="border-0 shadow-none">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-2xl font-bold text-blue-900">Login to your account</CardTitle>
+                        <CardDescription>
+                          Enter your credentials to access your account
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Form {...loginForm}>
+                          <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                            <FormField
+                              control={loginForm.control}
+                              name="username"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Username</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter your username" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={loginForm.control}
+                              name="password"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Password</FormLabel>
+                                  <div className="relative">
+                                    <FormControl>
+                                      <Input 
+                                        type={showLoginPassword ? "text" : "password"}
+                                        placeholder="Enter your password" 
+                                        {...field} 
+                                      />
+                                    </FormControl>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                                      onClick={() => setShowLoginPassword(!showLoginPassword)}
+                                      tabIndex={-1}
+                                    >
+                                      {showLoginPassword ? (
+                                        <EyeOff className="h-4 w-4" />
+                                      ) : (
+                                        <Eye className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="submit"
+                              className="w-full bg-amber-500 text-gray-900 hover:bg-amber-400"
+                              disabled={loginMutation.isPending}
+                            >
+                              {loginMutation.isPending ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Logging in...
+                                </>
+                              ) : (
+                                "Login"
+                              )}
+                            </Button>
+                          </form>
+                        </Form>
+                      </CardContent>
+                      <CardFooter className="flex flex-col space-y-4">
+                        <Separator />
+                        <div className="text-sm text-muted-foreground text-center">
+                          Don't have an account?{" "}
+                          <Button
+                            variant="link"
+                            className="p-0 text-blue-600"
+                            onClick={() => setActiveTab("register")}
+                          >
+                            Register
+                          </Button>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </TabsContent>
+
+                  {/* Register Tab */}
+                  <TabsContent value="register">
+                    <Card className="border-0 shadow-none">
+                      <CardHeader className="pb-4">
+                        <CardTitle className="text-2xl font-bold text-blue-900">Create an account</CardTitle>
+                        <CardDescription>
+                          Sign up to save your bookings and track your tickets
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Form {...registerForm}>
+                          <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                            <FormField
+                              control={registerForm.control}
+                              name="username"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Username</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Choose a username" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={registerForm.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Email</FormLabel>
+                                  <FormControl>
+                                    <Input type="email" placeholder="Enter your email" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={registerForm.control}
+                              name="password"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Password</FormLabel>
+                                  <div className="relative">
+                                    <FormControl>
+                                      <Input 
+                                        type={showRegisterPassword ? "text" : "password"} 
+                                        placeholder="Create a password" 
+                                        {...field} 
+                                      />
+                                    </FormControl>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                                      onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                                      tabIndex={-1}
+                                    >
+                                      {showRegisterPassword ? (
+                                        <EyeOff className="h-4 w-4" />
+                                      ) : (
+                                        <Eye className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={registerForm.control}
+                              name="confirmPassword"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Confirm Password</FormLabel>
+                                  <div className="relative">
+                                    <FormControl>
+                                      <Input 
+                                        type={showConfirmPassword ? "text" : "password"} 
+                                        placeholder="Confirm your password" 
+                                        {...field} 
+                                      />
+                                    </FormControl>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                      tabIndex={-1}
+                                    >
+                                      {showConfirmPassword ? (
+                                        <EyeOff className="h-4 w-4" />
+                                      ) : (
+                                        <Eye className="h-4 w-4" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button
+                              type="submit"
+                              className="w-full bg-amber-500 text-gray-900 hover:bg-amber-400"
+                              disabled={registerMutation.isPending}
+                            >
+                              {registerMutation.isPending ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Creating account...
+                                </>
+                              ) : (
+                                "Register"
+                              )}
+                            </Button>
+                          </form>
+                        </Form>
+                      </CardContent>
+                      <CardFooter className="flex flex-col space-y-4">
+                        <Separator />
+                        <div className="text-sm text-muted-foreground text-center">
+                          Already have an account?{" "}
+                          <Button
+                            variant="link"
+                            className="p-0 text-blue-600"
+                            onClick={() => setActiveTab("login")}
+                          >
+                            Login
+                          </Button>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </div>
+
+            {/* Right side - Hero section */}
+            <div className="w-full md:w-1/2 flex flex-col justify-center text-white">
+              <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/20 shadow-xl">
+                <h2 className="text-3xl font-bold mb-4 text-white">Welcome to Global Air Travel Services</h2>
+                <p className="mb-6 text-white/90">
+                  Create an account to enjoy these benefits:
+                </p>
+                <ul className="space-y-3">
+                  <li className="flex items-start">
+                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
+                    <span>Save your favorite routes and destinations</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
+                    <span>Retrieve and reuse your past booking information</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
+                    <span>Access your tickets anytime from your account</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
+                    <span>Get email notifications about your bookings</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
+                    <span>Manage your visa application documents in one place</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* White section below for proper page height */}
+      <section className="bg-white py-8">
+        <div className="container mx-auto px-4">
+          {/* This section is intentionally left empty, just to provide proper page balance */}
+        </div>
+      </section>
     </div>
   );
 }
