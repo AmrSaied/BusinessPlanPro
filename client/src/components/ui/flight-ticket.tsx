@@ -102,7 +102,29 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
     }
   };
   
-  // Generate PDF from ticket
+  // For direct PDF download from server
+  const downloadPDF = () => {
+    // Use bookingId from props if available, otherwise extract it from bookingReference
+    // This assumes the bookingReference contains the ID or you have another way to get the bookingId
+    // In a real app, you'd have the actual bookingId available
+    // For this implementation, we're extracting a number from the reference if possible
+    let bookingId: number;
+    
+    try {
+      // Try to extract digits from bookingReference
+      const matches = bookingReference.match(/\d+/);
+      bookingId = matches ? parseInt(matches[0]) : 1; // Default to 1 if no digits found
+    } catch (error) {
+      console.error('Error parsing booking reference:', error);
+      bookingId = 1; // Default fallback
+    }
+    
+    // Open the PDF download endpoint in a new tab/window
+    const downloadUrl = `/api/bookings/${bookingId}/ticket/download`;
+    window.open(downloadUrl, '_blank');
+  };
+  
+  // Generate PDF from ticket (client-side backup method)
   const generatePDF = async () => {
     if (!ticketRef.current) return;
     
@@ -126,7 +148,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       pdf.save(`flight-ticket-${bookingReference}.pdf`);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error('Error generating PDF client-side:', error);
       alert('Failed to generate PDF. Please try again.');
     }
   };
@@ -543,7 +565,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
       {/* Action Buttons (outside of PDF content) */}
       <div className="p-4 flex flex-col sm:flex-row gap-4 justify-center border-t border-gray-200">
         <Button
-          onClick={generatePDF}
+          onClick={downloadPDF}
           className="bg-primary text-white flex items-center"
         >
           <Download className="ltr:mr-2 rtl:ml-2 h-4 w-4" />

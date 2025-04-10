@@ -453,7 +453,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate ticket PDF
+  // Get ticket data (for preview)
   app.get("/api/bookings/:bookingId/ticket", async (req: Request, res: Response) => {
     try {
       const bookingId = parseInt(req.params.bookingId);
@@ -468,13 +468,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Cannot generate ticket for unconfirmed booking" });
       }
       
-      // Generate ticket data
+      // Generate ticket data for preview
       const ticketData = await ticketService.generateTicketData(bookingId);
       
       res.json(ticketData);
     } catch (err) {
-      console.error("Error generating ticket:", err);
-      res.status(500).json({ error: "Failed to generate ticket" });
+      console.error("Error generating ticket data:", err);
+      res.status(500).json({ error: "Failed to generate ticket data" });
+    }
+  });
+  
+  // Download ticket as PDF
+  app.get("/api/bookings/:bookingId/ticket/download", async (req: Request, res: Response) => {
+    try {
+      const bookingId = parseInt(req.params.bookingId);
+      
+      // Check if booking exists and is confirmed
+      const booking = await storage.getBooking(bookingId);
+      if (!booking) {
+        return res.status(404).json({ error: "Booking not found" });
+      }
+      
+      if (booking.status !== "confirmed") {
+        return res.status(400).json({ error: "Cannot generate ticket for unconfirmed booking" });
+      }
+      
+      // Generate PDF buffer
+      const pdfBuffer = await ticketService.generatePDF(bookingId);
+      
+      // Set response headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=flight-ticket-${booking.bookingReference}.pdf`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      // Send the PDF buffer
+      res.send(pdfBuffer);
+    } catch (err) {
+      console.error("Error generating PDF ticket:", err);
+      res.status(500).json({ error: "Failed to generate PDF ticket" });
     }
   });
 

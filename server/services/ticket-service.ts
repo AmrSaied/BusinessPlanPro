@@ -1,10 +1,137 @@
 import { IStorage } from "../storage";
+import PDFDocument from "pdfkit";
+import { Readable } from "stream";
 
 export class TicketService {
   private storage: IStorage;
   
   constructor(storage: IStorage) {
     this.storage = storage;
+  }
+  
+  async generatePDF(bookingId: number): Promise<Buffer> {
+    const ticketData = await this.generateTicketData(bookingId);
+    
+    // Create a PDF document
+    const doc = new PDFDocument({ margin: 50 });
+    
+    // Collect the PDF document chunks
+    return new Promise<Buffer>((resolve, reject) => {
+      try {
+        const chunks: Buffer[] = [];
+        const stream = new Readable();
+        
+        doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', reject);
+        
+        // Add viewtrip header
+        doc.fontSize(16).font('Helvetica-Bold').fillColor('#006699').text('ViewTrip', { align: 'left' });
+        doc.moveDown();
+        
+        // Add trip info header
+        doc.fontSize(14).font('Helvetica-Bold').fillColor('#000000').text('My Trip', { align: 'left' });
+        doc.fontSize(10).text(
+          `${ticketData.issueDate} - ${ticketData.flight.departureCity} (${ticketData.flight.departureAirport}) to ${ticketData.flight.arrivalCity} (${ticketData.flight.arrivalAirport}) - Confirmed`,
+          { align: 'left' }
+        );
+        doc.moveDown();
+        
+        // Add airline info
+        doc.fontSize(12).font('Helvetica-Bold').text(`${ticketData.flight.airlineName} (${ticketData.flight.airlineCode}) ${ticketData.flight.flightNumber}`);
+        doc.fontSize(10).font('Helvetica').text(`Confirmation Number: ${ticketData.bookingReference}`);
+        doc.moveDown();
+        
+        // Add passenger info
+        doc.fontSize(10).font('Helvetica-Bold').text('PASSENGERS');
+        ticketData.passengers.forEach(passenger => {
+          doc.fontSize(10).font('Helvetica').text(`${passenger.title}. ${passenger.firstName} ${passenger.lastName}`);
+        });
+        doc.moveDown();
+        
+        // Add airport info
+        doc.fontSize(10).font('Helvetica-Bold').text('AIRPORT INFO');
+        doc.fontSize(10).font('Helvetica').text(`${ticketData.flight.departureCity} Int'l Apt (${ticketData.flight.departureAirport})`);
+        doc.fontSize(10).font('Helvetica-Bold').text('TO');
+        doc.fontSize(10).font('Helvetica').text(`${ticketData.flight.arrivalCity} Int'l Apt (${ticketData.flight.arrivalAirport})`);
+        doc.fontSize(10).font('Helvetica').text(`${ticketData.flight.arrivalCity}, ${ticketData.flight.arrivalCountry}`);
+        doc.moveDown();
+        
+        // Add flight info
+        doc.fontSize(10).font('Helvetica-Bold').text('FLIGHT INFO');
+        doc.fontSize(10).font('Helvetica').text('Airbus A320-NEO');
+        doc.fontSize(10).font('Helvetica').text('Class of Service: Economy');
+        doc.moveDown();
+        
+        // Add departure and arrival times
+        doc.fontSize(12).font('Helvetica-Bold').text('DEPART', { continued: true });
+        doc.fontSize(10).font('Helvetica').text(`                                     ARRIVE`, { align: 'right' });
+        doc.fontSize(14).font('Helvetica-Bold').text(`${ticketData.flight.departureTime}`, { continued: true });
+        doc.fontSize(14).font('Helvetica-Bold').text(`                                ${ticketData.flight.arrivalTime}`, { align: 'right' });
+        doc.fontSize(10).font('Helvetica').text(`Duration: ${ticketData.flight.duration}`);
+        doc.moveDown();
+        
+        // Add additional services if any
+        if (ticketData.ticketOptions.expressProcessing || 
+            ticketData.ticketOptions.editableTicket || 
+            ticketData.ticketOptions.hotelReservation || 
+            ticketData.ticketOptions.insuranceLetter) {
+          
+          doc.fontSize(12).font('Helvetica-Bold').fillColor('#0066CC').text('ADDITIONAL SERVICES');
+          
+          if (ticketData.ticketOptions.expressProcessing) {
+            doc.fontSize(10).font('Helvetica-Bold').fillColor('#000000').text('Express Processing');
+            doc.fontSize(9).font('Helvetica').text('Premium Service');
+          }
+          
+          if (ticketData.ticketOptions.editableTicket) {
+            doc.fontSize(10).font('Helvetica-Bold').text('Editable Ticket');
+            doc.fontSize(9).font('Helvetica').text('Flexible Changes');
+          }
+          
+          if (ticketData.ticketOptions.hotelReservation) {
+            doc.fontSize(10).font('Helvetica-Bold').text('Hotel Reservation');
+            doc.fontSize(9).font('Helvetica').text('Accommodation Included');
+          }
+          
+          if (ticketData.ticketOptions.insuranceLetter) {
+            doc.fontSize(10).font('Helvetica-Bold').text('Insurance Letter');
+            doc.fontSize(9).font('Helvetica').text('Travel Protection');
+          }
+          
+          doc.moveDown();
+        }
+        
+        // Add contact information
+        doc.fontSize(12).font('Helvetica-Bold').fillColor('#0066CC').text('CONTACT INFORMATION');
+        doc.fontSize(10).font('Helvetica').fillColor('#000000').text(`Email: ${ticketData.contactEmail}`);
+        doc.fontSize(10).font('Helvetica').text(`Phone: ${ticketData.contactPhone}`);
+        doc.moveDown();
+        
+        // Add price information
+        doc.fontSize(12).font('Helvetica-Bold').text('PRICE INFORMATION');
+        doc.fontSize(10).font('Helvetica').text(`Total Price: ${ticketData.currency} ${ticketData.totalPrice.toFixed(2)}`);
+        doc.moveDown();
+        
+        // Add company information
+        doc.fontSize(10).font('Helvetica').text('Global Air Travel Services');
+        doc.fontSize(9).font('Helvetica').text('123 Booking Street, London');
+        doc.fontSize(9).font('Helvetica').text('support@globalairtravelservices.com');
+        doc.fontSize(9).font('Helvetica').text('+44 123 456 7890');
+        
+        // Add QR code placeholder text
+        doc.fontSize(8).font('Helvetica').text('Scan QR code to verify ticket', { align: 'center' });
+        
+        // Add ticket number and barcode placeholder
+        doc.moveDown();
+        doc.fontSize(8).font('Helvetica').text(`Ticket: ${ticketData.ticketNumber}`, { align: 'center' });
+        
+        // Finalize the PDF
+        doc.end();
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
   
   async generateTicketData(bookingId: number) {
