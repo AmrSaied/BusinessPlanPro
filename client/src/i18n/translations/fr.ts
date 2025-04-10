@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: 'Recevez votre billet par e-mail en aussi peu que 5 minutes.',
   
   get_ticket_now_feature3_title: 'Garantie de Remboursement',
-  get_ticket_now_feature3_text: 'Si votre réservation n\'est pas acceptée, nous offrons un remboursement complet.'
+  get_ticket_now_feature3_text: 'Si votre réservation n\'est pas acceptée, nous offrons un remboursement complet.',
+  
+  // Footer translations
+  footer_support_title: 'Support',
+  footer_help_center: 'Centre d\'Aide',
+  footer_live_chat: 'Chat en Direct',
+  footer_email_support: 'Support par E-mail',
+  footer_terms: 'Conditions d\'Utilisation',
+  footer_privacy: 'Politique de Confidentialité',
+  footer_languages_title: 'Langues',
+  footer_copyright: 'Tous droits réservés.',
+  footer_payment_methods: 'Nous acceptons :'
 };

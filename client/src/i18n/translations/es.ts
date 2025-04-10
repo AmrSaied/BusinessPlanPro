@@ -270,5 +270,13 @@ export default {
   get_ticket_now_feature2_text: 'Reciba su boleto por correo electrónico en tan solo 5 minutos.',
   
   get_ticket_now_feature3_title: 'Garantía de Devolución',
-  get_ticket_now_feature3_text: 'Si su reserva no es aceptada, ofrecemos un reembolso completo.'
+  get_ticket_now_feature3_text: 'Si su reserva no es aceptada, ofrecemos un reembolso completo.',
+  
+  // Additional footer translations
+  footer_support_title: 'Soporte',
+  footer_help_center: 'Centro de Ayuda',
+  footer_live_chat: 'Chat en Vivo',
+  footer_email_support: 'Soporte por Correo',
+  footer_languages_title: 'Idiomas',
+  footer_payment_methods: 'Aceptamos:'
 };
