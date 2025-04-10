@@ -202,6 +202,15 @@ export default {
   // Testimonials
   testimonials_title: 'Trusted by Travelers Worldwide',
   testimonials_subtitle: 'Hear from customers who used our service for their visa applications',
+  testimonial_1_text: 'I needed a flight reservation for my Schengen visa application urgently. Global Air Travel Services delivered it within minutes, and my visa was approved!',
+  testimonial_1_name: 'Raj M.',
+  testimonial_1_route: 'India → Germany',
+  testimonial_2_text: 'The support team was incredibly helpful when I needed to make changes to my reservation. Smooth process and great service.',
+  testimonial_2_name: 'Sofia C.',
+  testimonial_2_route: 'Brazil → Spain',
+  testimonial_3_text: 'Perfect solution for my US visa application. The PNR was verifiable and the embassy accepted it without any questions. Highly recommended!',
+  testimonial_3_name: 'Liu T.',
+  testimonial_3_route: 'China → United States',
   
   // FAQ
   faq_title: 'Frequently Asked Questions',
