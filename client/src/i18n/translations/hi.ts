@@ -159,5 +159,21 @@ export default {
   error_server: 'सर्वर त्रुटि, कृपया पुनः प्रयास करें',
   error_invalid_card: 'अमान्य कार्ड जानकारी',
   error_payment_failed: 'भुगतान विफल हुआ। कृपया पुनः प्रयास करें।',
-  error_fields: 'कृपया सभी आवश्यक फ़ील्ड भरें'
+  error_fields: 'कृपया सभी आवश्यक फ़ील्ड भरें',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: 'अपना फ्लाइट आरक्षण बनाने के लिए तैयार हैं?',
+  get_ticket_now_subtitle: 'मिनटों में अपना वीज़ा-तैयार फ्लाइट आरक्षण प्राप्त करें',
+  get_ticket_now_description: 'आपके वीज़ा आवेदन के लिए त्वरित, आसान और दूतावास द्वारा स्वीकृत फ्लाइट आरक्षण।',
+  get_ticket_now_button: 'अभी अपना टिकट प्राप्त करें',
+  get_ticket_now_floating_text: '5 मिनट से भी कम समय में अपना सत्यापन योग्य फ्लाइट आरक्षण बनाएं।',
+  
+  get_ticket_now_feature1_title: 'दूतावास द्वारा सत्यापित',
+  get_ticket_now_feature1_text: 'सभी आरक्षणों में सत्यापन योग्य PNR कोड और एयरलाइन संदर्भ शामिल हैं।',
+  
+  get_ticket_now_feature2_title: 'त्वरित वितरण',
+  get_ticket_now_feature2_text: 'अपना टिकट ईमेल के माध्यम से केवल 5 मिनट में प्राप्त करें।',
+  
+  get_ticket_now_feature3_title: 'धन-वापसी गारंटी',
+  get_ticket_now_feature3_text: 'यदि आपका आरक्षण स्वीकार नहीं किया जाता है, तो हम पूर्ण धनवापसी की पेशकश करते हैं।'
 };

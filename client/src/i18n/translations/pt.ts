@@ -159,5 +159,21 @@ export default {
   error_server: 'Erro do servidor, por favor tente novamente',
   error_invalid_card: 'Informações de cartão inválidas',
   error_payment_failed: 'Pagamento falhou. Por favor, tente novamente.',
-  error_fields: 'Por favor, preencha todos os campos obrigatórios'
+  error_fields: 'Por favor, preencha todos os campos obrigatórios',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: 'Pronto Para Criar Sua Reserva de Voo?',
+  get_ticket_now_subtitle: 'Obtenha sua reserva de voo pronta para visto em minutos',
+  get_ticket_now_description: 'Reservas de voo rápidas, fáceis e aceitas por embaixadas para seu pedido de visto.',
+  get_ticket_now_button: 'Obtenha Seu Bilhete Agora',
+  get_ticket_now_floating_text: 'Crie sua reserva de voo verificável em menos de 5 minutos.',
+  
+  get_ticket_now_feature1_title: 'Verificado por Embaixadas',
+  get_ticket_now_feature1_text: 'Todas as reservas incluem códigos PNR verificáveis e referências de companhias aéreas.',
+  
+  get_ticket_now_feature2_title: 'Entrega Rápida',
+  get_ticket_now_feature2_text: 'Receba seu bilhete por e-mail em apenas 5 minutos.',
+  
+  get_ticket_now_feature3_title: 'Garantia de Devolução do Dinheiro',
+  get_ticket_now_feature3_text: 'Se sua reserva não for aceita, oferecemos reembolso total.'
 };

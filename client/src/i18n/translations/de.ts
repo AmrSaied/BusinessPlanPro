@@ -159,5 +159,21 @@ export default {
   error_server: 'Serverfehler, bitte versuchen Sie es erneut',
   error_invalid_card: 'Ungültige Karteninformationen',
   error_payment_failed: 'Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.',
-  error_fields: 'Bitte füllen Sie alle erforderlichen Felder aus'
+  error_fields: 'Bitte füllen Sie alle erforderlichen Felder aus',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: 'Bereit, Ihre Flugreservierung zu erstellen?',
+  get_ticket_now_subtitle: 'Erhalten Sie Ihre visumsbereite Flugreservierung in Minuten',
+  get_ticket_now_description: 'Schnelle, einfache und von Botschaften akzeptierte Flugreservierungen für Ihren Visumantrag.',
+  get_ticket_now_button: 'Holen Sie sich Ihr Ticket jetzt',
+  get_ticket_now_floating_text: 'Erstellen Sie Ihre überprüfbare Flugreservierung in weniger als 5 Minuten.',
+  
+  get_ticket_now_feature1_title: 'Von Botschaften verifiziert',
+  get_ticket_now_feature1_text: 'Alle Reservierungen enthalten überprüfbare PNR-Codes und Fluggesellschaftsreferenzen.',
+  
+  get_ticket_now_feature2_title: 'Schnelle Lieferung',
+  get_ticket_now_feature2_text: 'Erhalten Sie Ihr Ticket per E-Mail in nur 5 Minuten.',
+  
+  get_ticket_now_feature3_title: 'Geld-zurück-Garantie',
+  get_ticket_now_feature3_text: 'Wenn Ihre Reservierung nicht akzeptiert wird, bieten wir eine vollständige Rückerstattung an.'
 };

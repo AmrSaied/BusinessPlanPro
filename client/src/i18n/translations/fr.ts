@@ -159,5 +159,21 @@ export default {
   error_server: 'Erreur du serveur, veuillez réessayer',
   error_invalid_card: 'Informations de carte invalides',
   error_payment_failed: 'Paiement échoué. Veuillez réessayer.',
-  error_fields: 'Veuillez remplir tous les champs obligatoires'
+  error_fields: 'Veuillez remplir tous les champs obligatoires',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: 'Prêt à Créer Votre Réservation de Vol ?',
+  get_ticket_now_subtitle: 'Obtenez votre réservation de vol prête pour visa en quelques minutes',
+  get_ticket_now_description: 'Réservations de vol rapides, faciles et acceptées par les ambassades pour votre demande de visa.',
+  get_ticket_now_button: 'Obtenez Votre Billet Maintenant',
+  get_ticket_now_floating_text: 'Créez votre réservation de vol vérifiable en moins de 5 minutes.',
+  
+  get_ticket_now_feature1_title: 'Vérifié par les Ambassades',
+  get_ticket_now_feature1_text: 'Toutes les réservations incluent des codes PNR vérifiables et des références de compagnies aériennes.',
+  
+  get_ticket_now_feature2_title: 'Livraison Rapide',
+  get_ticket_now_feature2_text: 'Recevez votre billet par e-mail en aussi peu que 5 minutes.',
+  
+  get_ticket_now_feature3_title: 'Garantie de Remboursement',
+  get_ticket_now_feature3_text: 'Si votre réservation n\'est pas acceptée, nous offrons un remboursement complet.'
 };
