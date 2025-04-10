@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: '最短5分でメールにてチケットを受け取れます。',
   
   get_ticket_now_feature3_title: '返金保証',
-  get_ticket_now_feature3_text: '予約が受け入れられなかった場合、全額返金いたします。'
+  get_ticket_now_feature3_text: '予約が受け入れられなかった場合、全額返金いたします。',
+  
+  // Footer translations
+  footer_support_title: 'サポート',
+  footer_help_center: 'ヘルプセンター',
+  footer_live_chat: 'ライブチャット',
+  footer_email_support: 'メールサポート',
+  footer_terms: '利用規約',
+  footer_privacy: 'プライバシーポリシー',
+  footer_languages_title: '言語',
+  footer_copyright: '全著作権所有。',
+  footer_payment_methods: '対応決済方法：'
 };

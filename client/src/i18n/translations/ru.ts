@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: 'Получите билет по электронной почте всего за 5 минут.',
   
   get_ticket_now_feature3_title: 'Гарантия возврата денег',
-  get_ticket_now_feature3_text: 'Если ваше бронирование не будет принято, мы предлагаем полный возврат средств.'
+  get_ticket_now_feature3_text: 'Если ваше бронирование не будет принято, мы предлагаем полный возврат средств.',
+  
+  // Footer translations
+  footer_support_title: 'Поддержка',
+  footer_help_center: 'Центр поддержки',
+  footer_live_chat: 'Онлайн-чат',
+  footer_email_support: 'Поддержка по электронной почте',
+  footer_terms: 'Условия использования',
+  footer_privacy: 'Политика конфиденциальности',
+  footer_languages_title: 'Языки',
+  footer_copyright: 'Все права защищены.',
+  footer_payment_methods: 'Мы принимаем:'
 };

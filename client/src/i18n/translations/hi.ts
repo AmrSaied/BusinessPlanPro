@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: 'अपना टिकट ईमेल के माध्यम से केवल 5 मिनट में प्राप्त करें।',
   
   get_ticket_now_feature3_title: 'धन-वापसी गारंटी',
-  get_ticket_now_feature3_text: 'यदि आपका आरक्षण स्वीकार नहीं किया जाता है, तो हम पूर्ण धनवापसी की पेशकश करते हैं।'
+  get_ticket_now_feature3_text: 'यदि आपका आरक्षण स्वीकार नहीं किया जाता है, तो हम पूर्ण धनवापसी की पेशकश करते हैं।',
+  
+  // Footer translations
+  footer_support_title: 'सहायता',
+  footer_help_center: 'सहायता केंद्र',
+  footer_live_chat: 'लाइव चैट',
+  footer_email_support: 'ईमेल सहायता',
+  footer_terms: 'सेवा की शर्तें',
+  footer_privacy: 'गोपनीयता नीति',
+  footer_languages_title: 'भाषाएँ',
+  footer_copyright: 'सर्वाधिकार सुरक्षित।',
+  footer_payment_methods: 'हम स्वीकार करते हैं:'
 };

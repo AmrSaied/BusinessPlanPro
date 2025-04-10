@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: 'Erhalten Sie Ihr Ticket per E-Mail in nur 5 Minuten.',
   
   get_ticket_now_feature3_title: 'Geld-zurück-Garantie',
-  get_ticket_now_feature3_text: 'Wenn Ihre Reservierung nicht akzeptiert wird, bieten wir eine vollständige Rückerstattung an.'
+  get_ticket_now_feature3_text: 'Wenn Ihre Reservierung nicht akzeptiert wird, bieten wir eine vollständige Rückerstattung an.',
+  
+  // Footer translations
+  footer_support_title: 'Unterstützung',
+  footer_help_center: 'Hilfezentrum',
+  footer_live_chat: 'Live-Chat',
+  footer_email_support: 'E-Mail-Support',
+  footer_terms: 'Nutzungsbedingungen',
+  footer_privacy: 'Datenschutzrichtlinie',
+  footer_languages_title: 'Sprachen',
+  footer_copyright: 'Alle Rechte vorbehalten.',
+  footer_payment_methods: 'Wir akzeptieren:'
 };

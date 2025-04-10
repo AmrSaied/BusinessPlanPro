@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: '通过电子邮件在短至5分钟内收到您的机票。',
   
   get_ticket_now_feature3_title: '退款保证',
-  get_ticket_now_feature3_text: '如果您的预订未被接受，我们提供全额退款。'
+  get_ticket_now_feature3_text: '如果您的预订未被接受，我们提供全额退款。',
+  
+  // Footer translations
+  footer_support_title: '支持',
+  footer_help_center: '帮助中心',
+  footer_live_chat: '在线聊天',
+  footer_email_support: '电子邮件支持',
+  footer_terms: '服务条款',
+  footer_privacy: '隐私政策',
+  footer_languages_title: '语言',
+  footer_copyright: '版权所有。',
+  footer_payment_methods: '我们接受：'
 };

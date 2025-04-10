@@ -175,5 +175,16 @@ export default {
   get_ticket_now_feature2_text: 'Receba seu bilhete por e-mail em apenas 5 minutos.',
   
   get_ticket_now_feature3_title: 'Garantia de Devolução do Dinheiro',
-  get_ticket_now_feature3_text: 'Se sua reserva não for aceita, oferecemos reembolso total.'
+  get_ticket_now_feature3_text: 'Se sua reserva não for aceita, oferecemos reembolso total.',
+  
+  // Footer translations
+  footer_support_title: 'Suporte',
+  footer_help_center: 'Central de Ajuda',
+  footer_live_chat: 'Chat Ao Vivo',
+  footer_email_support: 'Suporte por E-mail',
+  footer_terms: 'Termos de Serviço',
+  footer_privacy: 'Política de Privacidade',
+  footer_languages_title: 'Idiomas',
+  footer_copyright: 'Todos os direitos reservados.',
+  footer_payment_methods: 'Aceitamos:'
 };

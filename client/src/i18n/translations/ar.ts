@@ -272,14 +272,11 @@ export default {
   get_ticket_now_feature3_title: 'ضمان استرداد الأموال',
   get_ticket_now_feature3_text: 'إذا لم يتم قبول حجزك، فإننا نقدم استرداد كامل.',
   
-  // Footer translations
-  footer_support_title: 'الدعم',
+  // Additional footer translations
   footer_help_center: 'مركز المساعدة',
   footer_live_chat: 'الدردشة المباشرة',
   footer_email_support: 'دعم البريد الإلكتروني',
-  footer_terms: 'شروط الخدمة',
-  footer_privacy: 'سياسة الخصوصية',
+  footer_support_title: 'الدعم',
   footer_languages_title: 'اللغات',
-  footer_copyright: 'جميع الحقوق محفوظة.',
   footer_payment_methods: 'نقبل:'
 };
