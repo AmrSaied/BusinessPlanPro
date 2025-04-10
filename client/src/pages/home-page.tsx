@@ -181,13 +181,13 @@ const HomePage = () => {
               </div>
             </div>
             <p className="text-gray-600 mb-4">
-              "I needed a flight reservation for my Schengen visa application urgently. Global Air Travel Services delivered it within minutes, and my visa was approved!"
+              {t('testimonial_1_text')}
             </p>
             <div className="flex items-center">
               <div className="h-10 w-10 rounded-full bg-primary-100 text-primary flex items-center justify-center font-medium mr-3">RM</div>
               <div>
-                <div className="font-medium">Raj M.</div>
-                <div className="text-sm text-gray-500">India → Germany</div>
+                <div className="font-medium">{t('testimonial_1_name')}</div>
+                <div className="text-sm text-gray-500">{t('testimonial_1_route')}</div>
               </div>
             </div>
           </div>
@@ -204,13 +204,13 @@ const HomePage = () => {
               </div>
             </div>
             <p className="text-gray-600 mb-4">
-              "The support team was incredibly helpful when I needed to make changes to my reservation. Smooth process and great service."
+              {t('testimonial_2_text')}
             </p>
             <div className="flex items-center">
               <div className="h-10 w-10 rounded-full bg-primary-100 text-primary flex items-center justify-center font-medium mr-3">SC</div>
               <div>
-                <div className="font-medium">Sofia C.</div>
-                <div className="text-sm text-gray-500">Brazil → Spain</div>
+                <div className="font-medium">{t('testimonial_2_name')}</div>
+                <div className="text-sm text-gray-500">{t('testimonial_2_route')}</div>
               </div>
             </div>
           </div>
@@ -230,13 +230,13 @@ const HomePage = () => {
               </div>
             </div>
             <p className="text-gray-600 mb-4">
-              "Perfect solution for my US visa application. The PNR was verifiable and the embassy accepted it without any questions. Highly recommended!"
+              {t('testimonial_3_text')}
             </p>
             <div className="flex items-center">
               <div className="h-10 w-10 rounded-full bg-primary-100 text-primary flex items-center justify-center font-medium mr-3">LT</div>
               <div>
-                <div className="font-medium">Liu T.</div>
-                <div className="text-sm text-gray-500">China → United States</div>
+                <div className="font-medium">{t('testimonial_3_name')}</div>
+                <div className="text-sm text-gray-500">{t('testimonial_3_route')}</div>
               </div>
             </div>
           </div>
