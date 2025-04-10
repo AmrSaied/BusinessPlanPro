@@ -41,6 +41,19 @@ export default {
   step_3_text: 'Ingrese su pasaporte e información personal',
   step_4_title: 'Descargue Su Boleto',
   step_4_text: 'Reciba su boleto PDF al instante por correo electrónico',
+  step_5_title: 'Aplique',
+  step_5_description: 'Envíe su solicitud de visa con su reserva de vuelo',
+  
+  how_benefits_title: 'Beneficios de Nuestro Servicio',
+  
+  how_benefit1_title: 'Boletos de Aspecto Oficial',
+  how_benefit1_description: 'Nuestros boletos aparecen exactamente como reservas de vuelo reales con códigos PNR reales',
+  
+  how_benefit2_title: 'Aceptado por Embajadas',
+  how_benefit2_description: 'Aceptado por embajadas y consulados en todo el mundo para solicitudes de visa',
+  
+  how_benefit3_title: 'Ahorro de Dinero',
+  how_benefit3_description: 'Evite pagar boletos reembolsables costosos solo para su solicitud de visa',
   
   // Search form
   search_title: 'Busque Su Vuelo',
