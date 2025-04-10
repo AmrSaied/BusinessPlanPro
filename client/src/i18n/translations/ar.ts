@@ -44,6 +44,21 @@ export default {
   step_5_title: 'قدم طلبك',
   step_5_description: 'قدم طلب التأشيرة الخاص بك مع حجز الرحلة الخاص بك',
   
+  how_step1_title: 'ابحث',
+  how_step1_description: 'أدخل تفاصيل سفرك، بما في ذلك المنشأ والوجهة وتواريخ السفر',
+  
+  how_step2_title: 'اختر',
+  how_step2_description: 'اختر من بين الرحلات المتاحة التي تتوافق مع متطلبات سفرك',
+  
+  how_step3_title: 'ادفع',
+  how_step3_description: 'قم بإجراء دفعة آمنة باستخدام بطاقة الائتمان أو باي بال',
+  
+  how_step4_title: 'استلم',
+  how_step4_description: 'احصل على تذكرة حجز رحلتك القابلة للتحقق في بريدك الإلكتروني',
+  
+  how_step5_title: 'قدم طلبك',
+  how_step5_description: 'قدم طلب التأشيرة الخاص بك مع حجز الرحلة الخاص بك',
+  
   how_benefits_title: 'مزايا خدمتنا',
   
   how_benefit1_title: 'تذاكر ذات مظهر رسمي',

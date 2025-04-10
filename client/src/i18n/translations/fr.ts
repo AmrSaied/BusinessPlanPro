@@ -44,6 +44,21 @@ export default {
   step_5_title: 'Postulez',
   step_5_description: 'Soumettez votre demande de visa avec votre réservation de vol',
   
+  how_step1_title: 'Recherchez',
+  how_step1_description: 'Entrez vos détails de voyage, y compris l\'origine, la destination et les dates de voyage',
+  
+  how_step2_title: 'Sélectionnez',
+  how_step2_description: 'Choisissez parmi les vols disponibles qui correspondent à vos exigences de voyage',
+  
+  how_step3_title: 'Payez',
+  how_step3_description: 'Effectuez un paiement sécurisé par carte de crédit ou PayPal',
+  
+  how_step4_title: 'Recevez',
+  how_step4_description: 'Recevez votre billet de réservation de vol vérifiable dans votre boîte mail',
+  
+  how_step5_title: 'Postulez',
+  how_step5_description: 'Soumettez votre demande de visa avec votre réservation de vol',
+  
   how_benefits_title: 'Avantages de Notre Service',
   
   how_benefit1_title: 'Billets à Apparence Officielle',

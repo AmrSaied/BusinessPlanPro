@@ -44,6 +44,21 @@ export default {
   step_5_title: 'Aplique',
   step_5_description: 'Envíe su solicitud de visa con su reserva de vuelo',
   
+  how_step1_title: 'Busque',
+  how_step1_description: 'Introduzca sus detalles de viaje, incluyendo origen, destino y fechas de viaje',
+  
+  how_step2_title: 'Seleccione',
+  how_step2_description: 'Elija entre los vuelos disponibles que coincidan con sus requisitos de viaje',
+  
+  how_step3_title: 'Pague',
+  how_step3_description: 'Realice un pago seguro usando tarjeta de crédito o PayPal',
+  
+  how_step4_title: 'Reciba',
+  how_step4_description: 'Reciba su billete de reserva de vuelo verificable en su correo electrónico',
+  
+  how_step5_title: 'Solicite',
+  how_step5_description: 'Presente su solicitud de visado con su reserva de vuelo',
+  
   how_benefits_title: 'Beneficios de Nuestro Servicio',
   
   how_benefit1_title: 'Boletos de Aspecto Oficial',

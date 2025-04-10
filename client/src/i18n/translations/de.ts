@@ -44,6 +44,21 @@ export default {
   step_5_title: 'Bewerben',
   step_5_description: 'Reichen Sie Ihren Visumantrag mit Ihrer Flugreservierung ein',
   
+  how_step1_title: 'Suchen',
+  how_step1_description: 'Geben Sie Ihre Reisedetails ein, einschließlich Abflugort, Ziel und Reisedaten',
+  
+  how_step2_title: 'Auswählen',
+  how_step2_description: 'Wählen Sie aus verfügbaren Flügen, die Ihren Reiseanforderungen entsprechen',
+  
+  how_step3_title: 'Bezahlen',
+  how_step3_description: 'Führen Sie eine sichere Zahlung per Kreditkarte oder PayPal durch',
+  
+  how_step4_title: 'Erhalten',
+  how_step4_description: 'Erhalten Sie Ihr verifizierbares Flugreservierungsticket per E-Mail',
+  
+  how_step5_title: 'Bewerben',
+  how_step5_description: 'Reichen Sie Ihren Visumantrag mit Ihrer Flugreservierung ein',
+  
   how_benefits_title: 'Vorteile unseres Services',
   
   how_benefit1_title: 'Offiziell aussehende Tickets',
