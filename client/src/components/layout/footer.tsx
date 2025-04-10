@@ -69,31 +69,31 @@ const Footer = () => {
 
           {/* Support */}
           <div>
-            <h3 className="font-heading font-semibold text-lg mb-4">Support</h3>
+            <h3 className="font-heading font-semibold text-lg mb-4">{t("footer_support_title")}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/support" className="text-gray-400 hover:text-white transition">
-                  Help Center
+                  {t("footer_help_center")}
                 </Link>
               </li>
               <li>
                 <Link href="/support" className="text-gray-400 hover:text-white transition">
-                  Live Chat
+                  {t("footer_live_chat")}
                 </Link>
               </li>
               <li>
                 <Link href="/support" className="text-gray-400 hover:text-white transition">
-                  Email Support
+                  {t("footer_email_support")}
                 </Link>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition">
-                  Terms of Service
+                  {t("footer_terms")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition">
-                  Privacy Policy
+                  {t("footer_privacy")}
                 </a>
               </li>
             </ul>
@@ -101,7 +101,7 @@ const Footer = () => {
 
           {/* Languages */}
           <div>
-            <h3 className="font-heading font-semibold text-lg mb-4">Languages</h3>
+            <h3 className="font-heading font-semibold text-lg mb-4">{t("footer_languages_title")}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               {availableLanguages.map((lang) => (
                 <button
@@ -119,9 +119,9 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-700 pt-6 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} {t("app.name")}. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {t("app.name")}. {t("footer_copyright")}</p>
           <p className="mt-2">
-            <span className="mr-2">We accept:</span>
+            <span className="mr-2">{t("footer_payment_methods")}</span>
             <i className="fab fa-cc-visa mr-2"></i>
             <i className="fab fa-cc-mastercard mr-2"></i>
             <i className="fab fa-cc-amex mr-2"></i>

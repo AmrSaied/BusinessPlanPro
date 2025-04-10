@@ -318,20 +318,6 @@ export default {
   error_fields: 'Please fill in all required fields',
   
   // Get Ticket Now widget
-  get_ticket_now_title: 'Ready to Create Your Flight Reservation?',
-  get_ticket_now_subtitle: 'Get your visa-ready flight reservation in minutes',
-  get_ticket_now_description: 'Fast, easy, and embassy-accepted flight reservations for your visa application.',
-  get_ticket_now_button: 'Get Your Ticket Now',
-  get_ticket_now_floating_text: 'Create your verifiable flight reservation in less than 5 minutes.',
-  
-  get_ticket_now_feature1_title: 'Embassy Verified',
-  get_ticket_now_feature1_text: 'All reservations include verifiable PNR codes and airline references.',
-  
-  get_ticket_now_feature2_title: 'Quick Delivery',
-  get_ticket_now_feature2_text: 'Receive your ticket via email in as little as 5 minutes.',
-  
-  get_ticket_now_feature3_title: 'Money-back Guarantee',
-  get_ticket_now_feature3_text: 'If your reservation is not accepted, we offer a full refund.',
   
   // How To Work page
   how_to_work_title: 'How to Use FastDummyTicket for Visa Applications',
@@ -406,13 +392,5 @@ export default {
   how_to_work_contact_phone_text: 'Our team is available to help you with any technical or booking issues.',
   
   // Footer translations
-  footer_support_title: 'Support',
-  footer_help_center: 'Help Center',
-  footer_live_chat: 'Live Chat',
-  footer_email_support: 'Email Support',
-  footer_terms: 'Terms of Service',
-  footer_privacy: 'Privacy Policy',
-  footer_languages_title: 'Languages',
-  footer_copyright: 'All rights reserved.',
-  footer_payment_methods: 'We accept:'
+  footer_support_title: 'Support'
 };
