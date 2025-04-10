@@ -44,6 +44,21 @@ export default {
   step_5_title: '申请',
   step_5_description: '使用您的航班预订提交签证申请',
   
+  how_step1_title: '搜索',
+  how_step1_description: '输入您的旅行详情，包括出发地、目的地和旅行日期',
+  
+  how_step2_title: '选择',
+  how_step2_description: '从符合您旅行要求的可用航班中选择',
+  
+  how_step3_title: '支付',
+  how_step3_description: '使用信用卡或PayPal进行安全支付',
+  
+  how_step4_title: '接收',
+  how_step4_description: '获取可验证的航班预订票发送到您的电子邮箱',
+  
+  how_step5_title: '申请',
+  how_step5_description: '使用您的航班预订提交签证申请',
+  
   how_benefits_title: '我们服务的优势',
   
   how_benefit1_title: '官方外观票据',

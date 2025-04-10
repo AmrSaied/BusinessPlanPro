@@ -44,6 +44,21 @@ export default {
   step_5_title: '申請',
   step_5_description: 'フライト予約とともにビザ申請を提出',
   
+  how_step1_title: '検索',
+  how_step1_description: '出発地、目的地、旅行日を含む旅行詳細を入力',
+  
+  how_step2_title: '選択',
+  how_step2_description: 'あなたの旅行要件に合った利用可能なフライトから選択',
+  
+  how_step3_title: '支払い',
+  how_step3_description: 'クレジットカードまたはPayPalを使用して安全に支払い',
+  
+  how_step4_title: '受け取り',
+  how_step4_description: '検証可能なフライト予約チケットをメールで受け取る',
+  
+  how_step5_title: '申請',
+  how_step5_description: 'フライト予約とともにビザ申請を提出',
+  
   how_benefits_title: '当社サービスの特典',
   
   how_benefit1_title: '公式に見えるチケット',
