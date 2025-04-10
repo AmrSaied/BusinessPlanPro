@@ -30,6 +30,31 @@ export default {
   advantage_support_title: '24時間365日サポート',
   advantage_support_text: '必要なときにいつでもサポートを受けられます',
   
+  // How it works section
+  how_it_works_title: 'FastDummyTicketの仕組み',
+  how_it_works_subtitle: '4つの簡単なステップで検証可能なフライト予約を取得 - 迅速、簡単、安全',
+  step_1_title: '検索',
+  step_1_text: '出発地、目的地、旅行日を含む旅行詳細を入力',
+  step_2_title: '選択',
+  step_2_text: 'あなたの旅行要件に合った利用可能なフライトから選択',
+  step_3_title: '支払い',
+  step_3_text: 'クレジットカードまたはPayPalを使用して安全に支払い',
+  step_4_title: '受け取り',
+  step_4_text: '検証可能なフライト予約チケットをメールで受け取る',
+  step_5_title: '申請',
+  step_5_description: 'フライト予約とともにビザ申請を提出',
+  
+  how_benefits_title: '当社サービスの特典',
+  
+  how_benefit1_title: '公式に見えるチケット',
+  how_benefit1_description: '当社のチケットは実際のPNRコードを含む実際のフライト予約と同じように見えます',
+  
+  how_benefit2_title: '大使館に受け入れられる',
+  how_benefit2_description: 'ビザ申請のために世界中の大使館や領事館で受け入れられています',
+  
+  how_benefit3_title: 'お金の節約',
+  how_benefit3_description: 'ビザ申請のためだけに高額な払い戻し可能なチケットを支払うことを避けられます',
+  
   // Flight Ticket Component
   my_trip: '私の旅行',
   confirmed: '確認済み',

@@ -30,6 +30,31 @@ export default {
   advantage_support_title: 'Suporte 24/7',
   advantage_support_text: 'Obtenha ajuda quando precisar',
   
+  // How it works section
+  how_it_works_title: 'Como funciona o FastDummyTicket',
+  how_it_works_subtitle: 'Obtenha sua reserva de voo verificável em 4 simples passos - é rápido, fácil e seguro',
+  step_1_title: 'Pesquise',
+  step_1_text: 'Insira seus detalhes de viagem, incluindo origem, destino e datas de viagem',
+  step_2_title: 'Selecione',
+  step_2_text: 'Escolha entre os voos disponíveis que correspondam aos seus requisitos de viagem',
+  step_3_title: 'Pague',
+  step_3_text: 'Faça um pagamento seguro usando cartão de crédito ou PayPal',
+  step_4_title: 'Receba',
+  step_4_text: 'Receba seu bilhete de reserva de voo verificável em seu e-mail',
+  step_5_title: 'Aplique',
+  step_5_description: 'Envie seu pedido de visto com sua reserva de voo',
+  
+  how_benefits_title: 'Benefícios do Nosso Serviço',
+  
+  how_benefit1_title: 'Bilhetes de Aparência Oficial',
+  how_benefit1_description: 'Nossos bilhetes parecem exatamente como reservas de voo reais com códigos PNR reais',
+  
+  how_benefit2_title: 'Aceito por Embaixadas',
+  how_benefit2_description: 'Aceito por embaixadas e consulados em todo o mundo para pedidos de visto',
+  
+  how_benefit3_title: 'Economia de Dinheiro',
+  how_benefit3_description: 'Evite pagar por bilhetes reembolsáveis caros apenas para seu pedido de visto',
+  
   // Flight Ticket Component
   my_trip: 'Minha Viagem',
   confirmed: 'Confirmado',
