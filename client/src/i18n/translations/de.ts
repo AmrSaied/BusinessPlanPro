@@ -30,6 +30,31 @@ export default {
   advantage_support_title: '24/7 Support',
   advantage_support_text: 'Erhalten Sie Hilfe, wann immer Sie sie brauchen',
   
+  // How it works section
+  how_it_works_title: 'Wie FastDummyTicket funktioniert',
+  how_it_works_subtitle: 'Erhalten Sie Ihre verifizierbare Flugreservierung in 4 einfachen Schritten - es ist schnell, einfach und sicher',
+  step_1_title: 'Suchen',
+  step_1_text: 'Geben Sie Ihre Reisedetails ein, einschließlich Abflugort, Ziel und Reisedaten',
+  step_2_title: 'Auswählen',
+  step_2_text: 'Wählen Sie aus verfügbaren Flügen, die Ihren Reiseanforderungen entsprechen',
+  step_3_title: 'Bezahlen',
+  step_3_text: 'Führen Sie eine sichere Zahlung per Kreditkarte oder PayPal durch',
+  step_4_title: 'Erhalten',
+  step_4_text: 'Erhalten Sie Ihr verifizierbares Flugreservierungsticket per E-Mail',
+  step_5_title: 'Bewerben',
+  step_5_description: 'Reichen Sie Ihren Visumantrag mit Ihrer Flugreservierung ein',
+  
+  how_benefits_title: 'Vorteile unseres Services',
+  
+  how_benefit1_title: 'Offiziell aussehende Tickets',
+  how_benefit1_description: 'Unsere Tickets sehen genau wie echte Flugreservierungen mit echten PNR-Codes aus',
+  
+  how_benefit2_title: 'Von Botschaften akzeptiert',
+  how_benefit2_description: 'Akzeptiert von Botschaften und Konsulaten weltweit für Visumanträge',
+  
+  how_benefit3_title: 'Geldsparend',
+  how_benefit3_description: 'Vermeiden Sie, für teure erstattungsfähige Tickets nur für Ihren Visumantrag zu bezahlen',
+  
   // Flight Ticket Component
   my_trip: 'Meine Reise',
   confirmed: 'Bestätigt',

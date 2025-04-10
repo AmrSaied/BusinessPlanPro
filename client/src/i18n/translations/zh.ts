@@ -30,6 +30,31 @@ export default {
   advantage_support_title: '24/7支持',
   advantage_support_text: '随时获得需要的帮助',
   
+  // How it works section
+  how_it_works_title: 'FastDummyTicket如何运作',
+  how_it_works_subtitle: '通过4个简单步骤获取可验证的航班预订 - 快速、简单且安全',
+  step_1_title: '搜索',
+  step_1_text: '输入您的旅行详情，包括出发地、目的地和旅行日期',
+  step_2_title: '选择',
+  step_2_text: '从符合您旅行要求的可用航班中选择',
+  step_3_title: '支付',
+  step_3_text: '使用信用卡或PayPal进行安全支付',
+  step_4_title: '接收',
+  step_4_text: '获取可验证的航班预订票发送到您的电子邮箱',
+  step_5_title: '申请',
+  step_5_description: '使用您的航班预订提交签证申请',
+  
+  how_benefits_title: '我们服务的优势',
+  
+  how_benefit1_title: '官方外观票据',
+  how_benefit1_description: '我们的票据看起来与真实航班预订完全一样，带有真实的PNR代码',
+  
+  how_benefit2_title: '使馆认可',
+  how_benefit2_description: '全球各地使馆和领事馆认可用于签证申请',
+  
+  how_benefit3_title: '节省资金',
+  how_benefit3_description: '避免仅为签证申请支付昂贵的可退款机票',
+  
   // Flight Ticket Component
   my_trip: '我的旅行',
   confirmed: '已确认',
