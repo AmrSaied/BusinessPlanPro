@@ -99,6 +99,19 @@ export default {
   airport_placeholder: 'Stadt oder Flughafencode',
   select_date: 'Datum auswählen',
   
+  // Testimonials
+  testimonials_title: 'Vertraut von Reisenden weltweit',
+  testimonials_subtitle: 'Hören Sie von Kunden, die unseren Service für ihre Visumanträge genutzt haben',
+  testimonial_1_text: 'Ich brauchte dringend eine Flugreservierung für meinen Schengen-Visumantrag. Global Air Travel Services lieferte es innerhalb von Minuten, und mein Visum wurde genehmigt!',
+  testimonial_1_name: 'Raj M.',
+  testimonial_1_route: 'Indien → Deutschland',
+  testimonial_2_text: 'Das Support-Team war unglaublich hilfsbereit, als ich Änderungen an meiner Reservierung vornehmen musste. Reibungsloser Prozess und großartiger Service.',
+  testimonial_2_name: 'Sofia C.',
+  testimonial_2_route: 'Brasilien → Spanien',
+  testimonial_3_text: 'Perfekte Lösung für meinen US-Visumantrag. Der PNR war überprüfbar und die Botschaft akzeptierte ihn ohne Fragen. Sehr empfehlenswert!',
+  testimonial_3_name: 'Liu T.',
+  testimonial_3_route: 'China → Vereinigte Staaten',
+  
   // Error messages
   error_required: 'Dieses Feld ist erforderlich',
   error_email: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',

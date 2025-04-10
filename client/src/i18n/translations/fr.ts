@@ -99,6 +99,19 @@ export default {
   airport_placeholder: 'Ville ou code d\'aéroport',
   select_date: 'Sélectionner une date',
   
+  // Testimonials
+  testimonials_title: 'Approuvé par des Voyageurs du Monde Entier',
+  testimonials_subtitle: 'Écoutez les clients qui ont utilisé notre service pour leurs demandes de visa',
+  testimonial_1_text: 'J\'avais besoin d\'une réservation de vol pour ma demande de visa Schengen en urgence. Global Air Travel Services me l\'a livrée en quelques minutes, et mon visa a été approuvé !',
+  testimonial_1_name: 'Raj M.',
+  testimonial_1_route: 'Inde → Allemagne',
+  testimonial_2_text: 'L\'équipe d\'assistance était incroyablement utile lorsque j\'ai dû apporter des modifications à ma réservation. Processus fluide et excellent service.',
+  testimonial_2_name: 'Sofia C.',
+  testimonial_2_route: 'Brésil → Espagne',
+  testimonial_3_text: 'Solution parfaite pour ma demande de visa américain. Le PNR était vérifiable et l\'ambassade l\'a accepté sans aucune question. Fortement recommandé !',
+  testimonial_3_name: 'Liu T.',
+  testimonial_3_route: 'Chine → États-Unis',
+  
   // Error messages
   error_required: 'Ce champ est obligatoire',
   error_email: 'Veuillez entrer une adresse email valide',
