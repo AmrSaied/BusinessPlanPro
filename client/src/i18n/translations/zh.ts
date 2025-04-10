@@ -99,6 +99,19 @@ export default {
   airport_placeholder: '城市或机场代码',
   select_date: '选择日期',
   
+  // Testimonials
+  testimonials_title: '全球旅行者信赖',
+  testimonials_subtitle: '听听使用我们服务申请签证的客户的评价',
+  testimonial_1_text: '我急需申根签证的航班预订。全球航空旅行服务在几分钟内就完成了交付，我的签证获得了批准！',
+  testimonial_1_name: '拉吉 M.',
+  testimonial_1_route: '印度 → 德国',
+  testimonial_2_text: '当我需要更改预订时，支持团队非常有帮助。流程顺畅，服务出色。',
+  testimonial_2_name: '索菲亚 C.',
+  testimonial_2_route: '巴西 → 西班牙',
+  testimonial_3_text: '对我的美国签证申请来说是完美的解决方案。PNR可验证，大使馆没有任何疑问就接受了。强烈推荐！',
+  testimonial_3_name: '刘 T.',
+  testimonial_3_route: '中国 → 美国',
+  
   // Error messages
   error_required: '此字段为必填项',
   error_email: '请输入有效的电子邮件地址',

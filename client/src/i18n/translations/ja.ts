@@ -99,6 +99,19 @@ export default {
   airport_placeholder: '都市または空港コード',
   select_date: '日付を選択',
   
+  // Testimonials
+  testimonials_title: '世界中の旅行者に信頼されています',
+  testimonials_subtitle: 'ビザ申請に当社のサービスを利用したお客様の声をお聞きください',
+  testimonial_1_text: 'シェンゲンビザ申請のためにフライト予約が緊急に必要でした。グローバル・エア・トラベル・サービスは数分以内に提供され、私のビザは承認されました！',
+  testimonial_1_name: 'ラージ M.',
+  testimonial_1_route: 'インド → ドイツ',
+  testimonial_2_text: '予約の変更が必要だった時、サポートチームは非常に役立ちました。スムーズなプロセスと素晴らしいサービスです。',
+  testimonial_2_name: 'ソフィア C.',
+  testimonial_2_route: 'ブラジル → スペイン',
+  testimonial_3_text: '私の米国ビザ申請のための完璧なソリューション。PNRは検証可能で、大使館は何の質問もなく受け入れました。強くお勧めします！',
+  testimonial_3_name: 'リウ T.',
+  testimonial_3_route: '中国 → アメリカ合衆国',
+  
   // Error messages
   error_required: 'このフィールドは必須です',
   error_email: '有効なメールアドレスを入力してください',
