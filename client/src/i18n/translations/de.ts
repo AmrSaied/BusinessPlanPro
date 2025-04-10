@@ -186,5 +186,12 @@ export default {
   footer_privacy: 'Datenschutzrichtlinie',
   footer_languages_title: 'Sprachen',
   footer_copyright: 'Alle Rechte vorbehalten.',
-  footer_payment_methods: 'Wir akzeptieren:'
+  footer_payment_methods: 'Wir akzeptieren:',
+  
+  // Tips for Visa Applicants
+  how_tips_title: 'Tipps für Visumanträge',
+  how_tip1: 'Beantragen Sie Ihr Visum mindestens 4-6 Wochen vor Ihrem geplanten Reisedatum',
+  how_tip2: 'Stellen Sie sicher, dass Ihr Reisepass nach Ihrem geplanten Rückreisedatum noch mindestens sechs Monate gültig ist',
+  how_tip3: 'Fügen Sie bei der Beantragung eine detaillierte Reiseroute zusammen mit Ihrer Flugreservierung bei',
+  how_tip4: 'Überprüfen Sie vor der Beantragung die spezifischen Visumanforderungen für Ihr Zielland'
 };

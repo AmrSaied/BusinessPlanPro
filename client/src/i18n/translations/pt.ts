@@ -186,5 +186,12 @@ export default {
   footer_privacy: 'Política de Privacidade',
   footer_languages_title: 'Idiomas',
   footer_copyright: 'Todos os direitos reservados.',
-  footer_payment_methods: 'Aceitamos:'
+  footer_payment_methods: 'Aceitamos:',
+  
+  // Tips for Visa Applicants
+  how_tips_title: 'Dicas para Solicitantes de Visto',
+  how_tip1: 'Solicite seu visto pelo menos 4-6 semanas antes da data pretendida de viagem',
+  how_tip2: 'Certifique-se de que seu passaporte tenha pelo menos seis meses de validade além da data planejada de retorno',
+  how_tip3: 'Inclua um itinerário detalhado junto com sua reserva de voo durante a solicitação',
+  how_tip4: 'Verifique os requisitos específicos de visto para seu país de destino antes de solicitar'
 };

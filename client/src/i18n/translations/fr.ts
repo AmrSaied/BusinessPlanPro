@@ -186,5 +186,12 @@ export default {
   footer_privacy: 'Politique de Confidentialité',
   footer_languages_title: 'Langues',
   footer_copyright: 'Tous droits réservés.',
-  footer_payment_methods: 'Nous acceptons :'
+  footer_payment_methods: 'Nous acceptons :',
+  
+  // Tips for Visa Applicants
+  how_tips_title: 'Conseils pour les demandeurs de visa',
+  how_tip1: 'Faites votre demande de visa au moins 4 à 6 semaines avant votre date de voyage prévue',
+  how_tip2: 'Assurez-vous que votre passeport est valide pour au moins six mois au-delà de votre date de retour prévue',
+  how_tip3: 'Incluez un itinéraire détaillé avec votre réservation de vol lors de la demande',
+  how_tip4: 'Vérifiez les exigences spécifiques de visa pour votre pays de destination avant de faire la demande'
 };

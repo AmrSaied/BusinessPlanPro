@@ -186,5 +186,12 @@ export default {
   footer_privacy: '隐私政策',
   footer_languages_title: '语言',
   footer_copyright: '版权所有。',
-  footer_payment_methods: '我们接受：'
+  footer_payment_methods: '我们接受：',
+  
+  // Tips for Visa Applicants
+  how_tips_title: '签证申请人提示',
+  how_tip1: '在您预定的旅行日期前至少4-6周申请签证',
+  how_tip2: '确保您的护照在计划回国日期后至少有六个月的有效期',
+  how_tip3: '申请时附上详细的行程安排以及航班预订',
+  how_tip4: '申请前查询目的地国家的具体签证要求'
 };

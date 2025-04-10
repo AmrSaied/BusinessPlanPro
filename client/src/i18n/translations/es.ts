@@ -278,5 +278,12 @@ export default {
   footer_live_chat: 'Chat en Vivo',
   footer_email_support: 'Soporte por Correo',
   footer_languages_title: 'Idiomas',
-  footer_payment_methods: 'Aceptamos:'
+  footer_payment_methods: 'Aceptamos:',
+  
+  // Tips for Visa Applicants
+  how_tips_title: 'Consejos para Solicitantes de Visa',
+  how_tip1: 'Solicite su visa al menos 4-6 semanas antes de su fecha de viaje prevista',
+  how_tip2: 'Asegúrese de que su pasaporte tenga al menos seis meses de validez más allá de su fecha de regreso planificada',
+  how_tip3: 'Incluya un itinerario detallado junto con su reserva de vuelo durante la solicitud',
+  how_tip4: 'Verifique los requisitos específicos de visa para su país de destino antes de solicitar'
 };

@@ -186,5 +186,12 @@ export default {
   footer_privacy: 'プライバシーポリシー',
   footer_languages_title: '言語',
   footer_copyright: '全著作権所有。',
-  footer_payment_methods: '対応決済方法：'
+  footer_payment_methods: '対応決済方法：',
+  
+  // Tips for Visa Applicants
+  how_tips_title: 'ビザ申請者へのヒント',
+  how_tip1: '予定されている渡航日の少なくとも4〜6週間前にビザを申請してください',
+  how_tip2: '計画された帰国日から少なくとも6ヶ月間のパスポート有効期限があることを確認してください',
+  how_tip3: '申請時に、フライト予約と共に詳細な旅程表を含めてください',
+  how_tip4: '申請前に目的地国の特定のビザ要件を確認してください'
 };

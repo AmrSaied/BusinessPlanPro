@@ -278,5 +278,12 @@ export default {
   footer_email_support: 'دعم البريد الإلكتروني',
   footer_support_title: 'الدعم',
   footer_languages_title: 'اللغات',
-  footer_payment_methods: 'نقبل:'
+  footer_payment_methods: 'نقبل:',
+  
+  // Tips for Visa Applicants
+  how_tips_title: 'نصائح لمقدمي طلبات التأشيرة',
+  how_tip1: 'تقدم بطلب للحصول على تأشيرتك قبل 4-6 أسابيع على الأقل من تاريخ سفرك المقصود',
+  how_tip2: 'تأكد من أن جواز سفرك صالح لمدة ستة أشهر على الأقل بعد تاريخ عودتك المخطط له',
+  how_tip3: 'قم بتضمين جدول سفر مفصل مع حجز رحلتك أثناء التقديم',
+  how_tip4: 'تحقق من متطلبات التأشيرة المحددة لبلد وجهتك قبل التقديم'
 };
