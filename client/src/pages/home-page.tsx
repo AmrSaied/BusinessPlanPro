@@ -308,8 +308,8 @@ const HomePage = () => {
       <Hero />
       <FlightSearch />
       <HowItWorks />
-      <GetYourTicket />
       <Testimonials />
+      <GetYourTicket />
     </>
   );
 };
