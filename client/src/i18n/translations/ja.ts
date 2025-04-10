@@ -159,5 +159,21 @@ export default {
   error_server: 'サーバーエラー、再試行してください',
   error_invalid_card: '無効なカード情報',
   error_payment_failed: '支払いに失敗しました。もう一度お試しください。',
-  error_fields: 'すべての必須フィールドに入力してください'
+  error_fields: 'すべての必須フィールドに入力してください',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: 'フライト予約を作成する準備はできていますか？',
+  get_ticket_now_subtitle: '数分でビザ申請用のフライト予約を取得',
+  get_ticket_now_description: 'ビザ申請のための迅速、簡単、かつ大使館に受け入れられるフライト予約。',
+  get_ticket_now_button: '今すぐチケットを取得',
+  get_ticket_now_floating_text: '5分以内に検証可能なフライト予約を作成。',
+  
+  get_ticket_now_feature1_title: '大使館で検証済み',
+  get_ticket_now_feature1_text: 'すべての予約には検証可能なPNRコードと航空会社の参照が含まれています。',
+  
+  get_ticket_now_feature2_title: '迅速な配送',
+  get_ticket_now_feature2_text: '最短5分でメールにてチケットを受け取れます。',
+  
+  get_ticket_now_feature3_title: '返金保証',
+  get_ticket_now_feature3_text: '予約が受け入れられなかった場合、全額返金いたします。'
 };

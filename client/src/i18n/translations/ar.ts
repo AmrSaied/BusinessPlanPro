@@ -254,5 +254,21 @@ export default {
   error_server: 'خطأ في الخادم، يرجى المحاولة مرة أخرى',
   error_invalid_card: 'معلومات البطاقة غير صالحة',
   error_payment_failed: 'فشل الدفع. يرجى المحاولة مرة أخرى.',
-  error_fields: 'يرجى ملء جميع الحقول المطلوبة'
+  error_fields: 'يرجى ملء جميع الحقول المطلوبة',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: 'هل أنت جاهز لإنشاء حجز رحلتك؟',
+  get_ticket_now_subtitle: 'احصل على حجز رحلة جاهز للتأشيرة في دقائق',
+  get_ticket_now_description: 'حجوزات رحلات سريعة وسهلة ومقبولة من السفارات لطلب التأشيرة الخاص بك.',
+  get_ticket_now_button: 'احصل على تذكرتك الآن',
+  get_ticket_now_floating_text: 'أنشئ حجز رحلتك القابل للتحقق في أقل من 5 دقائق.',
+  
+  get_ticket_now_feature1_title: 'تحقق من السفارة',
+  get_ticket_now_feature1_text: 'تتضمن جميع الحجوزات رموز PNR قابلة للتحقق ومراجع شركات الطيران.',
+  
+  get_ticket_now_feature2_title: 'توصيل سريع',
+  get_ticket_now_feature2_text: 'استلم تذكرتك عبر البريد الإلكتروني في أقل من 5 دقائق.',
+  
+  get_ticket_now_feature3_title: 'ضمان استرداد الأموال',
+  get_ticket_now_feature3_text: 'إذا لم يتم قبول حجزك، فإننا نقدم استرداد كامل.'
 };

@@ -159,5 +159,21 @@ export default {
   error_server: '服务器错误，请重试',
   error_invalid_card: '无效的卡信息',
   error_payment_failed: '支付失败。请重试。',
-  error_fields: '请填写所有必填字段'
+  error_fields: '请填写所有必填字段',
+  
+  // Get Ticket Now widget
+  get_ticket_now_title: '准备创建您的航班预订？',
+  get_ticket_now_subtitle: '在几分钟内获取您的签证就绪航班预订',
+  get_ticket_now_description: '快速、简便且被使馆接受的航班预订，用于您的签证申请。',
+  get_ticket_now_button: '立即获取您的机票',
+  get_ticket_now_floating_text: '在不到5分钟的时间内创建您的可验证航班预订。',
+  
+  get_ticket_now_feature1_title: '使馆验证',
+  get_ticket_now_feature1_text: '所有预订均包含可验证的PNR代码和航空公司引用。',
+  
+  get_ticket_now_feature2_title: '快速交付',
+  get_ticket_now_feature2_text: '通过电子邮件在短至5分钟内收到您的机票。',
+  
+  get_ticket_now_feature3_title: '退款保证',
+  get_ticket_now_feature3_text: '如果您的预订未被接受，我们提供全额退款。'
 };
