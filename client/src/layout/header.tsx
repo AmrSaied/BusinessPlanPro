@@ -92,7 +92,7 @@ const Header = () => {
           </Link>
           
           {/* Navigation - Desktop */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center justify-between min-w-[380px] max-w-[500px] flex-grow mx-4">
             <Link href="/">
               <span className={`font-medium ${location === '/' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_home')}
@@ -120,13 +120,13 @@ const Header = () => {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-1 text-sm rounded-md px-2 py-1 text-gray-700 hover:bg-gray-100">
-                  <Globe className="h-4 w-4 text-gray-500" />
-                  <span>{languages[currentLanguage]?.nativeName || 'English'}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                <Button variant="ghost" className="flex items-center text-sm rounded-md px-2 py-1 text-gray-700 hover:bg-gray-100">
+                  <Globe className="h-4 w-4 text-gray-500 mr-1.5" />
+                  <span className="truncate max-w-[100px]">{languages[currentLanguage]?.nativeName || 'English'}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-500 ml-1" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-48">
+              <DropdownMenuContent className="w-52">
                 {Object.entries(languages || {}).map(([code, lang]: [string, any]) => (
                   <DropdownMenuItem 
                     key={code} 
@@ -134,10 +134,10 @@ const Header = () => {
                     className={code === currentLanguage ? "bg-primary/10" : ""}
                   >
                     <div className="flex items-center w-full">
-                      <span className="mr-2 text-lg">{lang.flag}</span> 
-                      <span>{lang.nativeName}</span>
+                      <span className="mr-2 text-lg flex-shrink-0">{lang.flag}</span> 
+                      <span className="truncate">{lang.nativeName}</span>
                       {code === currentLanguage && (
-                        <span className="ml-auto">✓</span>
+                        <span className="ml-auto flex-shrink-0">✓</span>
                       )}
                     </div>
                   </DropdownMenuItem>
@@ -173,7 +173,7 @@ const Header = () => {
                 </DropdownMenu>
               ) : (
                 <Link href="/auth">
-                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block min-w-[140px] text-center">
                     {t('nav_sign_in')}
                   </span>
                 </Link>
@@ -222,7 +222,7 @@ const Header = () => {
                 </>
               ) : (
                 <Link href="/auth">
-                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block min-w-[140px]">
                     {t('nav_sign_in')}
                   </span>
                 </Link>
