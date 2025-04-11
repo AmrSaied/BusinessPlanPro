@@ -13,147 +13,390 @@ export class TicketService {
     const ticketData = await this.generateTicketData(bookingId);
     
     // Create a PDF document
-    const doc = new PDFDocument({ margin: 50 });
+    const doc = new PDFDocument({ margin: 30, size: 'A4' });
     
     // Collect the PDF document chunks
     return new Promise<Buffer>((resolve, reject) => {
       try {
         const chunks: Buffer[] = [];
-        const stream = new Readable();
         
         doc.on('data', (chunk: Buffer) => chunks.push(chunk));
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
         
-        // Add airline header with realistic logo text
-        let headerColor = '#006699'; // Default blue
+        // Define airline colors and styles based on airline code
+        let primaryColor = '#1A365D'; // Default dark blue
+        let secondaryColor = '#2B4C7E';
+        let airlineLogoText = ticketData.flight.airlineName;
+        
         if (ticketData.flight.airlineCode === 'BA') {
-          headerColor = '#075AAA'; // British Airways blue
-          doc.fontSize(16).font('Helvetica-Bold').fillColor(headerColor).text('British Airways', { align: 'left' });
+          primaryColor = '#075AAA'; // British Airways blue
+          secondaryColor = '#EB2226'; // British Airways red
+          airlineLogoText = 'British Airways';
         } else if (ticketData.flight.airlineCode === 'AA') {
-          headerColor = '#0078D2'; // American Airlines blue
-          doc.fontSize(16).font('Helvetica-Bold').fillColor(headerColor).text('American Airlines', { align: 'left' });
+          primaryColor = '#0078D2'; // American Airlines blue
+          secondaryColor = '#C00C23'; // American Airlines red
+          airlineLogoText = 'American Airlines';
         } else if (ticketData.flight.airlineCode === 'EK') {
-          headerColor = '#D71E35'; // Emirates red
-          doc.fontSize(16).font('Helvetica-Bold').fillColor(headerColor).text('Emirates', { align: 'left' });
-        } else {
-          doc.fontSize(16).font('Helvetica-Bold').fillColor(headerColor).text(ticketData.flight.airlineName, { align: 'left' });
+          primaryColor = '#D71E35'; // Emirates red
+          secondaryColor = '#231F20'; // Emirates dark gray
+          airlineLogoText = 'Emirates';
+        } else if (ticketData.flight.airlineCode === 'LH') {
+          primaryColor = '#05164D'; // Lufthansa blue
+          secondaryColor = '#FFAD00'; // Lufthansa gold
+          airlineLogoText = 'Lufthansa';
         }
-        doc.moveDown();
         
-        // Add trip info header
-        doc.fontSize(14).font('Helvetica-Bold').fillColor('#000000').text('Flight Confirmation', { align: 'left' });
-        doc.fontSize(10).text(
-          `${ticketData.issueDate} - ${ticketData.flight.departureCity} (${ticketData.flight.departureAirport}) to ${ticketData.flight.arrivalCity} (${ticketData.flight.arrivalAirport}) - Confirmed`,
-          { align: 'left' }
-        );
-        doc.moveDown();
+        // Draw the header background
+        doc.fillColor(primaryColor)
+           .rect(0, 0, doc.page.width, 70)
+           .fill();
         
-        // Add airline info
-        doc.fontSize(12).font('Helvetica-Bold').text(`${ticketData.flight.airlineName} (${ticketData.flight.airlineCode}) ${ticketData.flight.flightNumber}`);
-        doc.fontSize(10).font('Helvetica').text(`Confirmation Number: ${ticketData.bookingReference}`);
-        doc.moveDown();
+        // Add header text with airline logo styling
+        doc.fillColor('white')
+           .fontSize(24)
+           .font('Helvetica-Bold')
+           .text(airlineLogoText, 30, 25);
         
-        // Add passenger info
-        doc.fontSize(10).font('Helvetica-Bold').text('PASSENGERS');
-        ticketData.passengers.forEach(passenger => {
-          doc.fontSize(10).font('Helvetica').text(`${passenger.title}. ${passenger.firstName} ${passenger.lastName}`);
+        // Add a small descriptor below the logo
+        doc.fillColor('white')
+           .fontSize(8)
+           .font('Helvetica')
+           .text('E-TICKET RECEIPT / PASSENGER ITINERARY', 30, 50);
+        
+        // Reset text color
+        doc.fillColor('black');
+        
+        // Add the ViewTrip logo/brand in the header
+        doc.fillColor('white')
+           .fontSize(10)
+           .font('Helvetica-Bold')
+           .text('ViewTrip', doc.page.width - 80, 25, { align: 'right' });
+           
+        // Add booking reference box in top right
+        doc.fillColor(secondaryColor)
+           .rect(doc.page.width - 160, 80, 130, 60)
+           .fill();
+           
+        doc.fillColor('white')
+           .fontSize(10)
+           .font('Helvetica-Bold')
+           .text('BOOKING REFERENCE', doc.page.width - 150, 90, { align: 'left' });
+           
+        doc.fillColor('white')
+           .fontSize(18)
+           .font('Helvetica-Bold')
+           .text(ticketData.bookingReference, doc.page.width - 150, 110, { align: 'left' });
+        
+        // Add main separator
+        doc.strokeColor('#DDDDDD')
+           .lineWidth(1)
+           .moveTo(30, 150)
+           .lineTo(doc.page.width - 30, 150)
+           .stroke();
+           
+        // Passenger information section
+        doc.fillColor('#333333')
+           .fontSize(14)
+           .font('Helvetica-Bold')
+           .text('PASSENGER INFORMATION', 30, 170);
+        
+        let yPos = 195;
+        
+        ticketData.passengers.forEach((passenger, index) => {
+          doc.fontSize(10)
+             .font('Helvetica-Bold')
+             .text(`PASSENGER ${index + 1}:`, 30, yPos);
+             
+          doc.fontSize(12)
+             .font('Helvetica')
+             .text(`${passenger.title}. ${passenger.firstName} ${passenger.lastName}`, 140, yPos);
+             
+          // Add a passport number if available
+          if (passenger.passportNumber) {
+            doc.fontSize(8)
+               .font('Helvetica')
+               .text(`Passport: ${passenger.passportNumber}`, 140, yPos + 15);
+          }
+          
+          // Add nationality if available
+          if (passenger.nationality) {
+            doc.fontSize(8)
+               .font('Helvetica')
+               .text(`Nationality: ${passenger.nationality}`, 280, yPos + 15);
+          }
+          
+          yPos += 35; // Move down for the next passenger
         });
-        doc.moveDown();
         
-        // Add airport info
-        doc.fontSize(10).font('Helvetica-Bold').text('AIRPORT INFO');
-        doc.fontSize(10).font('Helvetica').text(`${ticketData.flight.departureCity} Int'l Apt (${ticketData.flight.departureAirport})`);
-        doc.fontSize(10).font('Helvetica-Bold').text('TO');
-        doc.fontSize(10).font('Helvetica').text(`${ticketData.flight.arrivalCity} Int'l Apt (${ticketData.flight.arrivalAirport})`);
-        doc.fontSize(10).font('Helvetica').text(`${ticketData.flight.arrivalCity}, ${ticketData.flight.arrivalCountry}`);
-        doc.moveDown();
+        // Flight information section
+        yPos += 10;
+        doc.strokeColor('#DDDDDD')
+           .lineWidth(1)
+           .moveTo(30, yPos)
+           .lineTo(doc.page.width - 30, yPos)
+           .stroke();
         
-        // Add flight info
-        doc.fontSize(10).font('Helvetica-Bold').text('FLIGHT INFO');
-        doc.fontSize(10).font('Helvetica').text('Airbus A320-NEO');
-        doc.fontSize(10).font('Helvetica').text('Class of Service: Economy');
-        doc.moveDown();
+        yPos += 20;
+        doc.fillColor('#333333')
+           .fontSize(14)
+           .font('Helvetica-Bold')
+           .text('FLIGHT INFORMATION', 30, yPos);
         
-        // Add departure and arrival times
-        doc.fontSize(12).font('Helvetica-Bold').text('DEPART', { continued: true });
-        doc.fontSize(10).font('Helvetica').text(`                                     ARRIVE`, { align: 'right' });
-        doc.fontSize(14).font('Helvetica-Bold').text(`${ticketData.flight.departureTime}`, { continued: true });
-        doc.fontSize(14).font('Helvetica-Bold').text(`                                ${ticketData.flight.arrivalTime}`, { align: 'right' });
-        doc.fontSize(10).font('Helvetica').text(`Duration: ${ticketData.flight.duration}`);
-        doc.moveDown();
+        yPos += 30;
+        // Flight number and info box
+        doc.fillColor(primaryColor)
+           .rect(30, yPos, doc.page.width - 60, 40)
+           .fill();
         
-        // Add additional services if any
+        doc.fillColor('white')
+           .fontSize(14)
+           .font('Helvetica-Bold')
+           .text(`${ticketData.flight.airlineCode} ${ticketData.flight.flightNumber}`, 40, yPos + 12);
+           
+        doc.fillColor('white')
+           .fontSize(10)
+           .font('Helvetica')
+           .text(`Operated by ${ticketData.flight.airlineName}`, 180, yPos + 15);
+        
+        doc.fillColor('white')
+           .fontSize(10)
+           .font('Helvetica')
+           .text(`Class: Economy`, doc.page.width - 100, yPos + 15, { align: 'right' });
+        
+        // Departure and Arrival Information
+        yPos += 60;
+        
+        // Departure box
+        doc.fillColor('#F5F5F5')
+           .rect(30, yPos, (doc.page.width - 80) / 2, 100)
+           .fill();
+           
+        doc.fillColor(primaryColor)
+           .fontSize(12)
+           .font('Helvetica-Bold')
+           .text('DEPARTURE', 45, yPos + 15);
+           
+        doc.fillColor('#333333')
+           .fontSize(22)
+           .font('Helvetica-Bold')
+           .text(ticketData.flight.departureAirport, 45, yPos + 35);
+           
+        doc.fillColor('#666666')
+           .fontSize(10)
+           .font('Helvetica')
+           .text(`${ticketData.flight.departureCity}, ${ticketData.flight.departureCountry}`, 45, yPos + 60);
+          
+        doc.fillColor('#333333')
+           .fontSize(12)
+           .font('Helvetica-Bold')
+           .text(ticketData.flight.departureTime, 45, yPos + 80);
+        
+        // Arrival box
+        const arrivalX = 30 + ((doc.page.width - 80) / 2) + 20;
+        doc.fillColor('#F5F5F5')
+           .rect(arrivalX, yPos, (doc.page.width - 80) / 2, 100)
+           .fill();
+           
+        doc.fillColor(primaryColor)
+           .fontSize(12)
+           .font('Helvetica-Bold')
+           .text('ARRIVAL', arrivalX + 15, yPos + 15);
+           
+        doc.fillColor('#333333')
+           .fontSize(22)
+           .font('Helvetica-Bold')
+           .text(ticketData.flight.arrivalAirport, arrivalX + 15, yPos + 35);
+           
+        doc.fillColor('#666666')
+           .fontSize(10)
+           .font('Helvetica')
+           .text(`${ticketData.flight.arrivalCity}, ${ticketData.flight.arrivalCountry}`, arrivalX + 15, yPos + 60);
+          
+        doc.fillColor('#333333')
+           .fontSize(12)
+           .font('Helvetica-Bold')
+           .text(ticketData.flight.arrivalTime, arrivalX + 15, yPos + 80);
+        
+        // Flight duration
+        yPos += 110;
+        doc.fillColor('#666666')
+           .fontSize(10)
+           .font('Helvetica')
+           .text(`Duration: ${ticketData.flight.duration}`, 30, yPos);
+        
+        // Additional information
+        yPos += 30;
+        doc.strokeColor('#DDDDDD')
+           .lineWidth(1)
+           .moveTo(30, yPos)
+           .lineTo(doc.page.width - 30, yPos)
+           .stroke();
+        
+        yPos += 20;
+        doc.fillColor('#333333')
+           .fontSize(14)
+           .font('Helvetica-Bold')
+           .text('ADDITIONAL INFORMATION', 30, yPos);
+        
+        yPos += 25;
+        
         if (ticketData.ticketOptions.expressProcessing || 
             ticketData.ticketOptions.editableTicket || 
             ticketData.ticketOptions.hotelReservation || 
             ticketData.ticketOptions.insuranceLetter) {
-          
-          doc.fontSize(12).font('Helvetica-Bold').fillColor('#0066CC').text('ADDITIONAL SERVICES');
+              
+          // Create a table-like structure for additional services
+          const colWidth = (doc.page.width - 60) / 2;
+          let leftColY = yPos;
+          let rightColY = yPos;
           
           if (ticketData.ticketOptions.expressProcessing) {
-            doc.fontSize(10).font('Helvetica-Bold').fillColor('#000000').text('Express Processing');
-            doc.fontSize(9).font('Helvetica').text('Premium Service');
+            doc.fillColor('#555555')
+               .fontSize(10)
+               .font('Helvetica-Bold')
+               .text('✓ Express Processing', 30, leftColY);
+            
+            doc.fillColor('#777777')
+               .fontSize(8)
+               .font('Helvetica')
+               .text('Expedited delivery included', 30, leftColY + 12);
+               
+            leftColY += 25;
           }
           
           if (ticketData.ticketOptions.editableTicket) {
-            doc.fontSize(10).font('Helvetica-Bold').text('Editable Ticket');
-            doc.fontSize(9).font('Helvetica').text('Flexible Changes');
+            doc.fillColor('#555555')
+               .fontSize(10)
+               .font('Helvetica-Bold')
+               .text('✓ Editable Ticket', 30, leftColY);
+            
+            doc.fillColor('#777777')
+               .fontSize(8)
+               .font('Helvetica')
+               .text('Flexible changes allowed', 30, leftColY + 12);
+               
+            leftColY += 25;
           }
           
           if (ticketData.ticketOptions.hotelReservation) {
-            doc.fontSize(10).font('Helvetica-Bold').text('Hotel Reservation');
-            doc.fontSize(9).font('Helvetica').text('Accommodation Included');
+            doc.fillColor('#555555')
+               .fontSize(10)
+               .font('Helvetica-Bold')
+               .text('✓ Hotel Reservation', 30 + colWidth, rightColY);
+            
+            doc.fillColor('#777777')
+               .fontSize(8)
+               .font('Helvetica')
+               .text('Accommodation included', 30 + colWidth, rightColY + 12);
+               
+            rightColY += 25;
           }
           
           if (ticketData.ticketOptions.insuranceLetter) {
-            doc.fontSize(10).font('Helvetica-Bold').text('Insurance Letter');
-            doc.fontSize(9).font('Helvetica').text('Travel Protection');
+            doc.fillColor('#555555')
+               .fontSize(10)
+               .font('Helvetica-Bold')
+               .text('✓ Insurance Letter', 30 + colWidth, rightColY);
+            
+            doc.fillColor('#777777')
+               .fontSize(8)
+               .font('Helvetica')
+               .text('Travel protection included', 30 + colWidth, rightColY + 12);
+               
+            rightColY += 25;
           }
           
-          doc.moveDown();
+          yPos = Math.max(leftColY, rightColY) + 10;
         }
         
-        // Add contact information
-        doc.fontSize(12).font('Helvetica-Bold').fillColor('#0066CC').text('CONTACT INFORMATION');
-        doc.fontSize(10).font('Helvetica').fillColor('#000000').text(`Email: ${ticketData.contactEmail}`);
-        doc.fontSize(10).font('Helvetica').text(`Phone: ${ticketData.contactPhone}`);
-        doc.moveDown();
+        // Payment information
+        doc.fillColor('#333333')
+           .fontSize(10)
+           .font('Helvetica-Bold')
+           .text('PAYMENT INFORMATION', 30, yPos);
+           
+        doc.fillColor('#555555')
+           .fontSize(10)
+           .font('Helvetica')
+           .text(`Total Paid: ${ticketData.currency} ${ticketData.totalPrice.toFixed(2)}`, 30, yPos + 15);
         
-        // Add price information
-        doc.fontSize(12).font('Helvetica-Bold').text('PRICE INFORMATION');
-        doc.fontSize(10).font('Helvetica').text(`Total Price: ${ticketData.currency} ${ticketData.totalPrice.toFixed(2)}`);
-        doc.moveDown();
+        // Footer with contact information
+        const footerY = doc.page.height - 80;
         
-        // Add airline information based on airline code
+        doc.strokeColor('#DDDDDD')
+           .lineWidth(1)
+           .moveTo(30, footerY)
+           .lineTo(doc.page.width - 30, footerY)
+           .stroke();
+        
+        // Contact information based on airline
+        let contactInfo = {};
         if (ticketData.flight.airlineCode === 'BA') {
-          doc.fontSize(10).font('Helvetica').text('British Airways PLC');
-          doc.fontSize(9).font('Helvetica').text('Waterside, Harmondsworth, UB7 0GB, United Kingdom');
-          doc.fontSize(9).font('Helvetica').text('customer.service@ba.com');
-          doc.fontSize(9).font('Helvetica').text('+44 (0)203 250 0145');
+          contactInfo = {
+            companyName: 'British Airways PLC',
+            address: 'Waterside, Harmondsworth, UB7 0GB, United Kingdom',
+            email: 'customer.service@ba.com',
+            phone: '+44 (0)203 250 0145'
+          };
         } else if (ticketData.flight.airlineCode === 'AA') {
-          doc.fontSize(10).font('Helvetica').text('American Airlines, Inc.');
-          doc.fontSize(9).font('Helvetica').text('1 Skyview Drive, Fort Worth, TX 76155, USA');
-          doc.fontSize(9).font('Helvetica').text('customer.service@aa.com');
-          doc.fontSize(9).font('Helvetica').text('+1 800-433-7300');
+          contactInfo = {
+            companyName: 'American Airlines, Inc.',
+            address: '1 Skyview Drive, Fort Worth, TX 76155, USA',
+            email: 'customer.service@aa.com',
+            phone: '+1 800-433-7300'
+          };
         } else if (ticketData.flight.airlineCode === 'EK') {
-          doc.fontSize(10).font('Helvetica').text('Emirates Group');
-          doc.fontSize(9).font('Helvetica').text('Emirates Group Headquarters, PO Box 686, Dubai, UAE');
-          doc.fontSize(9).font('Helvetica').text('customer.affairs@emirates.com');
-          doc.fontSize(9).font('Helvetica').text('+971 600 555555');
+          contactInfo = {
+            companyName: 'Emirates Group',
+            address: 'Emirates Group Headquarters, PO Box 686, Dubai, UAE',
+            email: 'customer.affairs@emirates.com',
+            phone: '+971 600 555555'
+          };
         } else {
-          doc.fontSize(10).font('Helvetica').text(ticketData.flight.airlineName);
-          doc.fontSize(9).font('Helvetica').text('123 Airport Street, International Terminal');
-          doc.fontSize(9).font('Helvetica').text(`support@${ticketData.flight.airlineCode.toLowerCase()}.com`);
-          doc.fontSize(9).font('Helvetica').text('+44 123 456 7890');
+          contactInfo = {
+            companyName: ticketData.flight.airlineName,
+            address: '123 Airline Street, International Terminal',
+            email: `support@${ticketData.flight.airlineCode.toLowerCase()}.com`,
+            phone: '+44 123 456 7890'
+          };
         }
         
-        // Add QR code placeholder text
-        doc.fontSize(8).font('Helvetica').text('Scan QR code to verify ticket', { align: 'center' });
+        doc.fillColor('#555555')
+           .fontSize(8)
+           .font('Helvetica')
+           .text(contactInfo.companyName, 30, footerY + 10);
         
-        // Add ticket number and barcode placeholder
-        doc.moveDown();
-        doc.fontSize(8).font('Helvetica').text(`Ticket: ${ticketData.ticketNumber}`, { align: 'center' });
+        doc.fillColor('#777777')
+           .fontSize(7)
+           .font('Helvetica')
+           .text(contactInfo.address, 30, footerY + 20);
+           
+        doc.fillColor('#777777')
+           .fontSize(7)
+           .font('Helvetica')
+           .text(contactInfo.email, 30, footerY + 30);
+           
+        doc.fillColor('#777777')
+           .fontSize(7)
+           .font('Helvetica')
+           .text(contactInfo.phone, 30, footerY + 40);
+
+        // Passenger ticket identification and barcode area
+        doc.fillColor('#555555')
+           .fontSize(8)
+           .font('Helvetica-Bold')
+           .text(`TICKET NUMBER: ${ticketData.ticketNumber}`, doc.page.width - 180, footerY + 15, { align: 'right' });
+           
+        doc.fillColor('#777777')
+           .fontSize(7)
+           .font('Helvetica')
+           .text(`ISSUE DATE: ${ticketData.issueDate}`, doc.page.width - 180, footerY + 25, { align: 'right' });
+           
+        doc.fillColor('#777777')
+           .fontSize(7)
+           .font('Helvetica')
+           .text('Scan QR code to verify ticket →', doc.page.width - 180, footerY + 40, { align: 'right' });
         
         // Finalize the PDF
         doc.end();
