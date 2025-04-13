@@ -10,34 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Function to format passenger details into specialRequests string
-const formatSpecialRequests = (existingRequests: string, passenger: InsertPassenger): string => {
-  // If we have a departure date from the search params, include it
-  let specialRequestsWithPassenger = existingRequests || '';
-  
-  // Add passenger details to special requests
-  if (passenger) {
-    // Start with a comma if there are existing requests
-    if (specialRequestsWithPassenger && !specialRequestsWithPassenger.endsWith(',')) {
-      specialRequestsWithPassenger += ', ';
-    }
-    
-    // Add passenger details
-    specialRequestsWithPassenger += `firstName:${passenger.firstName}, lastName:${passenger.lastName}, title:${passenger.title}`;
-    
-    // Add additional passenger details if present
-    if (passenger.nationality) {
-      specialRequestsWithPassenger += `, nationality:${passenger.nationality}`;
-    }
-    
-    if (passenger.passportNumber) {
-      specialRequestsWithPassenger += `, passportNumber:${passenger.passportNumber}`;
-    }
-  }
-  
-  return specialRequestsWithPassenger;
-};
-
 const PaymentPage = () => {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
@@ -50,6 +22,39 @@ const PaymentPage = () => {
       navigate('/search');
     }
   }, [bookingData, navigate]);
+  
+  // Function to format passenger details into specialRequests string
+  const formatPassengerDetails = (existingRequests: string | undefined, passenger?: InsertPassenger): string => {
+    // If we have a departure date from the search params, include it
+    let specialRequestsWithPassenger = existingRequests || '';
+    
+    // Add passenger details to special requests
+    if (passenger) {
+      // Start with a comma if there are existing requests
+      if (specialRequestsWithPassenger && !specialRequestsWithPassenger.endsWith(',')) {
+        specialRequestsWithPassenger += ', ';
+      }
+      
+      // Add passenger details
+      specialRequestsWithPassenger += `firstName:${passenger.firstName}, lastName:${passenger.lastName}, title:${passenger.title}`;
+      
+      // Add additional passenger details if present
+      if (passenger.nationality) {
+        specialRequestsWithPassenger += `, nationality:${passenger.nationality}`;
+      }
+      
+      if (passenger.passportNumber) {
+        specialRequestsWithPassenger += `, passportNumber:${passenger.passportNumber}`;
+      }
+      
+      // Include departure date from search parameters if available
+      if (bookingData.searchParams?.departureDate) {
+        specialRequestsWithPassenger += `, departureDate:${bookingData.searchParams.departureDate}`;
+      }
+    }
+    
+    return specialRequestsWithPassenger;
+  };
   
   // Create booking mutation
   const createBookingMutation = useMutation({
@@ -93,7 +98,7 @@ const PaymentPage = () => {
   // Handle payment submission
   const handlePaymentComplete = async (paymentData: Payment) => {
     // Check if we have all required data
-    if (!bookingData.selectedFlight || !bookingData.options || !bookingData.passengers || !bookingData.contactInfo || !bookingData.totalPrice) {
+    if (!bookingData.selectedFlight || !bookingData.options || !bookingData.contactInfo || !bookingData.totalPrice) {
       toast({
         title: t('error_fields'),
         description: 'Missing required booking information',
@@ -121,7 +126,9 @@ const PaymentPage = () => {
         contactEmail: bookingData.contactInfo.email,
         contactPhone: bookingData.contactInfo.phone || '', // Ensure contactPhone is never undefined
         travelPurpose: bookingData.searchParams?.travelPurpose || 'visa',
-        specialRequests: formatSpecialRequests(bookingData.specialRequests, bookingData.passengers[0]),
+        specialRequests: bookingData.passengers && bookingData.passengers.length > 0 
+          ? formatPassengerDetails(bookingData.specialRequests, bookingData.passengers[0])
+          : bookingData.specialRequests || '',
       };
       
       const booking = await createBookingMutation.mutateAsync(bookingToCreate);
@@ -191,7 +198,9 @@ const PaymentPage = () => {
         contactEmail: bookingData.contactInfo.email,
         contactPhone: bookingData.contactInfo.phone || '', // Ensure contactPhone is never undefined
         travelPurpose: bookingData.searchParams?.travelPurpose || 'visa',
-        specialRequests: formatSpecialRequests(bookingData.specialRequests, bookingData.passengers[0]),
+        specialRequests: bookingData.passengers && bookingData.passengers.length > 0 
+          ? formatPassengerDetails(bookingData.specialRequests, bookingData.passengers[0])
+          : bookingData.specialRequests || '',
       };
       
       const booking = await createBookingMutation.mutateAsync(bookingToCreate);
