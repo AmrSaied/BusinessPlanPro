@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { flightSearchSchema, type FlightSearch } from "@shared/schema";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/context/language-context";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,6 +18,7 @@ import { format } from "date-fns";
 import { CalendarIcon, PlaneTakeoff, PlaneLanding, Users, Briefcase, AlertCircle } from "lucide-react";
 import AirportSearch from "./airport-search";
 import { Airport } from "@shared/schema";
+import { cn } from "@/lib/utils";
 
 interface FlightSearchFormProps {
   onSubmit: (data: FlightSearch) => void;
@@ -25,9 +27,13 @@ interface FlightSearchFormProps {
 
 const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const [tripType, setTripType] = useState<"one-way" | "round-trip">("round-trip"); // Set round-trip as default
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destinationAirport, setDestinationAirport] = useState<Airport | null>(null);
+  
+  // Check if language is RTL
+  const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
 
   const {
     control,
@@ -173,11 +179,18 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         <div className="relative">
                           <Button
                             variant="outline"
-                            className={`w-full justify-start text-left font-normal pl-10 ${
-                              !field.value ? "text-muted-foreground" : ""
-                            } ${errors.departureDate ? "border-red-500 ring-1 ring-red-500" : "border-gray-300 hover:border-primary"}`}
+                            dir={isRTL ? "rtl" : "ltr"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              isRTL ? "pr-10 text-right" : "pl-10 text-left",
+                              !field.value ? "text-muted-foreground" : "",
+                              errors.departureDate ? "border-red-500 ring-1 ring-red-500" : "border-gray-300 hover:border-primary"
+                            )}
                           >
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div className={cn(
+                              "absolute inset-y-0 flex items-center pointer-events-none",
+                              isRTL ? "right-0 pr-3" : "left-0 pl-3"
+                            )}>
                               <CalendarIcon className={`h-5 w-5 ${errors.departureDate ? "text-red-500" : "text-gray-400"}`} />
                             </div>
                             {field.value ? (
@@ -187,7 +200,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                             )}
                           </Button>
                           {errors.departureDate && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <div className={cn(
+                              "absolute top-1/2 -translate-y-1/2",
+                              isRTL ? "left-3" : "right-3"
+                            )}>
                               <AlertCircle className="h-5 w-5 text-red-500" />
                             </div>
                           )}
@@ -245,9 +261,17 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                   )}
                 />
                 {errors.departureDate && (
-                  <div className="flex mt-1">
-                    <AlertCircle className="h-4 w-4 text-red-500 mr-1" />
-                    <span className="text-sm text-red-500">{t(errors.departureDate.message as any) || errors.departureDate.message}</span>
+                  <div className={cn(
+                    "flex mt-1", 
+                    isRTL && "flex-row-reverse text-right"
+                  )}>
+                    <AlertCircle className={cn(
+                      "h-4 w-4 text-red-500", 
+                      isRTL ? "mr-0 ml-1" : "mr-1 ml-0"
+                    )} />
+                    <span className="text-sm text-red-500" dir={isRTL ? "rtl" : "ltr"}>
+                      {t(errors.departureDate.message as any) || errors.departureDate.message}
+                    </span>
                   </div>
                 )}
               </div>
@@ -269,11 +293,18 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           <div className="relative">
                             <Button
                               variant="outline"
-                              className={`w-full justify-start text-left font-normal pl-10 ${
-                                !field.value ? "text-muted-foreground" : ""
-                              } ${errors.returnDate ? "border-red-500 ring-1 ring-red-500" : "border-gray-300 hover:border-primary"}`}
+                              dir={isRTL ? "rtl" : "ltr"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                isRTL ? "pr-10 text-right" : "pl-10 text-left",
+                                !field.value ? "text-muted-foreground" : "",
+                                errors.returnDate ? "border-red-500 ring-1 ring-red-500" : "border-gray-300 hover:border-primary"
+                              )}
                             >
-                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <div className={cn(
+                                "absolute inset-y-0 flex items-center pointer-events-none",
+                                isRTL ? "right-0 pr-3" : "left-0 pl-3"
+                              )}>
                                 <CalendarIcon className={`h-5 w-5 ${errors.returnDate ? "text-red-500" : "text-gray-400"}`} />
                               </div>
                               {field.value ? (
@@ -283,7 +314,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                               )}
                             </Button>
                             {errors.returnDate && (
-                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <div className={cn(
+                                "absolute top-1/2 -translate-y-1/2",
+                                isRTL ? "left-3" : "right-3"
+                              )}>
                                 <AlertCircle className="h-5 w-5 text-red-500" />
                               </div>
                             )}
@@ -335,9 +369,17 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                     )}
                   />
                   {errors.returnDate && (
-                    <div className="flex mt-1">
-                      <AlertCircle className="h-4 w-4 text-red-500 mr-1" />
-                      <span className="text-sm text-red-500">{t(errors.returnDate.message as any) || t("invalid_return_date")}</span>
+                    <div className={cn(
+                      "flex mt-1", 
+                      isRTL && "flex-row-reverse text-right"
+                    )}>
+                      <AlertCircle className={cn(
+                        "h-4 w-4 text-red-500", 
+                        isRTL ? "mr-0 ml-1" : "mr-1 ml-0"
+                      )} />
+                      <span className="text-sm text-red-500" dir={isRTL ? "rtl" : "ltr"}>
+                        {t(errors.returnDate.message as any) || t("invalid_return_date")}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -350,7 +392,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                 {t("passengers")}
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className={cn(
+                  "absolute inset-y-0 flex items-center pointer-events-none",
+                  isRTL ? "right-0 pr-3" : "left-0 pl-3"
+                )}>
                   <Users className="h-5 w-5 text-gray-400" />
                 </div>
                 <Controller
@@ -361,7 +406,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                       value={String(field.value)}
                       onValueChange={(value) => field.onChange(parseInt(value))}
                     >
-                      <SelectTrigger className="pl-10 w-full">
+                      <SelectTrigger className={cn(
+                        "w-full",
+                        isRTL ? "pr-10 text-right" : "pl-10 text-left"
+                      )} dir={isRTL ? "rtl" : "ltr"}>
                         <SelectValue placeholder={`1 ${t("passenger_singular")}`} />
                       </SelectTrigger>
                       <SelectContent>
@@ -383,7 +431,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                 {t("travel_purpose")}
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className={cn(
+                  "absolute inset-y-0 flex items-center pointer-events-none",
+                  isRTL ? "right-0 pr-3" : "left-0 pl-3"
+                )}>
                   <Briefcase className="h-5 w-5 text-gray-400" />
                 </div>
                 <Controller
@@ -394,7 +445,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                       value={field.value}
                       onValueChange={field.onChange}
                     >
-                      <SelectTrigger className="pl-10 w-full">
+                      <SelectTrigger className={cn(
+                        "w-full",
+                        isRTL ? "pr-10 text-right" : "pl-10 text-left"
+                      )} dir={isRTL ? "rtl" : "ltr"}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
