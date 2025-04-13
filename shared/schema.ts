@@ -126,13 +126,13 @@ export const insertBookingPassengerSchema = createInsertSchema(bookingPassengers
 // Define search parameters schema for flight search
 export const flightSearchSchema = z.object({
   origin: z.string()
-    .min(3, { message: "Origin airport code must be 3 characters" })
-    .max(3, { message: "Origin airport code must be 3 characters" })
-    .refine(val => val.trim() !== "", { message: "Origin airport is required" }),
+    .min(3, { message: "invalid_airport_code" })
+    .max(3, { message: "invalid_airport_code" })
+    .refine(val => val.trim() !== "", { message: "origin_required" }),
   destination: z.string()
-    .min(3, { message: "Destination airport code must be 3 characters" })
-    .max(3, { message: "Destination airport code must be 3 characters" })
-    .refine(val => val.trim() !== "", { message: "Destination airport is required" }),
+    .min(3, { message: "invalid_airport_code" })
+    .max(3, { message: "invalid_airport_code" })
+    .refine(val => val.trim() !== "", { message: "destination_required" }),
   departureDate: z.string()
     .refine(date => {
       // Must be a valid date string

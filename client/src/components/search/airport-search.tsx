@@ -83,11 +83,11 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: Air
   return (
     <div className="w-full" ref={containerRef}>
       <div className="flex justify-between items-center mb-1">
-        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        <label className="block text-sm font-medium text-gray-700">{t(label)}</label>
         {error && (
           <span className="text-xs text-red-500 flex items-center">
             <AlertCircle className="w-3 h-3 mr-1" />
-            {error}
+            {t(error)}
           </span>
         )}
       </div>
@@ -97,8 +97,8 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: Air
         </div>
         <Input
           type="text"
-          className={`pl-10 pr-3 py-3 border ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary`}
-          placeholder={placeholder}
+          className={`pl-10 pr-3 py-3 border ${error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-primary'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary`}
+          placeholder={t(placeholder)}
           value={displayValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
