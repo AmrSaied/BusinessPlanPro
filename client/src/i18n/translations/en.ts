@@ -316,6 +316,10 @@ export default {
   error_invalid_card: 'Invalid card information',
   error_payment_failed: 'Payment failed. Please try again.',
   error_fields: 'Please fill in all required fields',
+  invalid_departure_date: 'Departure date must be today or in the future',
+  invalid_return_date: 'Return date must be after departure date',
+  select_departure_date: 'Select a departure date for your trip',
+  select_date_after: 'Select a date after',
   
   // Get Ticket Now widget
   

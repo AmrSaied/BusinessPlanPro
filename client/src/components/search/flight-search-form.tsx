@@ -168,10 +168,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant={errors.departureDate ? "destructive" : "outline"}
                         className={`w-full justify-start text-left font-normal pl-10 ${
                           !field.value ? "text-muted-foreground" : ""
-                        }`}
+                        } ${errors.departureDate ? "border-red-500" : ""}`}
                       >
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <CalendarIcon className="h-5 w-5 text-gray-400" />
@@ -189,11 +189,46 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         selected={field.value ? new Date(field.value) : undefined}
                         onSelect={(date) => {
                           if (date) {
-                            field.onChange(format(date, "yyyy-MM-dd"));
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            
+                            // Validate the date is today or in the future
+                            if (date < today) {
+                              // This should never happen due to disabled dates, but just in case
+                              setValue("departureDate", format(today, "yyyy-MM-dd"), {
+                                shouldValidate: true
+                              });
+                            } else {
+                              field.onChange(format(date, "yyyy-MM-dd"));
+                              
+                              // If we have a return date, validate that it's after the new departure date
+                              const returnDate = watch("returnDate");
+                              if (returnDate && watchedTripType === "round-trip") {
+                                const returnDateObj = new Date(returnDate);
+                                returnDateObj.setHours(0, 0, 0, 0);
+                                
+                                if (returnDateObj < date) {
+                                  // Auto-adjust return date to be the same as departure date
+                                  setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                    shouldValidate: true
+                                  });
+                                }
+                              }
+                            }
                           }
                         }}
                         initialFocus
-                        disabled={(date) => date < new Date()}
+                        disabled={(date) => {
+                          // Disable dates in the past
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          return date < today;
+                        }}
+                        footer={
+                          <p className="p-2 text-center text-sm text-muted-foreground">
+                            {t("select_departure_date")}
+                          </p>
+                        }
                       />
                     </PopoverContent>
                   </Popover>
