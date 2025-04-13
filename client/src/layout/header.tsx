@@ -92,7 +92,7 @@ const Header = () => {
           </Link>
           
           {/* Navigation - Desktop */}
-          <nav className="hidden md:flex items-center justify-between min-w-[380px] max-w-[500px] flex-grow mx-4">
+          <nav className="hidden md:flex items-center justify-between min-w-[380px] max-w-[500px] flex-grow mx-4 rtl:flex-row-reverse">
             <Link href="/">
               <span className={`font-medium ${location === '/' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_home')}
@@ -116,7 +116,7 @@ const Header = () => {
           </nav>
           
           {/* Language and Account Section */}
-          <div className="flex items-center space-x-6 md:space-x-8">
+          <div className="flex items-center space-x-6 md:space-x-8 rtl:space-x-reverse">
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -173,7 +173,7 @@ const Header = () => {
                 </DropdownMenu>
               ) : (
                 <Link href="/auth">
-                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block min-w-[160px] text-center whitespace-nowrap">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block min-w-[180px] text-center whitespace-nowrap rtl:min-w-[200px]">
                     {t('nav_sign_in')}
                   </span>
                 </Link>
@@ -222,7 +222,7 @@ const Header = () => {
                 </>
               ) : (
                 <Link href="/auth">
-                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block min-w-[160px] whitespace-nowrap">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block min-w-[180px] whitespace-nowrap rtl:min-w-[200px]">
                     {t('nav_sign_in')}
                   </span>
                 </Link>
