@@ -23,6 +23,9 @@ export class ViewTripTicketService {
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
         
+        // Generate a realistic e-ticket number (13 digits)
+        const eTicketNumber = `${Math.floor(1000000000000 + Math.random() * 9000000000000)}`;
+        
         // ViewTrip Header (blue bar)
         const viewTripBlue = '#006699';
         doc.fillColor(viewTripBlue)
@@ -42,7 +45,7 @@ export class ViewTripTicketService {
            .font('Helvetica-Bold')
            .text('My Trip', 30, yPos);
         
-        // Format departure date
+        // Format departure date (use fixed date from example)
         const departureDate = new Date();
         departureDate.setDate(departureDate.getDate() + 30); // Future date for the trip
         
@@ -72,8 +75,9 @@ export class ViewTripTicketService {
         
         yPos += 15;
         
-        // Airline info
-        doc.fillColor('#772222')
+        // Airline logo area (rectangular colored area)
+        const airlineColor = ticketData.flight.airlineCode === 'EY' ? '#d02432' : '#772222';
+        doc.fillColor(airlineColor)
            .rect(30, yPos, 40, 25)
            .fill();
            
@@ -102,19 +106,34 @@ export class ViewTripTicketService {
            .font('Helvetica')
            .text(`Confirmation Number: ${ticketData.bookingReference}`, 80, yPos + 12);
         
+        // Add e-ticket number on the right side
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`E-ticket: ${eTicketNumber}`, doc.page.width - 150, yPos, { width: 120, align: 'right' });
+           
+        // Add reservation date
+        const currentDate = new Date();
+        const reservationDate = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Reservation Date: ${reservationDate}`, doc.page.width - 150, yPos + 12, { width: 120, align: 'right' });
+        
         // Flight times area
         yPos += 40;
         
-        // Departure time - fixed values matching the sample ticket
+        // Departure time - use flight data
+        const [departureHour, departureMinute] = ticketData.flight.departureTime.replace('AM', '').replace('PM', '').trim().split(':');
+        const isPM = ticketData.flight.departureTime.includes('PM');
+        
         doc.fontSize(16)
            .font('Helvetica-Bold')
-           .text('5:30', 180, yPos);
+           .text(ticketData.flight.departureTime.replace('AM', '').replace('PM', '').trim(), 180, yPos);
            
         doc.fontSize(10)
-           .text('PM', 180, yPos + 16);
+           .text(isPM ? 'PM' : 'AM', 180, yPos + 16);
            
         doc.fontSize(8)
-           .text('CAI', 180, yPos + 26);
+           .text(ticketData.flight.departureAirport, 180, yPos + 26);
         
         // Non-stop flight indicators and plane
         doc.strokeColor('black')
@@ -139,29 +158,44 @@ export class ViewTripTicketService {
            
         // Flight duration
         doc.fontSize(7)
-           .text('3H 15M', 270, yPos + 17, { align: 'center' });
+           .text(ticketData.flight.duration.toUpperCase(), 270, yPos + 17, { align: 'center' });
         
-        // Arrival time - fixed values matching the sample ticket
+        // Arrival time - use flight data
+        const [arrivalHour, arrivalMinute] = ticketData.flight.arrivalTime.replace('AM', '').replace('PM', '').trim().split(':');
+        const isArrivalPM = ticketData.flight.arrivalTime.includes('PM');
+        
         doc.fontSize(16)
            .font('Helvetica-Bold')
-           .text('10:45', 350, yPos);
+           .text(ticketData.flight.arrivalTime.replace('AM', '').replace('PM', '').trim(), 350, yPos);
            
         doc.fontSize(10) 
-           .text('PM', 350, yPos + 16);
+           .text(isArrivalPM ? 'PM' : 'AM', 350, yPos + 16);
            
         doc.fontSize(8)
-           .text('AUH', 350, yPos + 26);
+           .text(ticketData.flight.arrivalAirport, 350, yPos + 26);
         
+        // Flight number
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Flight: ${flightNumber}`, 180, yPos + 40);
+           
         // Passenger information
-        yPos += 50;
+        yPos += 70;
         doc.fontSize(9)
            .font('Helvetica-Bold')
            .text('PASSENGERS', 30, yPos);
         
         yPos += 15;
         
-        // Add passenger details - using a consistent format from the sample
-        const passengerName = "ELSAARAN, AMR SAIED MR";
+        // Add passenger details
+        let passengerName = "ELSAARAN, AMR SAIED MR";
+        
+        // If we have actual passenger data, use it
+        if (ticketData.passengers && ticketData.passengers.length > 0) {
+          const passenger = ticketData.passengers[0];
+          passengerName = `${passenger.lastName?.toUpperCase()}, ${passenger.firstName?.toUpperCase()} ${passenger.title?.toUpperCase()}`;
+        }
+        
         doc.fontSize(9)
            .font('Helvetica')
            .text(passengerName, 30, yPos);
@@ -171,7 +205,7 @@ export class ViewTripTicketService {
         // Service class
         doc.fontSize(9)
            .font('Helvetica')
-           .text('Class Of Service: Economy', 30, yPos);
+           .text('Class Of Service: Economy (Y)', 30, yPos);
         
         yPos += 15;
         
@@ -182,12 +216,15 @@ export class ViewTripTicketService {
         
         yPos += 15;
         
-        // Departure airport details - fixed to match sample
+        // Departure airport details
+        const departureTerminal = ticketData.flight.departureAirport === 'CAI' ? 'Terminal 2' : 'Main Terminal';
+        const departureCountryCode = this.getCountryCode(ticketData.flight.departureCountry);
+        
         doc.fontSize(9)
            .font('Helvetica')
-           .text('Cairo Intl Arpt (CAI)', 30, yPos)
-           .text('Cairo, EG', 30, yPos + 10)
-           .text('Terminal 2', 30, yPos + 20);
+           .text(`${ticketData.flight.departureCity} Intl Arpt (${ticketData.flight.departureAirport})`, 30, yPos)
+           .text(`${ticketData.flight.departureCity}, ${departureCountryCode}`, 30, yPos + 10)
+           .text(departureTerminal, 30, yPos + 20);
         
         // To line with dots
         doc.fontSize(8)
@@ -202,12 +239,15 @@ export class ViewTripTicketService {
           doc.moveTo(i, lineY).lineTo(i + 3, lineY).stroke();
         }
         
-        // Arrival airport details - fixed to match sample
+        // Arrival airport details
+        const arrivalTerminal = ticketData.flight.arrivalAirport === 'AUH' ? 'Terminal A' : 'Main Terminal';
+        const arrivalCountryCode = this.getCountryCode(ticketData.flight.arrivalCountry);
+        
         doc.fontSize(9)
            .font('Helvetica')
-           .text('Zayed International Apt (AUH)', 350, yPos)
-           .text('Abu Dhabi, AE', 350, yPos + 10)
-           .text('Terminal A', 350, yPos + 20);
+           .text(`${ticketData.flight.arrivalCity} Intl Arpt (${ticketData.flight.arrivalAirport})`, 350, yPos)
+           .text(`${ticketData.flight.arrivalCity}, ${arrivalCountryCode}`, 350, yPos + 10)
+           .text(arrivalTerminal, 350, yPos + 20);
         
         yPos += 40;
         
@@ -219,10 +259,123 @@ export class ViewTripTicketService {
         yPos += 15;
         
         // Aircraft type and meal
+        const aircraftType = ticketData.flight.airlineCode === 'EY' ? 'Airbus A321 NEO' : 'Boeing 787-9';
         doc.fontSize(9)
            .font('Helvetica')
-           .text('Airbus A321 NEO', 30, yPos)
+           .text(aircraftType, 30, yPos)
            .text('Meal', 30, yPos + 10);
+        
+        // Fare basis section
+        yPos += 40;
+        doc.fontSize(9)
+           .font('Helvetica-Bold')
+           .text('FARE BASIS', 30, yPos);
+        
+        yPos += 15;
+        
+        // Generate a random fare basis code
+        const fareBasis = this.generateFareBasisCode(ticketData.flight.airlineCode);
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(fareBasis, 30, yPos);
+        
+        // Payment information
+        yPos += 30;
+        doc.fontSize(9)
+           .font('Helvetica-Bold')
+           .text('PAYMENT INFORMATION', 30, yPos);
+        
+        yPos += 15;
+        
+        // Payment details
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Form of Payment: Credit Card`, 30, yPos)
+           .text(`Amount: ${ticketData.currency} ${ticketData.totalPrice.toFixed(2)}`, 30, yPos + 10);
+        
+        // Security/QR Code section
+        yPos += 40;
+        
+        // Draw a fake QR code (black square with pattern)
+        const qrSize = 70;
+        const qrX = doc.page.width - 100;
+        const qrY = yPos;
+        
+        // Draw QR code background
+        doc.fillColor('black')
+           .rect(qrX, qrY, qrSize, qrSize)
+           .fill();
+        
+        // Draw some white squares to mimic QR code pattern
+        doc.fillColor('white');
+        
+        // Draw QR code-like pattern (random white blocks)
+        for (let i = 0; i < 8; i++) {
+          for (let j = 0; j < 8; j++) {
+            if (Math.random() > 0.6) {
+              const blockSize = qrSize / 8;
+              doc.rect(qrX + i * blockSize, qrY + j * blockSize, blockSize, blockSize).fill();
+            }
+          }
+        }
+        
+        // Three fixed position blocks (QR code positioning squares)
+        doc.fillColor('white')
+           .rect(qrX + 5, qrY + 5, 15, 15)
+           .fill()
+           .rect(qrX + qrSize - 20, qrY + 5, 15, 15)
+           .fill()
+           .rect(qrX + 5, qrY + qrSize - 20, 15, 15)
+           .fill();
+        
+        doc.fillColor('black')
+           .rect(qrX + 8, qrY + 8, 9, 9)
+           .fill()
+           .rect(qrX + qrSize - 17, qrY + 8, 9, 9)
+           .fill()
+           .rect(qrX + 8, qrY + qrSize - 17, 9, 9)
+           .fill();
+        
+        // Add verification text
+        doc.fillColor('black')
+           .fontSize(8)
+           .font('Helvetica')
+           .text('SCAN FOR VERIFICATION', qrX, qrY + qrSize + 5, { width: qrSize, align: 'center' });
+        
+        // Legal information and footer
+        yPos = doc.page.height - 100;
+        doc.fontSize(7)
+           .font('Helvetica')
+           .text('IMPORTANT NOTICES:', 30, yPos)
+           .text('• Please verify flight times prior to departure as schedules may change', 30, yPos + 10)
+           .text('• Arrive at the airport at least 3 hours before international departures', 30, yPos + 20)
+           .text('• Valid ID and travel documents required for travel', 30, yPos + 30)
+           .text('• This is an electronic ticket, please print this receipt or keep a digital copy', 30, yPos + 40);
+        
+        // Barcode at the bottom
+        const barcodeY = doc.page.height - 40;
+        
+        // Draw a fake barcode
+        const barcodeX = 30;
+        const barcodeHeight = 20;
+        const barcodeWidth = 350;
+        
+        for (let i = 0; i < 50; i++) {
+          const x = barcodeX + i * (barcodeWidth / 50);
+          const lineWidth = Math.random() * 3 + 1;
+          
+          // Skip some positions to create spacing in barcode
+          if (Math.random() > 0.7) continue;
+          
+          doc.fillColor('black')
+             .rect(x, barcodeY, lineWidth, barcodeHeight)
+             .fill();
+        }
+        
+        // Add barcode number
+        doc.fontSize(8)
+           .font('Helvetica')
+           .text(`${eTicketNumber}`, barcodeX, barcodeY + barcodeHeight + 2, { width: barcodeWidth, align: 'center' });
         
         // Finalize PDF
         doc.end();
@@ -230,6 +383,41 @@ export class ViewTripTicketService {
         reject(error);
       }
     });
+  }
+  
+  // Helper method to get 2-letter country code
+  private getCountryCode(country: string): string {
+    const countryCodes: Record<string, string> = {
+      'United States': 'US',
+      'United Kingdom': 'GB',
+      'Egypt': 'EG',
+      'United Arab Emirates': 'AE',
+      'Thailand': 'TH',
+      'China': 'CN',
+      'Japan': 'JP',
+      'Germany': 'DE',
+      'France': 'FR',
+      'Brazil': 'BR',
+      'Russia': 'RU',
+      'India': 'IN',
+      'Spain': 'ES',
+      'Netherlands': 'NL',
+      'Singapore': 'SG',
+      'Turkey': 'TR'
+    };
+    
+    return countryCodes[country] || country.substring(0, 2).toUpperCase();
+  }
+  
+  // Generate a realistic fare basis code
+  private generateFareBasisCode(airlineCode: string): string {
+    const classes = ['Y', 'B', 'M', 'E', 'H', 'Q', 'L', 'K', 'G', 'S'];
+    const randomClass = classes[Math.floor(Math.random() * classes.length)];
+    
+    // Basic structure: class + airline initial + random number + restriction codes
+    const fareCode = `${randomClass}${airlineCode.charAt(0)}${Math.floor(Math.random() * 90) + 10}NR`;
+    
+    return fareCode;
   }
   
   async generateTicketData(bookingId: number) {
