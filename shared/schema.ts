@@ -127,8 +127,27 @@ export const insertBookingPassengerSchema = createInsertSchema(bookingPassengers
 export const flightSearchSchema = z.object({
   origin: z.string().min(3).max(3),
   destination: z.string().min(3).max(3),
-  departureDate: z.string(),
-  returnDate: z.string().optional(),
+  departureDate: z.string()
+    .refine(date => {
+      // Must be a valid date string
+      const isValid = !isNaN(new Date(date).getTime());
+      return isValid;
+    }, { message: "Invalid departure date format" })
+    .refine(date => {
+      // Must be today or in the future
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(date);
+      selectedDate.setHours(0, 0, 0, 0);
+      return selectedDate >= today;
+    }, { message: "Departure date must be today or in the future" }),
+  returnDate: z.string()
+    .refine(date => {
+      // Must be a valid date string
+      const isValid = !isNaN(new Date(date).getTime());
+      return isValid;
+    }, { message: "Invalid return date format" })
+    .optional(),
   passengers: z.number().min(1).max(9),
   travelPurpose: z.string(),
   tripType: z.enum(["one-way", "round-trip"]),

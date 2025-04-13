@@ -49,6 +49,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   });
 
   const watchedDepartureDate = watch("departureDate");
+  const watchedTripType = watch("tripType");
 
   // Handle origin airport selection
   const handleOriginSelect = (airport: Airport) => {
@@ -204,7 +205,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
             </div>
 
             {/* Return Date (hidden for one-way) */}
-            {tripType === "round-trip" && (
+            {watchedTripType === "round-trip" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t("return_date")}
@@ -216,10 +217,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
-                          variant="outline"
+                          variant={errors.returnDate ? "destructive" : "outline"}
                           className={`w-full justify-start text-left font-normal pl-10 ${
                             !field.value ? "text-muted-foreground" : ""
-                          }`}
+                          } ${errors.returnDate ? "border-red-500" : ""}`}
                         >
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <CalendarIcon className="h-5 w-5 text-gray-400" />
@@ -238,21 +239,47 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           onSelect={(date) => {
                             if (date) {
                               field.onChange(format(date, "yyyy-MM-dd"));
+                              
+                              // Validate that return date is after departure date
+                              if (watchedDepartureDate) {
+                                const departureDate = new Date(watchedDepartureDate);
+                                departureDate.setHours(0, 0, 0, 0);
+                                
+                                if (date < departureDate) {
+                                  // Set custom error message
+                                  setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                    shouldValidate: true
+                                  });
+                                }
+                              }
                             }
                           }}
                           initialFocus
                           disabled={(date) => {
-                            // Disable dates before departure date
-                            const departureDate = watchedDepartureDate
-                              ? new Date(watchedDepartureDate)
-                              : new Date();
-                            return date < departureDate;
+                            // For round trips, disable dates before departure date
+                            if (watchedDepartureDate) {
+                              const departureDate = new Date(watchedDepartureDate);
+                              departureDate.setHours(0, 0, 0, 0);
+                              return date < departureDate;
+                            }
+                            // If no departure date is set, disable dates in the past
+                            return date < new Date();
                           }}
+                          footer={
+                            watchedDepartureDate ? (
+                              <p className="p-2 text-center text-sm text-muted-foreground">
+                                {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
+                              </p>
+                            ) : null
+                          }
                         />
                       </PopoverContent>
                     </Popover>
                   )}
                 />
+                {errors.returnDate && (
+                  <span className="text-sm text-red-500">{errors.returnDate.message || t("invalid_return_date")}</span>
+                )}
               </div>
             )}
 
