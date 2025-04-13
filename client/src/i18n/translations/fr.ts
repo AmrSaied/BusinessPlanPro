@@ -160,6 +160,17 @@ export default {
   error_invalid_card: 'Informations de carte invalides',
   error_payment_failed: 'Paiement échoué. Veuillez réessayer.',
   error_fields: 'Veuillez remplir tous les champs obligatoires',
+  invalid_airport_code: 'Code d\'aéroport invalide',
+  invalid_date_format: 'Format de date invalide, veuillez sélectionner une date valide',
+  return_date_required: 'Date de retour obligatoire pour les vols aller-retour',
+  origin_destination_same: 'L\'origine et la destination ne peuvent pas être identiques',
+  invalid_departure_date: 'La date de départ doit être aujourd\'hui ou dans le futur',
+  invalid_return_date: 'La date de retour doit être après la date de départ',
+  origin_required: 'L\'aéroport d\'origine est obligatoire',
+  destination_required: 'L\'aéroport de destination est obligatoire',
+  select_departure_date: 'Sélectionnez une date de départ pour votre voyage',
+  select_date_after: 'Sélectionnez une date après',
+  no_airports_found: 'Aucun aéroport trouvé',
   
   // Get Ticket Now widget
   get_ticket_now_title: 'Prêt à Créer Votre Réservation de Vol ?',

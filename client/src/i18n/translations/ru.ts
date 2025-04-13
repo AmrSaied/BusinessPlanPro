@@ -160,6 +160,17 @@ export default {
   error_invalid_card: 'Недействительная информация карты',
   error_payment_failed: 'Оплата не удалась. Пожалуйста, повторите попытку.',
   error_fields: 'Пожалуйста, заполните все обязательные поля',
+  invalid_airport_code: 'Неверный код аэропорта',
+  invalid_date_format: 'Неверный формат даты, пожалуйста, выберите правильную дату',
+  return_date_required: 'Дата возвращения обязательна для рейсов туда и обратно',
+  origin_destination_same: 'Пункты отправления и назначения не могут быть одинаковыми',
+  invalid_departure_date: 'Дата вылета должна быть сегодня или в будущем',
+  invalid_return_date: 'Дата возвращения должна быть после даты вылета',
+  origin_required: 'Аэропорт отправления обязателен',
+  destination_required: 'Аэропорт назначения обязателен',
+  select_departure_date: 'Выберите дату вылета для вашей поездки',
+  select_date_after: 'Выберите дату после',
+  no_airports_found: 'Аэропорты не найдены',
   
   // Get Ticket Now widget
   get_ticket_now_title: 'Готовы создать бронирование рейса?',
