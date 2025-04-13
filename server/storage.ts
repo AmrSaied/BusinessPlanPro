@@ -298,7 +298,7 @@ export class MemStorage implements IStorage {
         airport.name.toLowerCase().includes(lowerQuery) ||
         airport.city.toLowerCase().includes(lowerQuery) ||
         airport.country.toLowerCase().includes(lowerQuery)
-    ).slice(0, 10); // Limit to 10 results
+    ).slice(0, 30); // Increased limit to 30 results
   }
   
   async getAllAirports(limit?: number): Promise<Airport[]> {

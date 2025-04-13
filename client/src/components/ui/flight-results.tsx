@@ -36,7 +36,7 @@ const FlightResults = ({ flights, isLoading, onSelectFlight }: FlightResultsProp
     <div className="space-y-4">
       {flights.map((flight) => (
         <div 
-          key={`${flight.airlineCode}${flight.flightNumber}`}
+          key={`${flight.airlineCode}${flight.flightNumber}-${flight.id}`}
           className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition"
         >
           <div className="p-4">
@@ -64,6 +64,7 @@ const FlightResults = ({ flights, isLoading, onSelectFlight }: FlightResultsProp
                 <div className="text-center mb-3 md:mb-0 md:mr-8">
                   <div className="font-semibold">{flight.departureTime}</div>
                   <div className="text-sm text-gray-500">{flight.departureAirport}</div>
+                  <div className="text-xs text-gray-600">{flight.departureCity}</div>
                 </div>
                 
                 {/* Flight Duration */}
@@ -79,6 +80,7 @@ const FlightResults = ({ flights, isLoading, onSelectFlight }: FlightResultsProp
                 <div className="text-center mb-3 md:mb-0 md:mr-8">
                   <div className="font-semibold">{flight.arrivalTime}</div>
                   <div className="text-sm text-gray-500">{flight.arrivalAirport}</div>
+                  <div className="text-xs text-gray-600">{flight.arrivalCity}</div>
                 </div>
               </div>
             </div>
