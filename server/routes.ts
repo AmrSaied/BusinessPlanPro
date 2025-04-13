@@ -218,7 +218,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Try to find flights for similar routes in our database
             const similarFlights = await storage.getFlights();
             
-            // Filter and adapt flights to match the requested route
+            // Lookup origin and destination airport information to get city and country data
+            const originAirport = await storage.getAirportByIataCode(searchParams.origin);
+            const destinationAirport = await storage.getAirportByIataCode(searchParams.destination);
+            
+            console.log(`Origin airport: ${originAirport?.name}, Destination airport: ${destinationAirport?.name}`);
+            
+            // Filter and adapt flights to match the requested route with correct city and country information
             const adaptedFlights = similarFlights
               .filter(flight => 
                 (flight.departureAirport !== searchParams.origin || 
@@ -228,8 +234,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 ...flight,
                 id: 10000 + index, // Temporary IDs to avoid collision
                 departureAirport: searchParams.origin,
+                departureCity: originAirport?.city || "Unknown City",
+                departureCountry: originAirport?.country || "Unknown Country",
                 arrivalAirport: searchParams.destination,
-                // Keep other properties the same
+                arrivalCity: destinationAirport?.city || "Unknown City",
+                arrivalCountry: destinationAirport?.country || "Unknown Country",
               }));
             
             if (adaptedFlights.length > 0) {
@@ -260,12 +269,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // For one-way trips, we shouldn't include return flights
               if (searchParams.tripType === 'one-way') {
                 return res.json({
-                  outbound: adaptedFlights.slice(0, 5), // Limit to 5 flights
+                  outbound: adaptedFlights.slice(0, 3), // Limit to 3 flights for faster loading
                   return: undefined
                 });
               } else {
                 return res.json({
-                  outbound: adaptedFlights.slice(0, 5), // Limit to 5 flights
+                  outbound: adaptedFlights.slice(0, 3), // Limit to 3 flights for faster loading
                   return: [] // Empty array for round-trip when no return flights found
                 });
               }
