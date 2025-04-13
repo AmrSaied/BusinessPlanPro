@@ -13,13 +13,14 @@ import {
 import { randomBytes } from "crypto";
 import { FlightService } from "./services/flight-service";
 import { TicketService } from "./services/ticket-service";
+import { ViewTripTicketService } from "./services/viewtrip-ticket-service";
 import { PaymentService } from "./services/payment-service";
 import { AmadeusService } from "./services/amadeus-service";
 import { setupAuth } from "./auth";
 
 // Initialize services
 const flightService = new FlightService(storage);
-const ticketService = new TicketService(storage);
+const ticketService = new ViewTripTicketService(storage); // Using ViewTrip ticket format
 const paymentService = new PaymentService();
 const aviationService = new AmadeusService(storage);
 

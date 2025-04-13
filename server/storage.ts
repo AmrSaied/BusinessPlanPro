@@ -342,6 +342,44 @@ export class MemStorage implements IStorage {
   // Helper methods to initialize data
   private initializeAirports() {
     const airports: InsertAirport[] = [
+      // ViewTrip ticket sample airports
+      {
+        iataCode: "CAI",
+        icaoCode: "HECA",
+        name: "Cairo International Airport",
+        city: "Cairo",
+        country: "Egypt",
+        countryCode: "EG",
+        latitude: 30.1219,
+        longitude: 31.4050,
+        timezone: "Africa/Cairo",
+        localName: { "en": "Cairo International Airport", "ar": "مطار القاهرة الدولي" }
+      },
+      {
+        iataCode: "AUH",
+        icaoCode: "OMAA",
+        name: "Zayed International Airport",
+        city: "Abu Dhabi",
+        country: "United Arab Emirates",
+        countryCode: "AE",
+        latitude: 24.4428,
+        longitude: 54.6511,
+        timezone: "Asia/Dubai",
+        localName: { "en": "Zayed International Airport", "ar": "مطار زايد الدولي" }
+      },
+      {
+        iataCode: "BKK",
+        icaoCode: "VTBS",
+        name: "Suvarnabhumi Airport",
+        city: "Bangkok",
+        country: "Thailand",
+        countryCode: "TH",
+        latitude: 13.6900,
+        longitude: 100.7501,
+        timezone: "Asia/Bangkok",
+        localName: { "en": "Suvarnabhumi Airport", "th": "ท่าอากาศยานสุวรรณภูมิ" }
+      },
+      // Original airports
       {
         iataCode: "JFK",
         icaoCode: "KJFK",
@@ -544,6 +582,7 @@ export class MemStorage implements IStorage {
   
   private initializeFlights() {
     const flights: InsertFlight[] = [
+      // Original flights
       {
         airlineCode: "EK",
         airlineName: "Emirates",
@@ -618,6 +657,68 @@ export class MemStorage implements IStorage {
         arrivalTime: "10:40",
         duration: "7h 40m",
         basePrice: 12
+      },
+      
+      // ViewTrip sample format flights
+      {
+        airlineCode: "EY",
+        airlineName: "Etihad Airways",
+        flightNumber: "EY716",
+        departureAirport: "CAI",
+        departureCity: "Cairo",
+        departureCountry: "Egypt",
+        arrivalAirport: "AUH",
+        arrivalCity: "Abu Dhabi",
+        arrivalCountry: "United Arab Emirates",
+        departureTime: "5:30 PM",
+        arrivalTime: "10:45 PM", 
+        duration: "3h 15m",
+        basePrice: 95
+      },
+      {
+        airlineCode: "EY",
+        airlineName: "Etihad Airways",
+        flightNumber: "EY406",
+        departureAirport: "AUH",
+        departureCity: "Abu Dhabi",
+        arrivalAirport: "BKK",
+        arrivalCity: "Bangkok",
+        arrivalCountry: "Thailand",
+        departureCountry: "United Arab Emirates",
+        departureTime: "9:35 AM",
+        arrivalTime: "6:35 PM",
+        duration: "6h 0m",
+        basePrice: 120
+      },
+      {
+        airlineCode: "EY",
+        airlineName: "Etihad Airways",
+        flightNumber: "EY407",
+        departureAirport: "BKK",
+        departureCity: "Bangkok",
+        departureCountry: "Thailand",
+        arrivalAirport: "AUH",
+        arrivalCity: "Abu Dhabi",
+        arrivalCountry: "United Arab Emirates",
+        departureTime: "8:25 PM",
+        arrivalTime: "12:30 AM",
+        duration: "7h 5m",
+        basePrice: 110
+      },
+      {
+        airlineCode: "EY",
+        airlineName: "Etihad Airways",
+        flightNumber: "EY711",
+        departureAirport: "AUH",
+        departureCity: "Abu Dhabi",
+        departureCountry: "United Arab Emirates",
+        arrivalAirport: "CAI",
+        arrivalCity: "Cairo",
+        arrivalCountry: "Egypt",
+        departureTime: "2:50 AM",
+        arrivalTime: "5:05 AM",
+        duration: "3h 15m",
+        basePrice: 90
       }
     ];
     
