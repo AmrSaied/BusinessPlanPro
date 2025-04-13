@@ -255,6 +255,17 @@ export default {
   error_invalid_card: 'معلومات البطاقة غير صالحة',
   error_payment_failed: 'فشل الدفع. يرجى المحاولة مرة أخرى.',
   error_fields: 'يرجى ملء جميع الحقول المطلوبة',
+  invalid_airport_code: 'رمز المطار غير صالح',
+  invalid_date_format: 'تنسيق التاريخ غير صالح، يرجى اختيار تاريخ صالح',
+  return_date_required: 'تاريخ العودة مطلوب لرحلات الذهاب والعودة',
+  origin_destination_same: 'لا يمكن أن تكون نقطة المغادرة والوجهة متطابقتين',
+  invalid_departure_date: 'يجب أن يكون تاريخ المغادرة اليوم أو في المستقبل',
+  invalid_return_date: 'يجب أن يكون تاريخ العودة بعد تاريخ المغادرة',
+  origin_required: 'مطار المغادرة مطلوب',
+  destination_required: 'مطار الوصول مطلوب',
+  select_departure_date: 'اختر تاريخ مغادرة لرحلتك',
+  select_date_after: 'اختر تاريخًا بعد',
+  no_airports_found: 'لم يتم العثور على مطارات',
   
   // Get Ticket Now widget
   get_ticket_now_title: 'هل أنت جاهز لإنشاء حجز رحلتك؟',
