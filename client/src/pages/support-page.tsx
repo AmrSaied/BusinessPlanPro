@@ -112,11 +112,11 @@ const SupportPage = () => {
                 description: t('chat_initiated_description'),
               })}
             >
-              <MessageSquare className="mr-2 h-4 w-4" />
+              <MessageSquare className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
               {t('start_chat')}
             </Button>
             <div className="mt-3 text-xs text-gray-500">
-              <Clock className="inline h-3 w-3 mr-1" />
+              <Clock className={cn("inline h-3 w-3", isRTL ? "ml-1" : "mr-1")} />
               {t('available_24_7')}
             </div>
           </div>
@@ -275,7 +275,7 @@ const SupportPage = () => {
                   >
                     {loading ? (
                       <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className={cn("animate-spin h-4 w-4 text-white", isRTL ? "-mr-1 ml-2" : "-ml-1 mr-2")} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -283,7 +283,7 @@ const SupportPage = () => {
                       </>
                     ) : (
                       <>
-                        <Send className="mr-2 h-4 w-4" />
+                        <Send className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
                         {t('send_message')}
                       </>
                     )}
@@ -332,17 +332,17 @@ const SupportPage = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <div className="flex items-center">
-                    <Phone className="h-5 w-5 text-primary mr-3" />
-                    <div>
+                  <div className={cn("flex items-center", isRTL && "flex-row-reverse")}>
+                    <Phone className={cn("h-5 w-5 text-primary", isRTL ? "ml-3" : "mr-3")} />
+                    <div className={cn(isRTL && "text-right")}>
                       <div className="text-sm text-gray-500">{t('technical_support')}</div>
                       <div className="font-medium">+201113284428</div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center">
-                    <Phone className="h-5 w-5 text-primary mr-3" />
-                    <div>
+                  <div className={cn("flex items-center", isRTL && "flex-row-reverse")}>
+                    <Phone className={cn("h-5 w-5 text-primary", isRTL ? "ml-3" : "mr-3")} />
+                    <div className={cn(isRTL && "text-right")}>
                       <div className="text-sm text-gray-500">{t('inquiry')}</div>
                       <div className="font-medium">+201501685555</div>
                     </div>
@@ -350,17 +350,17 @@ const SupportPage = () => {
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="flex items-center">
-                    <Mail className="h-5 w-5 text-primary mr-3" />
-                    <div>
+                  <div className={cn("flex items-center", isRTL && "flex-row-reverse")}>
+                    <Mail className={cn("h-5 w-5 text-primary", isRTL ? "ml-3" : "mr-3")} />
+                    <div className={cn(isRTL && "text-right")}>
                       <div className="text-sm text-gray-500">{t('contact')}</div>
                       <div className="font-medium">info@alkashier.com</div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center">
-                    <Mail className="h-5 w-5 text-primary mr-3" />
-                    <div>
+                  <div className={cn("flex items-center", isRTL && "flex-row-reverse")}>
+                    <Mail className={cn("h-5 w-5 text-primary", isRTL ? "ml-3" : "mr-3")} />
+                    <div className={cn(isRTL && "text-right")}>
                       <div className="text-sm text-gray-500">{t('the_support')}</div>
                       <div className="font-medium">support@alkashier.com</div>
                     </div>
