@@ -165,8 +165,8 @@ const SupportPage = () => {
               </div>
               
               <div className="mt-10">
-                <h4 className="font-medium mb-4">{t('follow_us')}</h4>
-                <div className="flex space-x-4">
+                <h4 className={cn("font-medium mb-4", isRTL && "text-right")}>{t('follow_us')}</h4>
+                <div className={cn("flex", isRTL ? "space-x-0 space-x-reverse space-x-4 flex-row-reverse" : "space-x-4")}>
                   <a href="#" className="hover:opacity-80 transition">
                     <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                       <i className="fab fa-facebook-f text-white"></i>
@@ -193,12 +193,12 @@ const SupportPage = () => {
             
             {/* Contact Form */}
             <div className="p-8 lg:col-span-3">
-              <h3 className="font-heading text-2xl font-semibold text-gray-800 mb-6">{t('send_message')}</h3>
+              <h3 className={cn("font-heading text-2xl font-semibold text-gray-800 mb-6", isRTL && "text-right")}>{t('send_message')}</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="name" className={cn("block text-sm font-medium text-gray-700 mb-1", isRTL && "text-right")}>
                       {t('form_name')} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -208,13 +208,14 @@ const SupportPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary", isRTL && "text-right")}
                       placeholder={t('form_name_placeholder')}
+                      dir={isRTL ? "rtl" : "ltr"}
                     />
                   </div>
                   
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="email" className={cn("block text-sm font-medium text-gray-700 mb-1", isRTL && "text-right")}>
                       {t('form_email')} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -226,12 +227,13 @@ const SupportPage = () => {
                       required
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                       placeholder={t('form_email_placeholder')}
+                      dir={isRTL ? "rtl" : "ltr"}
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="subject" className={cn("block text-sm font-medium text-gray-700 mb-1", isRTL && "text-right")}>
                     {t('form_subject')} <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -240,7 +242,8 @@ const SupportPage = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary", isRTL && "text-right")}
+                    dir={isRTL ? "rtl" : "ltr"}
                   >
                     <option value="">{t('form_subject_placeholder')}</option>
                     <option value="booking">{t('subject_booking')}</option>
@@ -252,7 +255,7 @@ const SupportPage = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="message" className={cn("block text-sm font-medium text-gray-700 mb-1", isRTL && "text-right")}>
                     {t('form_message')} <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -262,8 +265,9 @@ const SupportPage = () => {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary", isRTL && "text-right")}
                     placeholder={t('form_message_placeholder')}
+                    dir={isRTL ? "rtl" : "ltr"}
                   ></textarea>
                 </div>
                 
@@ -296,37 +300,39 @@ const SupportPage = () => {
 
         {/* Support Sessions Section */}
         <div className="mt-16">
-          <div className="text-center mb-12">
+          <div className={cn("mb-12", isRTL ? "text-right" : "text-center")}>
             <h2 className="font-heading text-3xl font-bold text-gray-800 mb-4">
               {t('support_sessions')}
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className={cn("text-lg text-gray-600 mx-auto", isRTL ? "max-w-full" : "max-w-3xl")}>
               {t('support_sessions_description')}
             </p>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-8">
             <div className="mb-8">
-              <h3 className="font-heading text-xl font-semibold mb-4">
+              <h3 className={cn("font-heading text-xl font-semibold mb-4", isRTL && "text-right")}>
                 {t('schedule_support_session')}
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className={cn("text-gray-600 mb-6", isRTL && "text-right")}>
                 {t('schedule_support_session_description')}
               </p>
               
-              <Button
-                onClick={() => toast({
-                  title: t('session_scheduled'),
-                  description: t('session_scheduled_description'),
-                })}
-                className="bg-primary hover:bg-primary/90 text-white"
-              >
-                {t('schedule_session')}
-              </Button>
+              <div className={cn(isRTL && "flex justify-end")}>
+                <Button
+                  onClick={() => toast({
+                    title: t('session_scheduled'),
+                    description: t('session_scheduled_description'),
+                  })}
+                  className="bg-primary hover:bg-primary/90 text-white"
+                >
+                  {t('schedule_session')}
+                </Button>
+              </div>
             </div>
             
             <div className="border-t border-gray-200 pt-8">
-              <h3 className="font-heading text-xl font-semibold mb-4">
+              <h3 className={cn("font-heading text-xl font-semibold mb-4", isRTL && "text-right")}>
                 {t('contact_information')}
               </h3>
               
