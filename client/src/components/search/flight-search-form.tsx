@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { flightSearchSchema, type FlightSearch } from "@shared/schema";
@@ -14,7 +14,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { CalendarIcon, PlaneTakeoff, PlaneLanding, Users, Briefcase } from "lucide-react";
+import { CalendarIcon, PlaneTakeoff, PlaneLanding, Users, Briefcase, AlertCircle } from "lucide-react";
 import AirportSearch from "./airport-search";
 import { Airport } from "@shared/schema";
 
@@ -135,6 +135,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                   icon={<PlaneTakeoff className="h-5 w-5 text-gray-400" />}
                   onSelect={handleOriginSelect}
                   value={field.value}
+                  error={errors.origin?.message}
                 />
               )}
             />
@@ -150,6 +151,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                   icon={<PlaneLanding className="h-5 w-5 text-gray-400" />}
                   onSelect={handleDestinationSelect}
                   value={field.value}
+                  error={errors.destination?.message}
                 />
               )}
             />
@@ -384,7 +386,13 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="text-center flex flex-col items-center">
+            {Object.keys(errors).length > 0 && (
+              <div className="flex items-center text-red-500 mb-4 text-sm">
+                <AlertCircle className="w-4 h-4 mr-2" />
+                <span>{t("error_fields")}</span>
+              </div>
+            )}
             <Button
               type="submit"
               className="w-full sm:w-auto bg-primary text-white px-8 py-3 rounded-md font-medium text-lg hover:bg-primary-600 transition"

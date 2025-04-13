@@ -320,6 +320,11 @@ export default {
   invalid_return_date: 'Return date must be after departure date',
   select_departure_date: 'Select a departure date for your trip',
   select_date_after: 'Select a date after',
+  no_airports_found: 'No airports found',
+  origin_required: 'Origin airport is required',
+  destination_required: 'Destination airport is required',
+  same_airports: 'Origin and destination cannot be the same',
+  invalid_airport_code: 'Invalid airport code',
   
   // Get Ticket Now widget
   

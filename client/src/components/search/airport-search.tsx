@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/language-context";
 import { Airport } from "@shared/schema";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 interface AirportSearchProps {
   label: string;
@@ -12,9 +12,10 @@ interface AirportSearchProps {
   icon: React.ReactNode;
   onSelect: (airport: Airport) => void;
   value?: string;
+  error?: string;
 }
 
-const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSearchProps) => {
+const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: AirportSearchProps) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,18 +82,27 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
 
   return (
     <div className="w-full" ref={containerRef}>
-      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <div className="flex justify-between items-center mb-1">
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        {error && (
+          <span className="text-xs text-red-500 flex items-center">
+            <AlertCircle className="w-3 h-3 mr-1" />
+            {error}
+          </span>
+        )}
+      </div>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           {icon}
         </div>
         <Input
           type="text"
-          className="pl-10 pr-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary"
+          className={`pl-10 pr-3 py-3 border ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary`}
           placeholder={placeholder}
           value={displayValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
+          aria-invalid={!!error}
         />
 
         {/* Results dropdown */}
@@ -103,7 +113,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value }: AirportSea
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
             ) : !airports || airports.length === 0 ? (
-              <div className="px-4 py-2 text-sm text-gray-500">No airports found</div>
+              <div className="px-4 py-2 text-sm text-gray-500">{t('no_airports_found')}</div>
             ) : (
               airports.map((airport) => (
                 <div

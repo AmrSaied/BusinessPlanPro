@@ -125,8 +125,14 @@ export const insertBookingPassengerSchema = createInsertSchema(bookingPassengers
 
 // Define search parameters schema for flight search
 export const flightSearchSchema = z.object({
-  origin: z.string().min(3).max(3),
-  destination: z.string().min(3).max(3),
+  origin: z.string()
+    .min(3, { message: "Origin airport code must be 3 characters" })
+    .max(3, { message: "Origin airport code must be 3 characters" })
+    .refine(val => val.trim() !== "", { message: "Origin airport is required" }),
+  destination: z.string()
+    .min(3, { message: "Destination airport code must be 3 characters" })
+    .max(3, { message: "Destination airport code must be 3 characters" })
+    .refine(val => val.trim() !== "", { message: "Destination airport is required" }),
   departureDate: z.string()
     .refine(date => {
       // Must be a valid date string
@@ -153,7 +159,19 @@ export const flightSearchSchema = z.object({
   tripType: z.enum(["one-way", "round-trip"]),
   originDisplay: z.string().optional(),
   destinationDisplay: z.string().optional(),
-});
+})
+.refine(
+  (data) => {
+    if (data.origin === data.destination) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Origin and destination cannot be the same",
+    path: ["destination"],
+  }
+);
 
 // Payment Schema
 export const paymentSchema = z.object({
