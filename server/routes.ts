@@ -416,6 +416,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to add passenger" });
     }
   });
+  
+  // Add multiple passengers to booking
+  app.post("/api/bookings/:bookingId/multiple-passengers", async (req: Request, res: Response) => {
+    try {
+      const bookingId = parseInt(req.params.bookingId);
+      // Expects an array of passenger data
+      const passengersData = req.body.passengers;
+      
+      // Check if booking exists
+      const booking = await storage.getBooking(bookingId);
+      if (!booking) {
+        return res.status(404).json({ error: "Booking not found" });
+      }
+      
+      const createdPassengers = [];
+      
+      for (const passengerData of passengersData) {
+        // Validate each passenger
+        const validatedData = insertPassengerSchema.parse(passengerData);
+        
+        // Create passenger
+        const passenger = await storage.createPassenger(validatedData);
+        
+        // Link passenger to booking
+        await storage.createBookingPassenger({
+          bookingId,
+          passengerId: passenger.id
+        });
+        
+        createdPassengers.push(passenger);
+      }
+      
+      res.status(201).json(createdPassengers);
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid passenger data", details: err.errors });
+      }
+      console.error("Error adding passengers:", err);
+      res.status(500).json({ error: "Failed to add passengers" });
+    }
+  });
 
   // Process payment
   app.post("/api/payments", async (req: Request, res: Response) => {

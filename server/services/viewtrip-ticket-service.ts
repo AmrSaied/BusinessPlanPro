@@ -460,15 +460,39 @@ export class ViewTripTicketService {
     // Get passengers
     let passengers = await this.storage.getPassengersByBookingId(bookingId);
     
-    // If no passengers found, use contact data from booking
+    // If no passengers found, try to create a realistic passenger with data from booking
     if (!passengers || passengers.length === 0) {
-      console.log(`No passengers found for booking ${bookingId}, creating default passenger data`);
+      console.log(`No passengers found for booking ${bookingId}, creating passenger data from special requests`);
       
-      // Extract last name and first name if available from email (before @)
+      // Extract passenger information from specialRequests if available
+      let title = "Mr";
       let firstName = "Guest";
       let lastName = "Traveler";
+      let nationality = flight.departureCountry || "Egypt";
+      let passportNumber = `P${Math.floor(10000000 + Math.random() * 90000000)}`;
       
-      if (booking.contactEmail) {
+      try {
+        // Try to extract passenger details from specialRequests field if provided
+        if (booking.specialRequests) {
+          const details = booking.specialRequests.split(',');
+          
+          for (const detail of details) {
+            if (detail.includes(':')) {
+              const [key, value] = detail.split(':').map(s => s.trim());
+              if (key === 'firstName') firstName = this.capitalizeFirstLetter(value);
+              if (key === 'lastName') lastName = this.capitalizeFirstLetter(value); 
+              if (key === 'title') title = value;
+              if (key === 'nationality') nationality = value;
+              if (key === 'passportNumber') passportNumber = value;
+            }
+          }
+        }
+      } catch (e) {
+        console.log('Error parsing passenger details from specialRequests:', e);
+      }
+      
+      // If still no name data, try to extract from email
+      if (firstName === "Guest" && lastName === "Traveler" && booking.contactEmail) {
         const emailName = booking.contactEmail.split('@')[0];
         if (emailName.includes('.')) {
           const nameParts = emailName.split('.');
@@ -482,11 +506,11 @@ export class ViewTripTicketService {
       passengers = [{
         id: 1,
         userId: booking.userId,
-        title: "Mr",
+        title,
         firstName,
         lastName,
-        nationality: flight.departureCountry || "Egypt",
-        passportNumber: `P${Math.floor(10000000 + Math.random() * 90000000)}`,
+        nationality,
+        passportNumber,
         passportExpiry: "2030-01-01",
         dateOfBirth: "1990-01-01",
         isSaved: false
