@@ -4,11 +4,39 @@ import { useTranslation } from 'react-i18next';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useBooking } from '@/context/booking-context';
-import { Payment, InsertBooking } from '@shared/schema';
+import { Payment, InsertBooking, InsertPassenger } from '@shared/schema';
 import PaymentForm from '@/components/ui/payment-form';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
+// Function to format passenger details into specialRequests string
+const formatSpecialRequests = (existingRequests: string, passenger: InsertPassenger): string => {
+  // If we have a departure date from the search params, include it
+  let specialRequestsWithPassenger = existingRequests || '';
+  
+  // Add passenger details to special requests
+  if (passenger) {
+    // Start with a comma if there are existing requests
+    if (specialRequestsWithPassenger && !specialRequestsWithPassenger.endsWith(',')) {
+      specialRequestsWithPassenger += ', ';
+    }
+    
+    // Add passenger details
+    specialRequestsWithPassenger += `firstName:${passenger.firstName}, lastName:${passenger.lastName}, title:${passenger.title}`;
+    
+    // Add additional passenger details if present
+    if (passenger.nationality) {
+      specialRequestsWithPassenger += `, nationality:${passenger.nationality}`;
+    }
+    
+    if (passenger.passportNumber) {
+      specialRequestsWithPassenger += `, passportNumber:${passenger.passportNumber}`;
+    }
+  }
+  
+  return specialRequestsWithPassenger;
+};
 
 const PaymentPage = () => {
   const { t } = useTranslation();
@@ -93,7 +121,7 @@ const PaymentPage = () => {
         contactEmail: bookingData.contactInfo.email,
         contactPhone: bookingData.contactInfo.phone || '', // Ensure contactPhone is never undefined
         travelPurpose: bookingData.searchParams?.travelPurpose || 'visa',
-        specialRequests: bookingData.specialRequests,
+        specialRequests: formatSpecialRequests(bookingData.specialRequests, bookingData.passengers[0]),
       };
       
       const booking = await createBookingMutation.mutateAsync(bookingToCreate);
@@ -163,7 +191,7 @@ const PaymentPage = () => {
         contactEmail: bookingData.contactInfo.email,
         contactPhone: bookingData.contactInfo.phone || '', // Ensure contactPhone is never undefined
         travelPurpose: bookingData.searchParams?.travelPurpose || 'visa',
-        specialRequests: bookingData.specialRequests,
+        specialRequests: formatSpecialRequests(bookingData.specialRequests, bookingData.passengers[0]),
       };
       
       const booking = await createBookingMutation.mutateAsync(bookingToCreate);
