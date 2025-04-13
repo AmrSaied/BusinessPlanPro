@@ -116,14 +116,14 @@ const Header = () => {
           </nav>
           
           {/* Language and Account Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6 md:space-x-8">
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center text-sm rounded-md px-2 py-1 text-gray-700 hover:bg-gray-100">
-                  <Globe className="h-4 w-4 text-gray-500 mr-1.5" />
-                  <span className="truncate max-w-[100px]">{languages[currentLanguage]?.nativeName || 'English'}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-500 ml-1" />
+                <Button variant="ghost" className="flex items-center text-sm rounded-md px-3 py-1.5 text-gray-700 hover:bg-gray-100">
+                  <Globe className="h-4 w-4 text-gray-500 ltr:mr-2 rtl:ml-2 flex-shrink-0" />
+                  <span className="truncate max-w-[120px]">{languages[currentLanguage]?.nativeName || 'English'}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-500 ltr:ml-2 rtl:mr-2 flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52">
@@ -134,10 +134,10 @@ const Header = () => {
                     className={code === currentLanguage ? "bg-primary/10" : ""}
                   >
                     <div className="flex items-center w-full">
-                      <span className="mr-2 text-lg flex-shrink-0">{lang.flag}</span> 
+                      <span className="ltr:mr-2 rtl:ml-2 text-lg flex-shrink-0">{lang.flag}</span> 
                       <span className="truncate">{lang.nativeName}</span>
                       {code === currentLanguage && (
-                        <span className="ml-auto flex-shrink-0">✓</span>
+                        <span className="ltr:ml-auto rtl:mr-auto flex-shrink-0">✓</span>
                       )}
                     </div>
                   </DropdownMenuItem>
@@ -150,10 +150,10 @@ const Header = () => {
               {isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center space-x-1">
-                      <User className="h-4 w-4 mr-1" />
-                      <span>{userName}</span>
-                      <ChevronDown className="h-4 w-4" />
+                    <Button variant="ghost" className="flex items-center">
+                      <User className="h-4 w-4 ltr:mr-2 rtl:ml-2 flex-shrink-0" />
+                      <span className="mx-1">{userName}</span>
+                      <ChevronDown className="h-4 w-4 ltr:ml-1 rtl:mr-1 flex-shrink-0" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -165,7 +165,7 @@ const Header = () => {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                       <div className="flex items-center w-full">
-                        <LogOut className="h-4 w-4 mr-2" />
+                        <LogOut className="h-4 w-4 ltr:mr-2 rtl:ml-2 flex-shrink-0" />
                         <span>{t('nav_logout')}</span>
                       </div>
                     </DropdownMenuItem>
@@ -173,7 +173,7 @@ const Header = () => {
                 </DropdownMenu>
               ) : (
                 <Link href="/auth">
-                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block min-w-[140px] text-center">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition cursor-pointer inline-block min-w-[160px] text-center whitespace-nowrap">
                     {t('nav_sign_in')}
                   </span>
                 </Link>
@@ -216,13 +216,13 @@ const Header = () => {
                     onClick={() => logoutMutation.mutate()}
                     className="flex items-center font-medium text-gray-600 hover:text-primary transition py-2"
                   >
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4 ltr:mr-2 rtl:ml-2 flex-shrink-0" />
                     <span>{t('nav_logout')}</span>
                   </button>
                 </>
               ) : (
                 <Link href="/auth">
-                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block min-w-[140px]">
+                  <span className="bg-primary text-white px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition text-center cursor-pointer inline-block min-w-[160px] whitespace-nowrap">
                     {t('nav_sign_in')}
                   </span>
                 </Link>
