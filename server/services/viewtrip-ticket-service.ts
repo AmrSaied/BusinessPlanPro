@@ -45,9 +45,13 @@ export class ViewTripTicketService {
            .font('Helvetica-Bold')
            .text('My Trip', 30, yPos);
         
-        // Format departure date (use fixed date from example)
-        const departureDate = new Date();
-        departureDate.setDate(departureDate.getDate() + 30); // Future date for the trip
+        // Format actual departure date from booking
+        // Parse the departure date from booking data
+        const departureDate = ticketData.departureDate ? new Date(ticketData.departureDate) : new Date();
+        if (!ticketData.departureDate) {
+          // If no departure date in booking, set to 30 days in future as fallback
+          departureDate.setDate(departureDate.getDate() + 30);
+        }
         
         // Format as "THU, DEC 12, 2024"
         const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -456,21 +460,54 @@ export class ViewTripTicketService {
     // Get passengers
     let passengers = await this.storage.getPassengersByBookingId(bookingId);
     
-    // If no passengers found, create a default passenger
+    // If no passengers found, use contact data from booking
     if (!passengers || passengers.length === 0) {
       console.log(`No passengers found for booking ${bookingId}, creating default passenger data`);
+      
+      // Extract last name and first name if available from email (before @)
+      let firstName = "Guest";
+      let lastName = "Traveler";
+      
+      if (booking.contactEmail) {
+        const emailName = booking.contactEmail.split('@')[0];
+        if (emailName.includes('.')) {
+          const nameParts = emailName.split('.');
+          firstName = this.capitalizeFirstLetter(nameParts[0]);
+          lastName = this.capitalizeFirstLetter(nameParts[1]);
+        } else {
+          firstName = this.capitalizeFirstLetter(emailName);
+        }
+      }
+      
       passengers = [{
         id: 1,
         userId: booking.userId,
         title: "Mr",
-        firstName: "Amr Saied",
-        lastName: "Elsaaran",
-        nationality: "Egypt",
-        passportNumber: "A12345678",
+        firstName,
+        lastName,
+        nationality: flight.departureCountry || "Egypt",
+        passportNumber: `P${Math.floor(10000000 + Math.random() * 90000000)}`,
         passportExpiry: "2030-01-01",
         dateOfBirth: "1990-01-01",
         isSaved: false
       }];
+    }
+    
+    // Calculate actual departure date from booking data
+    // Try to extract from booking data, using today + 30 days as a fallback
+    let departureDate = new Date();
+    departureDate.setDate(departureDate.getDate() + 30); // Default 30 days from now
+    
+    // Use travelDate from booking.specialRequests if it exists
+    try {
+      if (booking.specialRequests && booking.specialRequests.includes('departureDate')) {
+        const dateMatch = booking.specialRequests.match(/departureDate:([^,]+)/);
+        if (dateMatch && dateMatch[1]) {
+          departureDate = new Date(dateMatch[1].trim());
+        }
+      }
+    } catch (e) {
+      console.log('Error parsing departure date:', e);
     }
     
     // Format data for ticket
@@ -511,6 +548,12 @@ export class ViewTripTicketService {
       status: booking.status,
       issueDate: booking.createdAt,
       travelPurpose: booking.travelPurpose,
+      departureDate: departureDate.toISOString(),
     };
+  }
+  
+  // Helper function to capitalize first letter
+  private capitalizeFirstLetter(string: string): string {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 }
