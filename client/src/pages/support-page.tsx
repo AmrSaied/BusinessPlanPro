@@ -3,10 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Phone, Mail, MessageSquare, Send, Clock, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/context/language-context';
+import { cn } from '@/lib/utils';
 
 const SupportPage = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { currentLanguage } = useLanguage();
+  const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -126,34 +130,34 @@ const SupportPage = () => {
               <h3 className="font-heading text-2xl font-semibold mb-6">{t('contact_info')}</h3>
               
               <div className="space-y-6">
-                <div className="flex items-start">
-                  <Phone className="h-6 w-6 mr-4 mt-1" />
-                  <div>
+                <div className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                  <Phone className={cn("h-6 w-6 mt-1", isRTL ? "ml-4" : "mr-4")} />
+                  <div className={cn(isRTL && "text-right")}>
                     <h4 className="font-medium mb-1">{t('phone_contact')}</h4>
                     <p className="opacity-90">+201113284428, +201501685555</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <Mail className="h-6 w-6 mr-4 mt-1" />
-                  <div>
+                <div className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                  <Mail className={cn("h-6 w-6 mt-1", isRTL ? "ml-4" : "mr-4")} />
+                  <div className={cn(isRTL && "text-right")}>
                     <h4 className="font-medium mb-1">{t('email')}</h4>
                     <p className="opacity-90">info@alkashier.com</p>
                     <p className="opacity-90">support@alkashier.com</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <MapPin className="h-6 w-6 mr-4 mt-1" />
-                  <div>
+                <div className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                  <MapPin className={cn("h-6 w-6 mt-1", isRTL ? "ml-4" : "mr-4")} />
+                  <div className={cn(isRTL && "text-right")}>
                     <h4 className="font-medium mb-1">{t('location')}</h4>
                     <p className="opacity-90">{t('company_address')}</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <Clock className="h-6 w-6 mr-4 mt-1" />
-                  <div>
+                <div className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                  <Clock className={cn("h-6 w-6 mt-1", isRTL ? "ml-4" : "mr-4")} />
+                  <div className={cn(isRTL && "text-right")}>
                     <h4 className="font-medium mb-1">{t('business_hours')}</h4>
                     <p className="opacity-90">{t('business_hours_details')}</p>
                   </div>

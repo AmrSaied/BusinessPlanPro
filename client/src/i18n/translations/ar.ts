@@ -296,5 +296,63 @@ export default {
   how_tip1: 'تقدم بطلب للحصول على تأشيرتك قبل 4-6 أسابيع على الأقل من تاريخ سفرك المقصود',
   how_tip2: 'تأكد من أن جواز سفرك صالح لمدة ستة أشهر على الأقل بعد تاريخ عودتك المخطط له',
   how_tip3: 'قم بتضمين جدول سفر مفصل مع حجز رحلتك أثناء التقديم',
-  how_tip4: 'تحقق من متطلبات التأشيرة المحددة لبلد وجهتك قبل التقديم'
+  how_tip4: 'تحقق من متطلبات التأشيرة المحددة لبلد وجهتك قبل التقديم',
+  
+  // Support page translations
+  support_title: 'اتصل بالدعم',
+  support_subtitle: 'نحن هنا للمساعدة في أي أسئلة أو مشاكل قد تواجهها.',
+  support_phone_description: 'فريقنا متاح لمساعدتك في أي مشاكل تقنية أو متعلقة بالحجز.',
+  support_email_description: 'أرسل لنا بريدًا إلكترونيًا وسنرد عليك في أقرب وقت ممكن.',
+  support_chat_description: 'تحدث مع فريق الدعم لدينا في الوقت الفعلي للحصول على مساعدة فورية.',
+  support_form_success_title: 'تم إرسال الرسالة',
+  support_form_success_message: 'شكرًا للتواصل معنا. سنرد عليك قريبًا!',
+  support_sessions: 'جلسات الدعم',
+  support_sessions_description: 'حدد موعدًا لجلسة دعم مخصصة مع فريقنا للحصول على مساعدة شخصية.',
+  schedule_support_session: 'حدد موعدًا لجلسة دعم',
+  schedule_support_session_description: 'احجز جلسة فردية مع فريق الدعم التقني لدينا لحل أي مشاكل معقدة.',
+  
+  // Additional support page translations
+  call_us: 'اتصل بنا',
+  mail_us: 'راسلنا',
+  live_chat: 'محادثة مباشرة',
+  contact_info: 'معلومات الاتصال',
+  send_message: 'أرسل رسالة',
+  phone_contact: 'الاتصال الهاتفي',
+  business_hours: 'ساعات العمل',
+  business_hours_details: 'من الإثنين إلى الجمعة: 9 صباحًا - 6 مساءً',
+  location: 'الموقع',
+  company_address: 'طريق الملك عبد العزيز، الرياض، المملكة العربية السعودية',
+  follow_us: 'تابعنا',
+  
+  // Form related translations
+  form_name: 'اسمك',
+  form_name_placeholder: 'أدخل اسمك',
+  form_email: 'بريدك الإلكتروني',
+  form_email_placeholder: 'أدخل بريدك الإلكتروني',
+  form_subject: 'الموضوع',
+  form_subject_placeholder: 'اختر موضوعًا',
+  form_message: 'رسالتك',
+  form_message_placeholder: 'كيف يمكننا مساعدتك؟',
+  sending: 'جاري الإرسال...',
+  
+  // Subject options
+  subject_booking: 'استفسار عن الحجز',
+  subject_technical_support: 'دعم تقني',
+  subject_billing: 'استفسار عن الفواتير',
+  subject_feedback: 'ملاحظات وتعليقات',
+  subject_other: 'موضوع آخر',
+  
+  // Buttons and status messages
+  start_chat: 'بدء المحادثة',
+  chat_initiated: 'تم بدء المحادثة',
+  chat_initiated_description: 'سيتواصل معك أحد ممثلي الدعم قريبًا.',
+  session_scheduled: 'تم جدولة الجلسة',
+  session_scheduled_description: 'تم جدولة جلسة الدعم الخاصة بك. سنرسل لك تأكيدًا عبر البريد الإلكتروني.',
+  available_24_7: 'متاح على مدار 24 ساعة',
+  schedule_session: 'جدولة جلسة',
+  contact_information: 'معلومات الاتصال',
+  technical_support: 'الدعم التقني',
+  inquiry: 'استفسار',
+  the_support: 'الدعم',
+  contact: 'تواصل'
 };
