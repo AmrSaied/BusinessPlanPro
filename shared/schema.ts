@@ -138,7 +138,7 @@ export const flightSearchSchema = z.object({
       // Must be a valid date string
       const isValid = !isNaN(new Date(date).getTime());
       return isValid;
-    }, { message: "Invalid departure date format" })
+    }, { message: "invalid_date_format" })
     .refine(date => {
       // Must be today or in the future
       const today = new Date();
@@ -146,13 +146,13 @@ export const flightSearchSchema = z.object({
       const selectedDate = new Date(date);
       selectedDate.setHours(0, 0, 0, 0);
       return selectedDate >= today;
-    }, { message: "Departure date must be today or in the future" }),
+    }, { message: "invalid_departure_date" }),
   returnDate: z.string()
     .refine(date => {
       // Must be a valid date string
       const isValid = !isNaN(new Date(date).getTime());
       return isValid;
-    }, { message: "Invalid return date format" })
+    }, { message: "invalid_date_format" })
     .optional(),
   passengers: z.number().min(1).max(9),
   travelPurpose: z.string(),
@@ -168,8 +168,39 @@ export const flightSearchSchema = z.object({
     return true;
   },
   {
-    message: "Origin and destination cannot be the same",
+    message: "origin_destination_same",
     path: ["destination"],
+  }
+)
+.refine(
+  (data) => {
+    // For round-trip, return date is required
+    if (data.tripType === "round-trip" && !data.returnDate) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "return_date_required",
+    path: ["returnDate"],
+  }
+)
+.refine(
+  (data) => {
+    // Validate return date is after departure date
+    if (data.tripType === "round-trip" && data.returnDate && data.departureDate) {
+      const returnDate = new Date(data.returnDate);
+      const departureDate = new Date(data.departureDate);
+      
+      if (returnDate < departureDate) {
+        return false;
+      }
+    }
+    return true;
+  },
+  {
+    message: "invalid_return_date",
+    path: ["returnDate"], 
   }
 );
 

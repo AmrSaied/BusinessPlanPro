@@ -163,82 +163,94 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t("departure_date")}
               </label>
-              <Controller
-                name="departureDate"
-                control={control}
-                render={({ field }) => (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={errors.departureDate ? "destructive" : "outline"}
-                        className={`w-full justify-start text-left font-normal pl-10 ${
-                          !field.value ? "text-muted-foreground" : ""
-                        } ${errors.departureDate ? "border-red-500" : ""}`}
-                      >
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <CalendarIcon className="h-5 w-5 text-gray-400" />
+              <div className="relative">
+                <Controller
+                  name="departureDate"
+                  control={control}
+                  render={({ field }) => (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <div className="relative">
+                          <Button
+                            variant="outline"
+                            className={`w-full justify-start text-left font-normal pl-10 ${
+                              !field.value ? "text-muted-foreground" : ""
+                            } ${errors.departureDate ? "border-red-500 ring-1 ring-red-500" : "border-gray-300 hover:border-primary"}`}
+                          >
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <CalendarIcon className={`h-5 w-5 ${errors.departureDate ? "text-red-500" : "text-gray-400"}`} />
+                            </div>
+                            {field.value ? (
+                              format(new Date(field.value), "PPP")
+                            ) : (
+                              <span>{t("select_date")}</span>
+                            )}
+                          </Button>
+                          {errors.departureDate && (
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                              <AlertCircle className="h-5 w-5 text-red-500" />
+                            </div>
+                          )}
                         </div>
-                        {field.value ? (
-                          format(new Date(field.value), "PPP")
-                        ) : (
-                          <span>{t("select_date")}</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
-                        onSelect={(date) => {
-                          if (date) {
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            
-                            // Validate the date is today or in the future
-                            if (date < today) {
-                              // This should never happen due to disabled dates, but just in case
-                              setValue("departureDate", format(today, "yyyy-MM-dd"), {
-                                shouldValidate: true
-                              });
-                            } else {
-                              field.onChange(format(date, "yyyy-MM-dd"));
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={(date) => {
+                            if (date) {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
                               
-                              // If we have a return date, validate that it's after the new departure date
-                              const returnDate = watch("returnDate");
-                              if (returnDate && watchedTripType === "round-trip") {
-                                const returnDateObj = new Date(returnDate);
-                                returnDateObj.setHours(0, 0, 0, 0);
+                              // Validate the date is today or in the future
+                              if (date < today) {
+                                // This should never happen due to disabled dates, but just in case
+                                setValue("departureDate", format(today, "yyyy-MM-dd"), {
+                                  shouldValidate: true
+                                });
+                              } else {
+                                field.onChange(format(date, "yyyy-MM-dd"));
                                 
-                                if (returnDateObj < date) {
-                                  // Auto-adjust return date to be the same as departure date
-                                  setValue("returnDate", format(date, "yyyy-MM-dd"), {
-                                    shouldValidate: true
-                                  });
+                                // If we have a return date, validate that it's after the new departure date
+                                const returnDate = watch("returnDate");
+                                if (returnDate && watchedTripType === "round-trip") {
+                                  const returnDateObj = new Date(returnDate);
+                                  returnDateObj.setHours(0, 0, 0, 0);
+                                  
+                                  if (returnDateObj < date) {
+                                    // Auto-adjust return date to be the same as departure date
+                                    setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                      shouldValidate: true
+                                    });
+                                  }
                                 }
                               }
                             }
+                          }}
+                          initialFocus
+                          disabled={(date) => {
+                            // Disable dates in the past
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return date < today;
+                          }}
+                          footer={
+                            <p className="p-2 text-center text-sm text-muted-foreground">
+                              {t("select_departure_date")}
+                            </p>
                           }
-                        }}
-                        initialFocus
-                        disabled={(date) => {
-                          // Disable dates in the past
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
-                          return date < today;
-                        }}
-                        footer={
-                          <p className="p-2 text-center text-sm text-muted-foreground">
-                            {t("select_departure_date")}
-                          </p>
-                        }
-                      />
-                    </PopoverContent>
-                  </Popover>
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                />
+                {errors.departureDate && (
+                  <div className="flex mt-1">
+                    <AlertCircle className="h-4 w-4 text-red-500 mr-1" />
+                    <span className="text-sm text-red-500">{t(errors.departureDate.message as any) || errors.departureDate.message}</span>
+                  </div>
                 )}
-              />
-              {errors.departureDate && (
-                <span className="text-sm text-red-500">{errors.departureDate.message}</span>
-              )}
+              </div>
             </div>
 
             {/* Return Date (hidden for one-way) */}
@@ -247,76 +259,88 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {t("return_date")}
                 </label>
-                <Controller
-                  name="returnDate"
-                  control={control}
-                  render={({ field }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={errors.returnDate ? "destructive" : "outline"}
-                          className={`w-full justify-start text-left font-normal pl-10 ${
-                            !field.value ? "text-muted-foreground" : ""
-                          } ${errors.returnDate ? "border-red-500" : ""}`}
-                        >
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <CalendarIcon className="h-5 w-5 text-gray-400" />
+                <div className="relative">
+                  <Controller
+                    name="returnDate"
+                    control={control}
+                    render={({ field }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <div className="relative">
+                            <Button
+                              variant="outline"
+                              className={`w-full justify-start text-left font-normal pl-10 ${
+                                !field.value ? "text-muted-foreground" : ""
+                              } ${errors.returnDate ? "border-red-500 ring-1 ring-red-500" : "border-gray-300 hover:border-primary"}`}
+                            >
+                              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <CalendarIcon className={`h-5 w-5 ${errors.returnDate ? "text-red-500" : "text-gray-400"}`} />
+                              </div>
+                              {field.value ? (
+                                format(new Date(field.value), "PPP")
+                              ) : (
+                                <span>{t("select_date")}</span>
+                              )}
+                            </Button>
+                            {errors.returnDate && (
+                              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                <AlertCircle className="h-5 w-5 text-red-500" />
+                              </div>
+                            )}
                           </div>
-                          {field.value ? (
-                            format(new Date(field.value), "PPP")
-                          ) : (
-                            <span>{t("select_date")}</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            if (date) {
-                              field.onChange(format(date, "yyyy-MM-dd"));
-                              
-                              // Validate that return date is after departure date
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              if (date) {
+                                field.onChange(format(date, "yyyy-MM-dd"));
+                                
+                                // Validate that return date is after departure date
+                                if (watchedDepartureDate) {
+                                  const departureDate = new Date(watchedDepartureDate);
+                                  departureDate.setHours(0, 0, 0, 0);
+                                  
+                                  if (date < departureDate) {
+                                    // Set custom error message
+                                    setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                      shouldValidate: true
+                                    });
+                                  }
+                                }
+                              }
+                            }}
+                            initialFocus
+                            disabled={(date) => {
+                              // For round trips, disable dates before departure date
                               if (watchedDepartureDate) {
                                 const departureDate = new Date(watchedDepartureDate);
                                 departureDate.setHours(0, 0, 0, 0);
-                                
-                                if (date < departureDate) {
-                                  // Set custom error message
-                                  setValue("returnDate", format(date, "yyyy-MM-dd"), {
-                                    shouldValidate: true
-                                  });
-                                }
+                                return date < departureDate;
                               }
+                              // If no departure date is set, disable dates in the past
+                              return date < new Date();
+                            }}
+                            footer={
+                              watchedDepartureDate ? (
+                                <p className="p-2 text-center text-sm text-muted-foreground">
+                                  {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
+                                </p>
+                              ) : null
                             }
-                          }}
-                          initialFocus
-                          disabled={(date) => {
-                            // For round trips, disable dates before departure date
-                            if (watchedDepartureDate) {
-                              const departureDate = new Date(watchedDepartureDate);
-                              departureDate.setHours(0, 0, 0, 0);
-                              return date < departureDate;
-                            }
-                            // If no departure date is set, disable dates in the past
-                            return date < new Date();
-                          }}
-                          footer={
-                            watchedDepartureDate ? (
-                              <p className="p-2 text-center text-sm text-muted-foreground">
-                                {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
-                              </p>
-                            ) : null
-                          }
-                        />
-                      </PopoverContent>
-                    </Popover>
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  />
+                  {errors.returnDate && (
+                    <div className="flex mt-1">
+                      <AlertCircle className="h-4 w-4 text-red-500 mr-1" />
+                      <span className="text-sm text-red-500">{t(errors.returnDate.message as any) || t("invalid_return_date")}</span>
+                    </div>
                   )}
-                />
-                {errors.returnDate && (
-                  <span className="text-sm text-red-500">{errors.returnDate.message || t("invalid_return_date")}</span>
-                )}
+                </div>
               </div>
             )}
 
