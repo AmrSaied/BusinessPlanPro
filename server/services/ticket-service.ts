@@ -24,84 +24,210 @@ export class TicketService {
         doc.on('end', () => resolve(Buffer.concat(chunks)));
         doc.on('error', reject);
         
-        // Define airline colors and styles based on airline code
-        let primaryColor = '#1A365D'; // Default dark blue
-        let secondaryColor = '#2B4C7E';
-        let airlineLogoText = ticketData.flight.airlineName;
+        // ViewTrip Header (blue bar)
+        const viewTripBlue = '#006699';
+        doc.fillColor(viewTripBlue)
+           .rect(30, 30, doc.page.width - 60, 30)
+           .fill();
+           
+        // ViewTrip Logo
+        doc.fillColor('white')
+           .fontSize(16)
+           .font('Helvetica-Bold')
+           .text('ViewTrip', 50, 39);
         
-        if (ticketData.flight.airlineCode === 'BA') {
-          primaryColor = '#075AAA'; // British Airways blue
-          secondaryColor = '#EB2226'; // British Airways red
-          airlineLogoText = 'British Airways';
-        } else if (ticketData.flight.airlineCode === 'AA') {
-          primaryColor = '#0078D2'; // American Airlines blue
-          secondaryColor = '#C00C23'; // American Airlines red
-          airlineLogoText = 'American Airlines';
-        } else if (ticketData.flight.airlineCode === 'EK') {
-          primaryColor = '#D71E35'; // Emirates red
-          secondaryColor = '#231F20'; // Emirates dark gray
-          airlineLogoText = 'Emirates';
-        } else if (ticketData.flight.airlineCode === 'LH') {
-          primaryColor = '#05164D'; // Lufthansa blue
-          secondaryColor = '#FFAD00'; // Lufthansa gold
-          airlineLogoText = 'Lufthansa';
+        // My Trip Section
+        let yPos = 80;
+        doc.fillColor('black')
+           .fontSize(16)
+           .font('Helvetica-Bold')
+           .text('My Trip', 30, yPos);
+        
+        yPos += 25;
+        
+        // For each flight segment (first segment - outbound)
+        // Format the travel date (Dec 12, 2024)
+        const departureDate = new Date();
+        departureDate.setDate(departureDate.getDate() + 30); // Future date for the trip
+        
+        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const formattedDate = `${departureDate.getDate()} ${monthNames[departureDate.getMonth()]} ${departureDate.getFullYear()}`;
+        
+        // First segment header (Outbound)
+        doc.fontSize(10)
+           .font('Helvetica-Bold')
+           .text(`${formattedDate} - ${ticketData.flight.departureCity} (${ticketData.flight.departureAirport}) to ${ticketData.flight.arrivalCity} (${ticketData.flight.arrivalAirport}) - Confirmed`, 30, yPos);
+           
+        // Checkmark in circle for confirmed status
+        doc.fillColor('green')
+           .circle(doc.widthOfString(`${formattedDate} - ${ticketData.flight.departureCity} (${ticketData.flight.departureAirport}) to ${ticketData.flight.arrivalCity} (${ticketData.flight.arrivalAirport}) - Confirmed`) + 35, yPos + 5, 5)
+           .fill();
+        
+        // Draw horizontal line
+        yPos += 15;
+        doc.strokeColor('black')
+           .lineWidth(0.5)
+           .moveTo(30, yPos)
+           .lineTo(doc.page.width - 30, yPos)
+           .stroke();
+        
+        yPos += 15;
+        
+        // Airline info
+        const airlineLogo: Record<string, string> = {
+          EK: 'Etihad Airways',
+          BA: 'British Airways',
+          AA: 'American Airlines',
+          LH: 'Lufthansa'
+        };
+        
+        const airlineName = airlineLogo[ticketData.flight.airlineCode] || ticketData.flight.airlineName;
+        const flightNumber = `${ticketData.flight.airlineCode} ${ticketData.flight.flightNumber.replace(ticketData.flight.airlineCode, '')}`;
+        
+        // Airline logo area (small rectangle on left)
+        doc.fillColor('#772222')
+           .rect(30, yPos, 40, 25)
+           .fill();
+           
+        // Airline name and flight number
+        doc.fillColor('black')
+           .fontSize(10)
+           .font('Helvetica-Bold')
+           .text(airlineName, 80, yPos);
+           
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Confirmation Number: ${ticketData.bookingReference}`, 80, yPos + 12);
+        
+        // Flight times and info in the center
+        yPos += 30;
+        
+        // Flight layout with plane icon
+        const layoutY = yPos;
+        
+        // Departure time
+        doc.fontSize(16)
+           .font('Helvetica-Bold')
+           .text('5:30', 180, layoutY)
+           .text('PM', 180, layoutY + 16, { fontSize: 10 })
+           .text('CAI', 180, layoutY + 26, { fontSize: 8 });
+        
+        // Plane icon and route line
+        const planeX = 250;
+        const planeY = layoutY + 10;
+        
+        // Draw line
+        doc.strokeColor('black')
+           .moveTo(230, planeY + 5)
+           .lineTo(320, planeY + 5)
+           .stroke();
+        
+        // Draw plane symbol
+        doc.fillColor('black')
+           .moveTo(planeX, planeY)
+           .lineTo(planeX + 8, planeY - 3)
+           .lineTo(planeX + 15, planeY)
+           .lineTo(planeX + 8, planeY + 3)
+           .fill();
+        
+        // Non-Stop text
+        doc.fontSize(8)
+           .text('NON', 270, layoutY - 8, { align: 'center' })
+           .text('STOP', 270, layoutY, { align: 'center' });
+           
+        // Flight duration below line
+        doc.fontSize(7)
+           .text('3H 15M', 270, layoutY + 12, { align: 'center' });
+        
+        // Arrival time
+        doc.fontSize(16)
+           .font('Helvetica-Bold')
+           .text('10:45', 350, layoutY)
+           .text('PM', 350, layoutY + 16, { fontSize: 10 })
+           .text('AUH', 350, layoutY + 26, { fontSize: 8 });
+           
+        // Passenger section
+        yPos += 60;
+        doc.fontSize(9)
+           .font('Helvetica-Bold')
+           .text('PASSENGERS', 30, yPos);
+           
+        yPos += 15;
+        
+        // Add passengers
+        let passengerName = "ELSAARAN, AMR SAIED MR";
+        if (ticketData.passengers.length > 0) {
+          const passenger = ticketData.passengers[0];
+          passengerName = `${passenger.lastName.toUpperCase()}, ${passenger.firstName.toUpperCase()} ${passenger.title.toUpperCase()}`;
         }
         
-        // Draw the header background
-        doc.fillColor(primaryColor)
-           .rect(0, 0, doc.page.width, 70)
-           .fill();
-        
-        // Add header text with airline logo styling
-        doc.fillColor('white')
-           .fontSize(24)
-           .font('Helvetica-Bold')
-           .text(airlineLogoText, 30, 25);
-        
-        // Add a small descriptor below the logo
-        doc.fillColor('white')
-           .fontSize(8)
+        doc.fontSize(9)
            .font('Helvetica')
-           .text('E-TICKET RECEIPT / PASSENGER ITINERARY', 30, 50);
-        
-        // Reset text color
-        doc.fillColor('black');
-        
-        // Add the ViewTrip logo/brand in the header
-        doc.fillColor('white')
-           .fontSize(10)
-           .font('Helvetica-Bold')
-           .text('ViewTrip', doc.page.width - 80, 25, { align: 'right' });
+           .text(passengerName, 30, yPos);
            
-        // Add booking reference box in top right
-        doc.fillColor(secondaryColor)
-           .rect(doc.page.width - 160, 80, 130, 60)
-           .fill();
-           
-        doc.fillColor('white')
-           .fontSize(10)
-           .font('Helvetica-Bold')
-           .text('BOOKING REFERENCE', doc.page.width - 150, 90, { align: 'left' });
-           
-        doc.fillColor('white')
-           .fontSize(18)
-           .font('Helvetica-Bold')
-           .text(ticketData.bookingReference, doc.page.width - 150, 110, { align: 'left' });
+        yPos += 15;
         
-        // Add main separator
-        doc.strokeColor('#DDDDDD')
-           .lineWidth(1)
-           .moveTo(30, 150)
-           .lineTo(doc.page.width - 30, 150)
-           .stroke();
+        // Class of service
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text('Class Of Service: Economy', 30, yPos);
            
-        // Passenger information section
-        doc.fillColor('#333333')
-           .fontSize(14)
-           .font('Helvetica-Bold')
-           .text('PASSENGER INFORMATION', 30, 170);
+        yPos += 15;
         
-        let yPos = 195;
+        // Airport info section
+        doc.fontSize(9)
+           .font('Helvetica-Bold')
+           .text('AIRPORT INFO', 30, yPos);
+           
+        yPos += 15;
+        
+        // Departure airport details
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Cairo Intl Arpt (CAI)`, 30, yPos)
+           .text(`Cairo, EG`, 30, yPos + 10)
+           .text(`Terminal 2`, 30, yPos + 20);
+        
+        // To line
+        doc.fontSize(8)
+           .text('to', 200, yPos + 10);
+           
+        // Draw dotted line before and after "to"
+        const lineY = yPos + 14;
+        
+        for (let i = 70; i < 190; i += 5) {
+          doc.moveTo(i, lineY)
+             .lineTo(i + 3, lineY)
+             .stroke();
+        }
+        
+        for (let i = 220; i < 340; i += 5) {
+          doc.moveTo(i, lineY)
+             .lineTo(i + 3, lineY)
+             .stroke();
+        }
+        
+        // Arrival airport details
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Zayed International Apt (AUH)`, 350, yPos)
+           .text(`Abu Dhabi, AE`, 350, yPos + 10)
+           .text(`Terminal A`, 350, yPos + 20);
+           
+        yPos += 40;
+        
+        // Flight info section
+        doc.fontSize(9)
+           .font('Helvetica-Bold')
+           .text('FLIGHT INFO', 30, yPos);
+           
+        yPos += 15;
+        
+        // Aircraft type and meal
+        doc.fontSize(9)
+           .font('Helvetica')
+           .text(`Airbus A321 NEO`, 30, yPos)
+           .text(`Meal`, 30, yPos + 10);
         
         ticketData.passengers.forEach((passenger, index) => {
           doc.fontSize(10)
@@ -331,7 +457,14 @@ export class TicketService {
            .stroke();
         
         // Contact information based on airline
-        let contactInfo = {};
+        interface AirlineContact {
+          companyName: string;
+          address: string;
+          email: string;
+          phone: string;
+        }
+        
+        let contactInfo: AirlineContact;
         if (ticketData.flight.airlineCode === 'BA') {
           contactInfo = {
             companyName: 'British Airways PLC',
