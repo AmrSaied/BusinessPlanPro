@@ -20,7 +20,10 @@ import {
 import { InsertPassenger, Passenger } from '@shared/schema';
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useLanguage } from '@/context/language-context';
-import { getNationalitiesForLanguage } from '@/i18n/nationalities';
+import { 
+  getNationalitiesForLanguage, 
+  matchNationalityInAnyLanguage 
+} from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
 
 interface PassengerFormProps {
