@@ -308,6 +308,7 @@ export default {
   not_valid_for_actual_travel: 'غير صالحة للسفر الفعلي',
   valid_for_visa_only: 'صالحة لأغراض التأشيرة فقط',
   visa_application: 'طلب التأشيرة',
+  pdf_generation_error: 'فشل إنشاء ملف PDF. يرجى المحاولة مرة أخرى.',
   confirmation_number: 'رقم التأكيد',
   
   // Error messages

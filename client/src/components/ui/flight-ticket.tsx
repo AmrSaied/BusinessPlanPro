@@ -103,24 +103,16 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
   };
   
   // For direct PDF download from server
-  const downloadPDF = () => {
-    let bookingId: number;
-    
+  const downloadPDF = async () => {
     try {
-      // Extract the numeric part from bookingReference (format: ZB416202)
-      // First check if there's a direct match for the full reference
-      const bookingIdFromRef = bookingReference.replace(/[^0-9]/g, '');
-      bookingId = bookingIdFromRef ? parseInt(bookingIdFromRef) : 1;
+      // Use the client-side PDF generation as primary method since the server endpoint
+      // requires knowing the exact booking ID (not the reference number)
+      await generatePDF();
       
-      // Open the PDF download endpoint in a new tab/window
-      const downloadUrl = `/api/bookings/${bookingId}/ticket/download`;
-      window.open(downloadUrl, '_blank');
-      
-      console.log(`Downloading ticket with booking ID: ${bookingId} from reference: ${bookingReference}`);
+      console.log(`Generating PDF client-side for booking reference: ${bookingReference}`);
     } catch (error) {
-      console.error('Error parsing booking reference:', error);
-      // Fall back to client-side PDF generation
-      generatePDF();
+      console.error('Error generating PDF:', error);
+      alert(t('pdf_generation_error'));
     }
   };
   

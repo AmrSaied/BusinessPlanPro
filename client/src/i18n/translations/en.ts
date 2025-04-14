@@ -320,6 +320,7 @@ export default {
   not_valid_for_actual_travel: 'Not valid for actual travel',
   valid_for_visa_only: 'Valid for visa purposes only',
   visa_application: 'Visa Application',
+  pdf_generation_error: 'Failed to generate PDF. Please try again.',
   
   // Support page
   support_title: 'Contact Support',
