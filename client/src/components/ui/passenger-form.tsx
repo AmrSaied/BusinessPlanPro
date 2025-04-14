@@ -30,6 +30,7 @@ interface PassengerFormProps {
 
 const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: PassengerFormProps) => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   
   // Initialize passenger array with the given count
   const [passengers, setPassengers] = useState<Array<Partial<InsertPassenger>>>(
@@ -62,24 +63,27 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     { value: 'dr', label: t('passenger_title_dr') }
   ];
   
-  // Sample countries - in a real app, this would be a comprehensive list
+  // Get nationality translations based on current language
+  const nationalityTranslations = getNationalitiesForLanguage(currentLanguage);
+  
+  // Map country values and translated labels
   const countries = [
-    { value: 'af', label: 'Afghanistan' },
-    { value: 'al', label: 'Albania' },
-    { value: 'dz', label: 'Algeria' },
-    { value: 'ad', label: 'Andorra' },
-    { value: 'ao', label: 'Angola' },
-    { value: 'ag', label: 'Antigua and Barbuda' },
-    { value: 'ar', label: 'Argentina' },
-    { value: 'am', label: 'Armenia' },
-    { value: 'au', label: 'Australia' },
-    { value: 'at', label: 'Austria' },
-    { value: 'az', label: 'Azerbaijan' },
-    { value: 'bs', label: 'Bahamas' },
-    { value: 'bh', label: 'Bahrain' },
-    { value: 'bd', label: 'Bangladesh' },
-    { value: 'bb', label: 'Barbados' },
-    { value: 'by', label: 'Belarus' },
+    { value: 'af', label: nationalityTranslations['Afghanistan'] || 'Afghanistan' },
+    { value: 'al', label: nationalityTranslations['Albania'] || 'Albania' },
+    { value: 'dz', label: nationalityTranslations['Algeria'] || 'Algeria' },
+    { value: 'ad', label: nationalityTranslations['Andorra'] || 'Andorra' },
+    { value: 'ao', label: nationalityTranslations['Angola'] || 'Angola' },
+    { value: 'ag', label: nationalityTranslations['Antigua and Barbuda'] || 'Antigua and Barbuda' },
+    { value: 'ar', label: nationalityTranslations['Argentina'] || 'Argentina' },
+    { value: 'am', label: nationalityTranslations['Armenia'] || 'Armenia' },
+    { value: 'au', label: nationalityTranslations['Australia'] || 'Australia' },
+    { value: 'at', label: nationalityTranslations['Austria'] || 'Austria' },
+    { value: 'az', label: nationalityTranslations['Azerbaijan'] || 'Azerbaijan' },
+    { value: 'bs', label: nationalityTranslations['Bahamas'] || 'Bahamas' },
+    { value: 'bh', label: nationalityTranslations['Bahrain'] || 'Bahrain' },
+    { value: 'bd', label: nationalityTranslations['Bangladesh'] || 'Bangladesh' },
+    { value: 'bb', label: nationalityTranslations['Barbados'] || 'Barbados' },
+    { value: 'by', label: nationalityTranslations['Belarus'] || 'Belarus' },
     { value: 'be', label: 'Belgium' },
     { value: 'bz', label: 'Belize' },
     { value: 'bj', label: 'Benin' },
@@ -114,11 +118,11 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     { value: 'dm', label: 'Dominica' },
     { value: 'do', label: 'Dominican Republic' },
     { value: 'ec', label: 'Ecuador' },
-    { value: 'eg', label: 'Egypt' },
-    { value: 'sv', label: 'El Salvador' },
-    { value: 'gq', label: 'Equatorial Guinea' },
-    { value: 'er', label: 'Eritrea' },
-    { value: 'ee', label: 'Estonia' },
+    { value: 'eg', label: nationalityTranslations['Egypt'] || 'Egypt' },
+    { value: 'sv', label: nationalityTranslations['El Salvador'] || 'El Salvador' },
+    { value: 'gq', label: nationalityTranslations['Equatorial Guinea'] || 'Equatorial Guinea' },
+    { value: 'er', label: nationalityTranslations['Eritrea'] || 'Eritrea' },
+    { value: 'ee', label: nationalityTranslations['Estonia'] || 'Estonia' },
     { value: 'sz', label: 'Eswatini' },
     { value: 'et', label: 'Ethiopia' },
     { value: 'fj', label: 'Fiji' },
@@ -225,11 +229,11 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     { value: 'so', label: 'Somalia' },
     { value: 'za', label: 'South Africa' },
     { value: 'ss', label: 'South Sudan' },
-    { value: 'es', label: 'Spain' },
-    { value: 'lk', label: 'Sri Lanka' },
-    { value: 'sd', label: 'Sudan' },
-    { value: 'sr', label: 'Suriname' },
-    { value: 'se', label: 'Sweden' },
+    { value: 'es', label: nationalityTranslations['Spain'] || 'Spain' },
+    { value: 'lk', label: nationalityTranslations['Sri Lanka'] || 'Sri Lanka' },
+    { value: 'sd', label: nationalityTranslations['Sudan'] || 'Sudan' },
+    { value: 'sr', label: nationalityTranslations['Suriname'] || 'Suriname' },
+    { value: 'se', label: nationalityTranslations['Sweden'] || 'Sweden' },
     { value: 'ch', label: 'Switzerland' },
     { value: 'sy', label: 'Syria' },
     { value: 'tj', label: 'Tajikistan' },
