@@ -24,7 +24,6 @@ import {
   getNationalitiesForLanguage 
 } from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
-// Simple multi-language search helper - no external dependency
 
 interface PassengerFormProps {
   passengerCount: number;
@@ -81,8 +80,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
   };
   
-  // Simple nationality filter that works with the current language only
-  const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
+  // Simple nationality filter for the current language with special handling for Arabic
+  const nationalityFilter = (item: { value: string; label: string }, searchTerm: string) => {
     if (!searchTerm) return true;
     
     // Basic filter with Arabic text normalization support
@@ -93,9 +92,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
            item.label.toLowerCase().includes(searchTerm.toLowerCase());
   };
   
-  // Map country values and translated labels with original English names for multi-language search
+  // Map country values and translated labels based on current language
   const countries = [
-    { value: 'af', label: getTranslatedCountryName('Afghanistan'), englishName: 'Afghanistan' },
+    { value: 'af', label: getTranslatedCountryName('Afghanistan') },
     { value: 'al', label: getTranslatedCountryName('Albania'), englishName: 'Albania' },
     { value: 'dz', label: getTranslatedCountryName('Algeria'), englishName: 'Algeria' },
     { value: 'ad', label: getTranslatedCountryName('Andorra'), englishName: 'Andorra' },
