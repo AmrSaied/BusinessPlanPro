@@ -616,16 +616,18 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       id={`dateOfBirth-${index}`}
                       variant="outline"
                       className={cn(
-                        "w-full text-left font-normal flex justify-between items-center",
+                        "w-full font-normal flex justify-between items-center",
                         !passenger.dateOfBirth && "text-muted-foreground",
-                        errors[`passenger${index}`]?.dateOfBirth && "border-red-500"
+                        errors[`passenger${index}`]?.dateOfBirth && "border-red-500",
+                        currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"
                       )}
+                      dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                     >
                       {passenger.dateOfBirth ? format(new Date(passenger.dateOfBirth.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
                       <CalendarIcon className="h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
                     <Calendar
                       mode="single"
                       captionLayout="dropdown-buttons"
@@ -656,6 +658,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.passportNumber}
                   onChange={(e) => updatePassenger(index, 'passportNumber', e.target.value)}
                   placeholder={t('passport_number')}
+                  className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
+                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.passportNumber && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].passportNumber}</p>
@@ -671,16 +675,18 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       id={`passportExpiry-${index}`}
                       variant="outline"
                       className={cn(
-                        "w-full text-left font-normal flex justify-between items-center",
+                        "w-full font-normal flex justify-between items-center",
                         !passenger.passportExpiry && "text-muted-foreground",
-                        errors[`passenger${index}`]?.passportExpiry && "border-red-500"
+                        errors[`passenger${index}`]?.passportExpiry && "border-red-500",
+                        currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"
                       )}
+                      dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                     >
                       {passenger.passportExpiry ? format(new Date(passenger.passportExpiry.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
                       <CalendarIcon className="h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
                     <Calendar
                       mode="single"
                       captionLayout="dropdown-buttons"
@@ -746,6 +752,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 value={contactInfo.email}
                 onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
                 placeholder={t('email_placeholder')}
+                className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
+                dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
               />
               {errors.contact?.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.contact.email}</p>
@@ -761,6 +769,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 value={contactInfo.phone}
                 onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
                 placeholder={t('phone_placeholder')}
+                className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
+                dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
               />
               {errors.contact?.phone && (
                 <p className="text-red-500 text-sm mt-1">{errors.contact.phone}</p>
@@ -806,6 +816,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             onChange={(e) => setSpecialRequests(e.target.value)}
             placeholder={t('special_requests_placeholder')}
             rows={3}
+            className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
+            dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
           />
         </div>
       </div>
