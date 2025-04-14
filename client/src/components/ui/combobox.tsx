@@ -63,9 +63,9 @@ export function Combobox({
           <ChevronsUpDown className={cn("h-4 w-4 shrink-0 opacity-50", isRTL ? "mr-2" : "ml-2")} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
+      <PopoverContent className={cn("w-full p-0", isRTL && "ml-0 mr-0")} align={isRTL ? "end" : "start"}>
         <Command className={cn(isRTL && "rtl")} dir={isRTL ? "rtl" : "ltr"}>
-          <CommandInput placeholder={t('search_placeholder', 'Search...')} className={cn(isRTL && "text-right")} />
+          <CommandInput placeholder={t('search_placeholder', 'Search...')} dir={isRTL ? "rtl" : "ltr"} className={cn(isRTL && "text-right")} />
           <CommandEmpty>{t('no_results', 'No results found.')}</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-y-auto">
             {items.map((item) => (
@@ -76,16 +76,16 @@ export function Combobox({
                   onChange(item.value);
                   setOpen(false);
                 }}
-                className={cn(isRTL && "flex-row-reverse")}
+                className={cn("flex items-center", isRTL && "flex-row-reverse justify-between")}
               >
                 <Check
                   className={cn(
-                    "mr-2 h-4 w-4",
+                    "h-4 w-4",
                     value === item.value ? "opacity-100" : "opacity-0",
-                    isRTL && "mr-0 ml-2"
+                    isRTL ? "ml-2" : "mr-2"
                   )}
                 />
-                {item.label}
+                <span className={cn(isRTL && "text-right w-full")}>{item.label}</span>
               </CommandItem>
             ))}
           </CommandGroup>
