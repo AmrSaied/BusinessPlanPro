@@ -20,8 +20,6 @@ import { useLanguage } from "@/context/language-context";
 type ComboboxItem = {
   value: string;
   label: string;
-  // Original English name for nationality items (optional)
-  englishName?: string;
 };
 
 interface ComboboxProps {
@@ -30,7 +28,7 @@ interface ComboboxProps {
   onChange: (value: string) => void;
   placeholder?: string;
   id?: string;
-  // Custom filter function for multi-language search
+  // Custom filter function for specific language filtering behavior
   customFilter?: (item: ComboboxItem, search: string) => boolean;
 }
 
