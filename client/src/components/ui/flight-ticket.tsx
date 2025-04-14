@@ -276,29 +276,31 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </div>
         </div>
         
-        {/* Flight Times with ViewTrip Layout - All left aligned */}
+        {/* Flight Times with ViewTrip Layout - All left aligned, no flexbox */}
         <div className="pl-4 pr-4 py-3">
-          <div className="flex items-start">
-            <div className="mr-20">
-              <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.depart}</div>
-              <div className="flex items-baseline">
-                <div className="text-lg font-bold">{segment.departTime}</div>
-                <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
-                <div className="text-xs ml-1">{segment.departCode}</div>
+          <div>
+            <div className="grid grid-cols-12 gap-2 items-start">
+              <div className="col-span-3">
+                <div className="uppercase text-xs font-bold text-gray-600 mb-1">DEPART</div>
+                <div className="flex items-baseline">
+                  <div className="text-lg font-bold">{segment.departTime}</div>
+                  <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
+                  <div className="text-xs ml-1">{segment.departCode}</div>
+                </div>
               </div>
-            </div>
-            
-            <div className="mr-16">
-              <div className="uppercase text-xs font-bold text-gray-500 mb-1">{TICKET_TEXT.nonStop}</div>
-              <div className="text-xs text-gray-500">{segment.duration}</div>
-            </div>
-            
-            <div>
-              <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.arrive}</div>
-              <div className="flex items-baseline">
-                <div className="text-lg font-bold">{segment.arriveTime}</div>
-                <div className="text-xs ml-1 uppercase">{segment.arriveAmPm}</div>
-                <div className="text-xs ml-1">{segment.arriveCode}</div>
+              
+              <div className="col-span-3">
+                <div className="uppercase text-xs font-bold text-gray-500 mb-1">NON STOP</div>
+                <div className="text-xs text-gray-500">{segment.duration}</div>
+              </div>
+              
+              <div className="col-span-3">
+                <div className="uppercase text-xs font-bold text-gray-600 mb-1">ARRIVE</div>
+                <div className="flex items-baseline">
+                  <div className="text-lg font-bold">{segment.arriveTime}</div>
+                  <div className="text-xs ml-1 uppercase">{segment.arriveAmPm}</div>
+                  <div className="text-xs ml-1">{segment.arriveCode}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -316,20 +318,20 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         {/* Airport Info Section */}
         <div className="border-b border-gray-300 p-4">
           <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.airportInfo}</div>
-          <div className="text-xs mb-3">
-            <div className="mb-0.5">{segment.departAirport}</div>
-            <div className="mb-0.5">{segment.departCity}</div>
-            {segment.departTerminal && <div>{segment.departTerminal}</div>}
+          <div className="text-xs mb-1">
+            <div className="mb-0.5 text-left">{segment.departAirport}</div>
+            <div className="mb-0.5 text-left">{segment.departCity}</div>
+            {segment.departTerminal && <div className="text-left">{segment.departTerminal}</div>}
           </div>
           
-          <div className="flex items-center my-3">
+          <div className="my-2 text-left">
             <div className="text-xs text-gray-600">{TICKET_TEXT.to}</div>
           </div>
           
-          <div className="text-xs">
-            <div className="mb-0.5">{segment.arriveAirport}</div>
-            <div className="mb-0.5">{segment.arriveCity}</div>
-            {segment.arriveTerminal && <div>{segment.arriveTerminal}</div>}
+          <div className="text-xs mt-1">
+            <div className="mb-0.5 text-left">{segment.arriveAirport}</div>
+            <div className="mb-0.5 text-left">{segment.arriveCity}</div>
+            {segment.arriveTerminal && <div className="text-left">{segment.arriveTerminal}</div>}
           </div>
         </div>
         
