@@ -243,10 +243,10 @@ function AuthPage() {
                               {loginMutation.isPending ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Logging in...
+                                  {t("auth_login_loading")}
                                 </>
                               ) : (
-                                "Login"
+                                t("auth_login_button")
                               )}
                             </Button>
                           </form>
@@ -255,13 +255,13 @@ function AuthPage() {
                       <CardFooter className="flex flex-col space-y-4">
                         <Separator />
                         <div className="text-sm text-muted-foreground text-center">
-                          Don't have an account?{" "}
+                          {t("auth_no_account")}{" "}
                           <Button
                             variant="link"
                             className="p-0 text-blue-600"
                             onClick={() => setActiveTab("register")}
                           >
-                            Register
+                            {t("auth_register_link")}
                           </Button>
                         </div>
                       </CardFooter>
@@ -344,12 +344,12 @@ function AuthPage() {
                               name="confirmPassword"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Confirm Password</FormLabel>
+                                  <FormLabel>{t("auth_confirm_password_label")}</FormLabel>
                                   <div className="relative">
                                     <FormControl>
                                       <Input 
                                         type={showConfirmPassword ? "text" : "password"} 
-                                        placeholder="Confirm your password" 
+                                        placeholder={t("auth_confirm_password_placeholder")} 
                                         {...field} 
                                       />
                                     </FormControl>
@@ -380,10 +380,10 @@ function AuthPage() {
                               {registerMutation.isPending ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Creating account...
+                                  {t("auth_register_loading")}
                                 </>
                               ) : (
-                                "Register"
+                                t("auth_register_button")
                               )}
                             </Button>
                           </form>
@@ -392,13 +392,13 @@ function AuthPage() {
                       <CardFooter className="flex flex-col space-y-4">
                         <Separator />
                         <div className="text-sm text-muted-foreground text-center">
-                          Already have an account?{" "}
+                          {t("auth_have_account")}{" "}
                           <Button
                             variant="link"
                             className="p-0 text-blue-600"
                             onClick={() => setActiveTab("login")}
                           >
-                            Login
+                            {t("auth_login_link")}
                           </Button>
                         </div>
                       </CardFooter>
@@ -411,30 +411,30 @@ function AuthPage() {
             {/* Right side - Hero section */}
             <div className="w-full md:w-1/2 flex flex-col justify-center text-white">
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/20 shadow-xl">
-                <h2 className="text-3xl font-bold mb-4 text-white">Welcome to Global Air Travel Services</h2>
+                <h2 className="text-3xl font-bold mb-4 text-white">{t("auth_hero_title")}</h2>
                 <p className="mb-6 text-white/90">
-                  Create an account to enjoy these benefits:
+                  {t("auth_hero_subtitle")}
                 </p>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>Save your favorite routes and destinations</span>
+                    <span>{t("auth_benefit_1")}</span>
                   </li>
                   <li className="flex items-start">
                     <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>Retrieve and reuse your past booking information</span>
+                    <span>{t("auth_benefit_2")}</span>
                   </li>
                   <li className="flex items-start">
                     <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>Access your tickets anytime from your account</span>
+                    <span>{t("auth_benefit_3")}</span>
                   </li>
                   <li className="flex items-start">
                     <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>Get email notifications about your bookings</span>
+                    <span>{t("auth_benefit_4")}</span>
                   </li>
                   <li className="flex items-start">
                     <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>Manage your visa application documents in one place</span>
+                    <span>{t("auth_benefit_5")}</span>
                   </li>
                 </ul>
               </div>
