@@ -276,25 +276,36 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </div>
         </div>
         
-        {/* Flight Times with ViewTrip Layout - All left aligned, no flexbox */}
+        {/* Flight Times with ViewTrip Layout - All left aligned, with airplane icon */}
         <div className="pl-4 pr-4 py-3">
           <div>
-            <div className="grid grid-cols-12 gap-2 items-start">
-              <div className="col-span-3">
+            <div className="grid grid-cols-12 gap-2 items-start text-left">
+              <div className="col-span-3 text-left relative">
                 <div className="uppercase text-xs font-bold text-gray-600 mb-1">DEPART</div>
                 <div className="flex items-baseline">
                   <div className="text-lg font-bold">{segment.departTime}</div>
                   <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
                   <div className="text-xs ml-1">{segment.departCode}</div>
                 </div>
+                {/* Removed up-arrow */}
               </div>
               
-              <div className="col-span-3">
-                <div className="uppercase text-xs font-bold text-gray-500 mb-1">NON STOP</div>
-                <div className="text-xs text-gray-500">{segment.duration}</div>
+              <div className="col-span-3 text-left text-center mx-4">
+                <div className="uppercase text-xs font-bold text-gray-500 mb-1 text-left">NON STOP</div>
+                <div className="flex items-center justify-start mt-1">
+                  <svg width="16" height="16" viewBox="0 0 16 16" className="text-gray-600 mr-2">
+                    <path d="M14 8c0 0.3-0.1 0.6-0.4 0.8l-11 7C2.4 15.9 2.2 16 2 16c-0.2 0-0.3 0-0.5-0.1C1.2 15.7 1 15.4 1 15V1c0-0.4 0.2-0.7 0.5-0.9C1.8 0 2.2 0 2.6 0.2l11 7C13.9 7.4 14 7.7 14 8z" fill="currentColor"/>
+                  </svg>
+                  <div className="text-xs text-gray-500">{segment.duration}</div>
+                </div>
+                <div className="w-full flex justify-center mt-1">
+                  <svg width="36" height="8" viewBox="0 0 36 8" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-400">
+                    <line x1="0" y1="4" x2="36" y2="4" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2"/>
+                  </svg>
+                </div>
               </div>
               
-              <div className="col-span-3">
+              <div className="col-span-3 text-left">
                 <div className="uppercase text-xs font-bold text-gray-600 mb-1">ARRIVE</div>
                 <div className="flex items-baseline">
                   <div className="text-lg font-bold">{segment.arriveTime}</div>
