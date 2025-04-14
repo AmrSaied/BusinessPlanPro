@@ -478,8 +478,13 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             
             {/* Saved passenger selector - shown only if user is authenticated */}
             {savedPassengers !== undefined && (
-              <div className={cn("flex items-center gap-2", currentLanguage === 'ar' || currentLanguage === 'he' ? "flex-row-reverse" : "")}>
-                <span className="text-sm text-gray-600">{t('load_saved_passenger', 'Load saved')}:</span>
+              <div className={cn(
+                "flex items-center gap-2 mt-2", 
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "flex-row-reverse justify-end" : ""
+              )}>
+                <span className="text-sm text-gray-600" dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}>
+                  {t('load_saved_passenger', 'Load saved')}:
+                </span>
                 <Select 
                   onValueChange={(value) => {
                     if (value === "none") return;
@@ -738,10 +743,13 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             
             {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
             {savedPassengers !== undefined && (
-              <div className="mt-4">
+              <div className={cn(
+                "mt-4",
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "flex justify-end" : ""
+              )}>
                 <div className={cn(
                   "flex items-center", 
-                  currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2"
+                  currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse rtl-checkbox" : "space-x-2"
                 )}>
                   <Checkbox 
                     id={`save-passenger-${index}`} 
@@ -751,6 +759,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   <label 
                     htmlFor={`save-passenger-${index}`}
                     className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                   >
                     {t('save_passenger', 'Save this passenger for future bookings')}
                   </label>
@@ -806,10 +815,13 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           
           {/* Save contact information checkbox - only show if user is authenticated */}
           {savedPassengers !== undefined && (
-            <div className="mt-4">
+            <div className={cn(
+              "mt-4",
+              currentLanguage === 'ar' || currentLanguage === 'he' ? "flex justify-end" : ""
+            )}>
               <div className={cn(
                 "flex items-center", 
-                currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2"
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse rtl-checkbox" : "space-x-2"
               )}>
                 <Checkbox 
                   id="save-contact-info" 
@@ -821,6 +833,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 <label 
                   htmlFor="save-contact-info"
                   className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                 >
                   {t('save_contact_info', 'Save contact information for future bookings')}
                 </label>
