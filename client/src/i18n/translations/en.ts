@@ -445,9 +445,20 @@ export default {
   auth_registering: 'Creating account...',
   auth_no_account: 'Don\'t have an account?',
   auth_have_account: 'Already have an account?',
+  auth_login_link: 'Login',
+  auth_register_link: 'Register',
   auth_success_login: 'You have successfully logged in',
   auth_success_register: 'Your account has been created and you are now logged in',
   auth_failed_register: 'Registration failed',
+  
+  // Auth hero section
+  auth_hero_title: 'Welcome to Global Air Travel Services',
+  auth_hero_subtitle: 'Create an account to enjoy these benefits:',
+  auth_benefit_1: 'Save your favorite routes and destinations',
+  auth_benefit_2: 'Retrieve and reuse your past booking information',
+  auth_benefit_3: 'Access your tickets anytime from your account',
+  auth_benefit_4: 'Get email notifications about your bookings',
+  auth_benefit_5: 'Manage your visa application documents in one place',
   
   // Validation messages
   validation_username_min: 'Username must be at least 3 characters',

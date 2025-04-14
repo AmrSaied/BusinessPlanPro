@@ -243,7 +243,7 @@ function AuthPage() {
                               {loginMutation.isPending ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  {t("auth_login_loading")}
+                                  {t("auth_logging_in")}
                                 </>
                               ) : (
                                 t("auth_login_button")
@@ -287,7 +287,7 @@ function AuthPage() {
                                 <FormItem>
                                   <FormLabel>{t("auth_username_label")}</FormLabel>
                                   <FormControl>
-                                    <Input placeholder={t("auth_username_register_placeholder")} {...field} />
+                                    <Input placeholder={t("auth_register_username_placeholder")} {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -316,7 +316,7 @@ function AuthPage() {
                                     <FormControl>
                                       <Input 
                                         type={showRegisterPassword ? "text" : "password"} 
-                                        placeholder={t("auth_password_create_placeholder")} 
+                                        placeholder={t("auth_create_password_placeholder")} 
                                         {...field} 
                                       />
                                     </FormControl>
@@ -380,7 +380,7 @@ function AuthPage() {
                               {registerMutation.isPending ? (
                                 <>
                                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  {t("auth_register_loading")}
+                                  {t("auth_registering")}
                                 </>
                               ) : (
                                 t("auth_register_button")

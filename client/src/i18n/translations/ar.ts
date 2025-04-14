@@ -409,9 +409,20 @@ export default {
   auth_registering: 'جاري إنشاء الحساب...',
   auth_no_account: 'ليس لديك حساب؟',
   auth_have_account: 'هل لديك حساب بالفعل؟',
+  auth_login_link: 'تسجيل الدخول',
+  auth_register_link: 'تسجيل',
   auth_success_login: 'تم تسجيل الدخول بنجاح',
   auth_success_register: 'تم إنشاء حسابك وتسجيل الدخول',
   auth_failed_register: 'فشل التسجيل',
+  
+  // Auth hero section
+  auth_hero_title: 'مرحبًا بك في خدمات السفر الجوي العالمية',
+  auth_hero_subtitle: 'أنشئ حسابًا للاستمتاع بهذه المزايا:',
+  auth_benefit_1: 'احفظ مساراتك ووجهاتك المفضلة',
+  auth_benefit_2: 'استرجع واستخدم معلومات الحجز السابقة',
+  auth_benefit_3: 'الوصول إلى تذاكرك في أي وقت من حسابك',
+  auth_benefit_4: 'احصل على إشعارات بالبريد الإلكتروني حول حجوزاتك',
+  auth_benefit_5: 'إدارة وثائق طلب التأشيرة في مكان واحد',
   
   // Validation messages
   validation_username_min: 'يجب أن يكون اسم المستخدم 3 أحرف على الأقل',
