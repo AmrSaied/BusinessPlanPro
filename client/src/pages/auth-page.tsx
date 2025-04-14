@@ -41,6 +41,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 function AuthPage() {
   console.log("Auth page component rendering");
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
@@ -86,7 +87,7 @@ function AuthPage() {
       await loginMutation.mutateAsync(values);
       toast({
         title: "Success",
-        description: "You have successfully logged in",
+        description: t("auth_success_login"),
       });
       navigate("/");
     } catch (error) {
@@ -108,14 +109,14 @@ function AuthPage() {
       await registerMutation.mutateAsync(userData);
       toast({
         title: "Success",
-        description: "Your account has been created and you are now logged in",
+        description: t("auth_success_register"),
       });
       navigate("/");
     } catch (error) {
       console.error("Registration error in component:", error);
       // Show error toast in addition to the one from the mutation
       toast({
-        title: "Registration failed",
+        title: t("auth_failed_register"),
         description: error instanceof Error ? error.message : "An unknown error occurred",
         variant: "destructive",
       });
@@ -172,17 +173,17 @@ function AuthPage() {
                   className="w-full"
                 >
                   <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="login">Login</TabsTrigger>
-                    <TabsTrigger value="register">Register</TabsTrigger>
+                    <TabsTrigger value="login">{t("auth_login_tab")}</TabsTrigger>
+                    <TabsTrigger value="register">{t("auth_register_tab")}</TabsTrigger>
                   </TabsList>
 
                   {/* Login Tab */}
                   <TabsContent value="login">
                     <Card className="border-0 shadow-none">
                       <CardHeader className="pb-4">
-                        <CardTitle className="text-2xl font-bold text-blue-900">Login to your account</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-blue-900">{t("auth_login_title")}</CardTitle>
                         <CardDescription>
-                          Enter your credentials to access your account
+                          {t("auth_login_description")}
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -193,9 +194,9 @@ function AuthPage() {
                               name="username"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Username</FormLabel>
+                                  <FormLabel>{t("auth_username_label")}</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="Enter your username" {...field} />
+                                    <Input placeholder={t("auth_username_placeholder")} {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -206,12 +207,12 @@ function AuthPage() {
                               name="password"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Password</FormLabel>
+                                  <FormLabel>{t("auth_password_label")}</FormLabel>
                                   <div className="relative">
                                     <FormControl>
                                       <Input 
                                         type={showLoginPassword ? "text" : "password"}
-                                        placeholder="Enter your password" 
+                                        placeholder={t("auth_password_placeholder")} 
                                         {...field} 
                                       />
                                     </FormControl>
@@ -271,9 +272,9 @@ function AuthPage() {
                   <TabsContent value="register">
                     <Card className="border-0 shadow-none">
                       <CardHeader className="pb-4">
-                        <CardTitle className="text-2xl font-bold text-blue-900">Create an account</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-blue-900">{t("auth_register_title")}</CardTitle>
                         <CardDescription>
-                          Sign up to save your bookings and track your tickets
+                          {t("auth_register_description")}
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -284,9 +285,9 @@ function AuthPage() {
                               name="username"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Username</FormLabel>
+                                  <FormLabel>{t("auth_username_label")}</FormLabel>
                                   <FormControl>
-                                    <Input placeholder="Choose a username" {...field} />
+                                    <Input placeholder={t("auth_username_register_placeholder")} {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -297,9 +298,9 @@ function AuthPage() {
                               name="email"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Email</FormLabel>
+                                  <FormLabel>{t("auth_email_label")}</FormLabel>
                                   <FormControl>
-                                    <Input type="email" placeholder="Enter your email" {...field} />
+                                    <Input type="email" placeholder={t("auth_email_placeholder")} {...field} />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -310,12 +311,12 @@ function AuthPage() {
                               name="password"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Password</FormLabel>
+                                  <FormLabel>{t("auth_password_label")}</FormLabel>
                                   <div className="relative">
                                     <FormControl>
                                       <Input 
                                         type={showRegisterPassword ? "text" : "password"} 
-                                        placeholder="Create a password" 
+                                        placeholder={t("auth_password_create_placeholder")} 
                                         {...field} 
                                       />
                                     </FormControl>
