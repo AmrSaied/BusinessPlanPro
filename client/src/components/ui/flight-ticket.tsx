@@ -313,11 +313,9 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </div>
         </div>
         
-        {/* Footer with Disclaimers */}
+        {/* Footer - Removed disclaimers as requested */}
         <div className="p-4 text-xs text-gray-600 text-center">
-          <div className="mb-1">{TICKET_TEXT.visaPurpose}</div>
-          <div className="mb-1">{TICKET_TEXT.refOnly}</div>
-          <div className="text-gray-400 text-xs mt-2">{ticketNumber}</div>
+          
         </div>
       </div>
       
