@@ -491,23 +491,39 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   disabled={savedPassengers.length === 0}
                   dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                 >
-                  <SelectTrigger className={cn("w-[220px]", currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left")}>
+                  <SelectTrigger 
+                    className={cn("w-[220px]", currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left")}
+                    dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  >
                     <SelectValue placeholder={t(savedPassengers.length > 0 ? 
                       'select_saved_passenger' : 
                       'no_saved_passengers', 
                       savedPassengers.length > 0 ? "Load saved passenger" : "No saved passengers yet")} 
                     />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">{t('select_saved_passenger', 'Select a saved passenger')}</SelectItem>
+                  <SelectContent align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
+                    <SelectItem 
+                      value="none" 
+                      className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
+                    >
+                      {t('select_saved_passenger', 'Select a saved passenger')}
+                    </SelectItem>
                     {savedPassengers.length > 0 ? (
                       savedPassengers.map((savedPassenger) => (
-                        <SelectItem key={savedPassenger.id} value={savedPassenger.id?.toString() || ''}>
+                        <SelectItem 
+                          key={savedPassenger.id} 
+                          value={savedPassenger.id?.toString() || ''}
+                          className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
+                        >
                           {savedPassenger.title}. {savedPassenger.firstName} {savedPassenger.lastName}
                         </SelectItem>
                       ))
                     ) : (
-                      <SelectItem value="none" disabled>
+                      <SelectItem 
+                        value="none" 
+                        disabled
+                        className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
+                      >
                         {t('save_passenger_first', 'Save a passenger to select it later')}
                       </SelectItem>
                     )}
@@ -526,12 +542,22 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.title} 
                   onValueChange={(value) => updatePassenger(index, 'title', value)}
                 >
-                  <SelectTrigger id={`title-${index}`}>
+                  <SelectTrigger 
+                    id={`title-${index}`} 
+                    className={cn(currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "")} 
+                    dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  >
                     <SelectValue placeholder={t('passenger_select_title')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
                     {titles.map((title) => (
-                      <SelectItem key={title.value} value={title.value}>{title.label}</SelectItem>
+                      <SelectItem 
+                        key={title.value} 
+                        value={title.value}
+                        className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
+                      >
+                        {title.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -554,7 +580,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   >
                     <SelectValue placeholder={t('select_nationality')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
                     {countries.map((country) => (
                       <SelectItem 
                         key={country.value} 
