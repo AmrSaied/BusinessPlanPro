@@ -83,22 +83,22 @@ const FaqPage = () => {
           
           {/* Additional Questions Section */}
           <div className="mt-12 bg-white p-8 rounded-lg shadow-sm text-center">
-            <h2 className="text-xl font-semibold mb-4">Still have questions?</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('faq_still_have_questions')}</h2>
             <p className="text-gray-600 mb-6">
-              Our support team is available 24/7 to assist you with any questions or concerns.
+              {t('faq_support_available')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
                 href="#" 
                 className="bg-primary text-white px-6 py-3 rounded-md font-medium text-center hover:bg-primary/90 transition"
               >
-                <i className="fas fa-comments mr-2"></i> Live Chat
+                <i className="fas fa-comments mr-2"></i> {t('live_chat')}
               </a>
               <a 
                 href="mailto:support@fastdummyticket.com" 
                 className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-md font-medium text-center hover:bg-gray-50 transition"
               >
-                <i className="fas fa-envelope mr-2"></i> Email Support
+                <i className="fas fa-envelope mr-2"></i> {t('footer_email_support')}
               </a>
             </div>
           </div>
