@@ -47,6 +47,12 @@ export function Combobox({
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
+  
+  // Helper function to normalize Arabic text (remove diacritics)
+  const normalizeArabic = (text: string) => {
+    // Remove Arabic diacritics and tatweel
+    return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
+  };
 
   // Find the selected item to display its label
   const selectedItem = items.find((item) => item.value === value);
@@ -60,8 +66,12 @@ export function Combobox({
         return customFilter(item, inputValue);
       }
       
-      // Default filter behavior - case insensitive search on label
-      return item.label.toLowerCase().includes(inputValue.toLowerCase());
+      // Default filter behavior with enhanced Arabic support
+      const normalizedInput = normalizeArabic(inputValue.toLowerCase());
+      const normalizedLabel = normalizeArabic(item.label.toLowerCase());
+      
+      return normalizedLabel.includes(normalizedInput) || 
+             item.label.toLowerCase().includes(inputValue.toLowerCase());
     });
   }, [items, inputValue, customFilter]);
 

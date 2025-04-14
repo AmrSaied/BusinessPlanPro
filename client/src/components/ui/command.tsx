@@ -38,20 +38,54 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-  <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-    <Search className="mx-2 h-4 w-4 shrink-0 opacity-50" />
-    <CommandPrimitive.Input
-      ref={ref}
-      className={cn(
-        "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      dir="auto" // Automatically detect text direction based on input
-      {...props}
-    />
-  </div>
-))
+>(({ className, ...props }, ref) => {
+  // Check if we're potentially in an RTL context
+  const isRTLRegex = /[\u0591-\u07FF\u200F\u202B\u202E\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+  const placeholderText = props.placeholder || '';
+  const isRTLPlaceholder = isRTLRegex.test(placeholderText);
+  
+  // Track input value to dynamically set direction
+  const [inputDirection, setInputDirection] = React.useState<'rtl' | 'ltr' | 'auto'>(
+    isRTLPlaceholder ? 'rtl' : 'auto'
+  );
+  
+  // This function will update direction without using onChange
+  const handleValueChange = React.useCallback((text: string) => {
+    // If input contains RTL characters, set direction to RTL
+    if (text && isRTLRegex.test(text)) {
+      setInputDirection('rtl');
+    } else if (text) {
+      setInputDirection('ltr');
+    } else {
+      // When empty, default to auto or the placeholder's direction
+      setInputDirection(isRTLPlaceholder ? 'rtl' : 'auto');
+    }
+  }, [isRTLRegex, isRTLPlaceholder]);
+  
+  // Set up the effect to watch for changes to the value prop
+  React.useEffect(() => {
+    if (typeof props.value === 'string') {
+      handleValueChange(props.value);
+    }
+  }, [props.value, handleValueChange]);
+  
+  return (
+    <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
+      <Search className="mx-2 h-4 w-4 shrink-0 opacity-50" />
+      <CommandPrimitive.Input
+        ref={ref}
+        className={cn(
+          "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+          inputDirection === 'rtl' ? "text-right" : "",
+          className
+        )}
+        dir={inputDirection}
+        onInput={(e) => handleValueChange(e.currentTarget.value)}
+        {...props}
+      />
+    </div>
+  );
+})
 
 CommandInput.displayName = CommandPrimitive.Input.displayName
 

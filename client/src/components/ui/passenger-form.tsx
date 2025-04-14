@@ -74,20 +74,33 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Dynamic filter function for searching nationalities in multiple languages
+  // Enhanced filter function for searching nationalities in multiple languages
+  // with special handling for Arabic text
   const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
     
-    const searchTermLower = searchTerm.toLowerCase();
+    // Normalize the search term by removing diacritics and vowel marks for Arabic
+    const normalizeArabic = (text: string) => {
+      // Remove Arabic diacritics (harakaat) and tatweel
+      return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
+    };
     
-    // Match in the current language (using the label which is already translated)
-    const matchesCurrentLanguage = item.label.toLowerCase().includes(searchTermLower);
+    const searchTermLower = searchTerm.toLowerCase();
+    const normalizedSearchTerm = normalizeArabic(searchTermLower);
+    
+    // Use normalized and non-normalized searches for better matching
+    const normalizedLabel = normalizeArabic(item.label.toLowerCase());
+    
+    // Check if item label matches search term (with and without normalization)
+    const matchesCurrentLanguage = 
+      item.label.toLowerCase().includes(searchTermLower) || 
+      normalizedLabel.includes(normalizedSearchTerm);
     
     // Also match in English if englishName is available (for cross-language searching)
     const matchesEnglish = item.englishName ? 
       item.englishName.toLowerCase().includes(searchTermLower) : false;
     
-    // Return true if it matches either in current language or in English
+    // Return true if it matches in either language
     return matchesCurrentLanguage || matchesEnglish;
   };
   
