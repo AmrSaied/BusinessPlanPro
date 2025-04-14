@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './button';
-import { Download, Printer } from 'lucide-react';
+import { Download, Printer, Plane } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -87,6 +87,36 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
     }
   };
   
+  // Convert non-English text to English if needed
+  const translateToEnglish = (text: string) => {
+    // This is a simple function to check if text contains non-Latin characters
+    // and provide a fallback name if needed
+    const nonLatinRegex = /[^\u0000-\u007F]/;
+    
+    if (nonLatinRegex.test(text)) {
+      // For simplicity, return a generic name if non-Latin characters are found
+      return "PASSENGER NAME";
+    }
+    
+    return text;
+  };
+  
+  // Calculate flight distance (approximate)
+  const calculateDistance = () => {
+    // In a real app, we would calculate this based on coordinates
+    // For demo purposes, we'll return a fixed value based on cities
+    const routeDistances: Record<string, number> = {
+      'AUH-JFK': 11030,
+      'CAI-JFK': 9037,
+      'AUH-LHR': 5502,
+      'AUH-DXB': 123,
+      'default': 2500
+    };
+    
+    const route = `${flight.departureAirport}-${flight.arrivalAirport}`;
+    return routeDistances[route] || routeDistances['default'];
+  };
+  
   // Generate PDF from ticket
   const generatePDF = async () => {
     if (!ticketRef.current) return;
@@ -168,7 +198,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             </div>
           </div>
           
-          {/* Flight Times */}
+          {/* Flight Times with Improved Layout */}
           <div className="flex justify-between items-center px-2 py-1">
             <div className="flex-1">
               <div className="uppercase text-xs font-bold text-gray-600">DEPART</div>
@@ -176,13 +206,15 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                 <div className="text-lg font-bold">{flight.departureTime.split(' ')[0]}</div>
                 <div className="text-xs ml-1 uppercase">{flight.departureTime.split(' ')[1]}</div>
               </div>
+              <div className="text-xs text-gray-600">{flight.departureCity}</div>
             </div>
             
-            <div className="flex-none">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 2L11 13"></path>
-                <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
-              </svg>
+            <div className="flex-none px-1">
+              <Plane className="h-5 w-5 text-gray-500" />
+              <div className="text-center mt-0.5">
+                <div className="text-xs text-gray-500 font-mono">NON</div>
+                <div className="text-xs text-gray-500 font-mono">STOP</div>
+              </div>
             </div>
             
             <div className="flex-1 text-right">
@@ -191,11 +223,18 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                 <div className="text-lg font-bold">{flight.arrivalTime.split(' ')[0]}</div>
                 <div className="text-xs ml-1 uppercase">{flight.arrivalTime.split(' ')[1]}</div>
               </div>
+              <div className="text-xs text-gray-600">{flight.arrivalCity}</div>
             </div>
           </div>
           
-          <div className="px-2 py-1">
-            <div className="text-xs text-gray-600">{flight.duration}</div>
+          {/* Flight Duration and Distance */}
+          <div className="flex justify-between border-t border-gray-200 px-2 py-1">
+            <div className="text-xs text-gray-600">
+              <span className="font-semibold">Duration:</span> {flight.duration}
+            </div>
+            <div className="text-xs text-gray-600">
+              <span className="font-semibold">Distance:</span> {calculateDistance()} km
+            </div>
           </div>
         </div>
         
@@ -204,7 +243,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           <div className="uppercase text-xs font-semibold mb-1">PASSENGERS</div>
           {passengers.map((passenger, index) => (
             <div key={index} className="text-xs">
-              {passenger.title.toUpperCase()}. {passenger.firstName.toUpperCase()} {passenger.lastName.toUpperCase()} {passenger.title === 'mr' ? 'MR' : 'MS'}
+              {passenger.title.toUpperCase()}. {translateToEnglish(passenger.firstName).toUpperCase()} {translateToEnglish(passenger.lastName).toUpperCase()}
             </div>
           ))}
           <div className="text-xs mt-1">Class Of Service: Economy</div>
@@ -219,7 +258,11 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             {flight.departureTerminal && <div>Terminal {flight.departureTerminal}</div>}
           </div>
           
-          <div className="border-b border-dotted border-gray-300 my-2"></div>
+          <div className="flex items-center my-2">
+            <div className="flex-grow border-b border-dotted border-gray-300"></div>
+            <div className="mx-2 text-xs text-gray-500 font-bold">TO</div>
+            <div className="flex-grow border-b border-dotted border-gray-300"></div>
+          </div>
           
           <div className="text-xs">
             <div>{flight.arrivalCity} Int'l Apt ({flight.arrivalAirport})</div>
@@ -231,9 +274,15 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         {/* Flight Info Section */}
         <div className="border-b border-gray-300 p-2">
           <div className="uppercase text-xs font-semibold mb-1">FLIGHT INFO</div>
-          <div className="text-xs">
-            <div>Boeing 777-300</div>
-            <div>Meal</div>
+          <div className="flex justify-between items-center text-xs">
+            <div>
+              <div>Boeing 777-300</div>
+              <div>Meal</div>
+            </div>
+            <div className="text-right">
+              <div className="font-semibold">Distance</div>
+              <div>{calculateDistance()} km</div>
+            </div>
           </div>
         </div>
         
