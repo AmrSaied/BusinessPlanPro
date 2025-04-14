@@ -104,24 +104,24 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
   
   // For direct PDF download from server
   const downloadPDF = () => {
-    // Use bookingId from props if available, otherwise extract it from bookingReference
-    // This assumes the bookingReference contains the ID or you have another way to get the bookingId
-    // In a real app, you'd have the actual bookingId available
-    // For this implementation, we're extracting a number from the reference if possible
     let bookingId: number;
     
     try {
-      // Try to extract digits from bookingReference
-      const matches = bookingReference.match(/\d+/);
-      bookingId = matches ? parseInt(matches[0]) : 1; // Default to 1 if no digits found
+      // Extract the numeric part from bookingReference (format: ZB416202)
+      // First check if there's a direct match for the full reference
+      const bookingIdFromRef = bookingReference.replace(/[^0-9]/g, '');
+      bookingId = bookingIdFromRef ? parseInt(bookingIdFromRef) : 1;
+      
+      // Open the PDF download endpoint in a new tab/window
+      const downloadUrl = `/api/bookings/${bookingId}/ticket/download`;
+      window.open(downloadUrl, '_blank');
+      
+      console.log(`Downloading ticket with booking ID: ${bookingId} from reference: ${bookingReference}`);
     } catch (error) {
       console.error('Error parsing booking reference:', error);
-      bookingId = 1; // Default fallback
+      // Fall back to client-side PDF generation
+      generatePDF();
     }
-    
-    // Open the PDF download endpoint in a new tab/window
-    const downloadUrl = `/api/bookings/${bookingId}/ticket/download`;
-    window.open(downloadUrl, '_blank');
   };
   
   // Generate PDF from ticket (client-side backup method)

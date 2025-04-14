@@ -79,17 +79,25 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     enabled: !!bookingId,
   });
   
-  // PDF download simulation (in a real app, this would generate a PDF)
+  // Handle ticket download
   const handleDownloadTicket = () => {
-    // Simulate download delay
-    const downloadStarted = new Date().toISOString();
-    console.log(`Download started at: ${downloadStarted}`);
+    if (!ticketData) return;
     
-    // In a real app, this would be an actual download
-    setTimeout(() => {
-      console.log(`Download from ${downloadStarted} completed`);
-      alert('Ticket downloaded successfully. In a real app, this would be a PDF file.');
-    }, 2000);
+    // Use the client-side method from FlightTicket component
+    try {
+      // Get booking ID from reference
+      const matches = ticketData.bookingReference.match(/\d+/);
+      const bookingId = matches ? parseInt(matches[0]) : parseInt(bookingId);
+      
+      // Open the PDF download endpoint in a new tab/window
+      const downloadUrl = `/api/bookings/${bookingId}/ticket/download`;
+      window.open(downloadUrl, '_blank');
+    } catch (error) {
+      console.error('Error downloading ticket:', error);
+      
+      // Fallback to client-side PDF generation (in a production app)
+      alert('Download link unavailable. Please try again or contact support.');
+    }
   };
   
   // Handle booking another ticket
