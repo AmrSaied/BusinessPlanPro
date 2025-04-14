@@ -203,6 +203,7 @@ function AuthPage() {
                                     <Input 
                                       placeholder={t("auth_username_placeholder")} 
                                       className={cn(isRTL && "text-right")}
+                                      dir={isRTL ? "rtl" : "ltr"}
                                       {...field} 
                                     />
                                   </FormControl>
@@ -222,6 +223,7 @@ function AuthPage() {
                                         type={showLoginPassword ? "text" : "password"}
                                         placeholder={t("auth_password_placeholder")} 
                                         className={cn(isRTL && "text-right")}
+                                        dir={isRTL ? "rtl" : "ltr"}
                                         {...field} 
                                       />
                                     </FormControl>
@@ -302,6 +304,7 @@ function AuthPage() {
                                     <Input 
                                       placeholder={t("auth_register_username_placeholder")} 
                                       className={cn(isRTL && "text-right")}
+                                      dir={isRTL ? "rtl" : "ltr"}
                                       {...field} 
                                     />
                                   </FormControl>
@@ -320,6 +323,7 @@ function AuthPage() {
                                       type="email" 
                                       placeholder={t("auth_email_placeholder")} 
                                       className={cn(isRTL && "text-right")}
+                                      dir={isRTL ? "rtl" : "ltr"}
                                       {...field} 
                                     />
                                   </FormControl>
@@ -339,6 +343,7 @@ function AuthPage() {
                                         type={showRegisterPassword ? "text" : "password"} 
                                         placeholder={t("auth_create_password_placeholder")} 
                                         className={cn(isRTL && "text-right")}
+                                        dir={isRTL ? "rtl" : "ltr"}
                                         {...field} 
                                       />
                                     </FormControl>
@@ -376,6 +381,7 @@ function AuthPage() {
                                         type={showConfirmPassword ? "text" : "password"} 
                                         placeholder={t("auth_confirm_password_placeholder")} 
                                         className={cn(isRTL && "text-right")}
+                                        dir={isRTL ? "rtl" : "ltr"}
                                         {...field} 
                                       />
                                     </FormControl>
