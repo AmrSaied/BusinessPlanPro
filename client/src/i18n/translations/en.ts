@@ -2,6 +2,7 @@ export default {
   // Common
   language_name: 'English',
   app_name: 'FastDummyTicket',
+  search_in_english: 'Search in English...',
 
   // Navigation
   nav_home: 'Home',
