@@ -69,7 +69,7 @@ const UserDashboard = () => {
       contactEmail: 'user@example.com',
       contactPhone: '+1234567890',
       travelPurpose: 'visa',
-      paymentId: 1,
+      paymentId: '1',
       specialRequests: ''
     },
     {
@@ -88,7 +88,7 @@ const UserDashboard = () => {
       contactEmail: 'user@example.com',
       contactPhone: '+1234567890',
       travelPurpose: 'immigration',
-      paymentId: 2,
+      paymentId: '2',
       specialRequests: ''
     }
   ];

@@ -21,6 +21,7 @@ import { InsertPassenger, Passenger } from '@shared/schema';
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useLanguage } from '@/context/language-context';
 import { getNationalitiesForLanguage } from '@/i18n/nationalities';
+import { Combobox } from '@/components/ui/combobox';
 
 interface PassengerFormProps {
   passengerCount: number;
@@ -532,19 +533,13 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               {/* Nationality */}
               <div>
                 <Label htmlFor={`nationality-${index}`}>{t('nationality')}</Label>
-                <Select 
-                  value={passenger.nationality} 
-                  onValueChange={(value) => updatePassenger(index, 'nationality', value)}
-                >
-                  <SelectTrigger id={`nationality-${index}`}>
-                    <SelectValue placeholder={t('select_nationality')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {countries.map((country) => (
-                      <SelectItem key={country.value} value={country.value}>{country.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Combobox
+                  items={countries}
+                  value={passenger.nationality}
+                  onChange={(value) => updatePassenger(index, 'nationality', value)}
+                  placeholder={t('select_nationality')}
+                  id={`nationality-${index}`}
+                />
                 {errors[`passenger${index}`]?.nationality && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].nationality}</p>
                 )}
