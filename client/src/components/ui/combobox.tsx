@@ -20,6 +20,8 @@ import { useLanguage } from "@/context/language-context";
 type ComboboxItem = {
   value: string;
   label: string;
+  // Original English name for nationality items (optional)
+  englishName?: string;
 };
 
 interface ComboboxProps {
@@ -28,6 +30,8 @@ interface ComboboxProps {
   onChange: (value: string) => void;
   placeholder?: string;
   id?: string;
+  // Custom filter function for multi-language search
+  customFilter?: (item: ComboboxItem, search: string) => boolean;
 }
 
 export function Combobox({ 
@@ -35,15 +39,31 @@ export function Combobox({
   value, 
   onChange, 
   placeholder = "Select an option", 
-  id 
+  id,
+  customFilter 
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
 
   // Find the selected item to display its label
   const selectedItem = items.find((item) => item.value === value);
+  
+  // Filter items based on input value, using custom filter if provided
+  const filteredItems = React.useMemo(() => {
+    if (!inputValue) return items;
+    
+    return items.filter(item => {
+      if (customFilter) {
+        return customFilter(item, inputValue);
+      }
+      
+      // Default filter behavior - case insensitive search on label
+      return item.label.toLowerCase().includes(inputValue.toLowerCase());
+    });
+  }, [items, inputValue, customFilter]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -65,10 +85,16 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent className={cn("w-full p-0", isRTL && "ml-0 mr-0")} align={isRTL ? "end" : "start"}>
         <Command className={cn(isRTL && "rtl")} dir={isRTL ? "rtl" : "ltr"}>
-          <CommandInput placeholder={t('search_placeholder', 'Search...')} dir={isRTL ? "rtl" : "ltr"} className={cn(isRTL && "text-right")} />
+          <CommandInput 
+            placeholder={t('search_placeholder', 'Search...')} 
+            dir={isRTL ? "rtl" : "ltr"} 
+            className={cn(isRTL && "text-right")} 
+            onValueChange={setInputValue}
+            value={inputValue}
+          />
           <CommandEmpty>{t('no_results', 'No results found.')}</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-y-auto">
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <CommandItem
                 key={item.value}
                 value={item.value}

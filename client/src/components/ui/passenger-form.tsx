@@ -75,11 +75,11 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Map country values and translated labels
+  // Map country values and translated labels with original English names for multi-language search
   const countries = [
-    { value: 'af', label: getTranslatedCountryName('Afghanistan') },
-    { value: 'al', label: getTranslatedCountryName('Albania') },
-    { value: 'dz', label: getTranslatedCountryName('Algeria') },
+    { value: 'af', label: getTranslatedCountryName('Afghanistan'), englishName: 'Afghanistan' },
+    { value: 'al', label: getTranslatedCountryName('Albania'), englishName: 'Albania' },
+    { value: 'dz', label: getTranslatedCountryName('Algeria'), englishName: 'Algeria' },
     { value: 'ad', label: getTranslatedCountryName('Andorra') },
     { value: 'ao', label: getTranslatedCountryName('Angola') },
     { value: 'ag', label: getTranslatedCountryName('Antigua and Barbuda') },
