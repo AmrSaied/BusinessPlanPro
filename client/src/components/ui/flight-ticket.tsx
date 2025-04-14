@@ -158,9 +158,9 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
       {/* PDF Generation Container */}
       <div ref={ticketRef} className="ticket-container text-gray-900">
         {/* ViewTrip Header */}
-        <div className="bg-[#006699] p-2 text-white">
+        <div className="bg-[#006699] p-3 text-white">
           <div className="flex items-center">
-            <div className="w-6 h-6 flex items-center justify-center rounded-full bg-white mr-2">
+            <div className="w-7 h-7 flex items-center justify-center rounded-full bg-white mr-3">
               <span className="text-[#006699] font-bold text-base">V</span>
             </div>
             <span className="text-base font-bold">ViewTrip</span>
@@ -168,8 +168,8 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         </div>
         
         {/* My Trip Header */}
-        <div className="p-2 border-b border-gray-300">
-          <h1 className="text-base font-medium">My Trip</h1>
+        <div className="p-4 border-b border-gray-300">
+          <h1 className="text-base font-medium mb-2">My Trip</h1>
           <div className="text-sm leading-tight text-gray-700">
             <div className="font-bold">
               {formatTicketDate(issueDate)} - {flight.departureCity} ({flight.departureAirport}) to {flight.arrivalCity} ({flight.arrivalAirport}) - Confirmed
@@ -183,52 +183,52 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         {/* Flight Segment */}
         <div className="border-b border-gray-200">
           {/* Date Header */}
-          <div className="p-1 font-bold text-xs border-b border-gray-300">
+          <div className="p-3 font-bold text-xs border-b border-gray-300">
             {formatTicketDate(issueDate)}
           </div>
           
           {/* Airline Info */}
-          <div className="flex items-start p-2">
-            <div className="bg-[#4a0000] text-white font-bold h-5 w-5 flex items-center justify-center mr-2">
+          <div className="flex items-start p-3">
+            <div className="bg-[#4a0000] text-white font-bold h-6 w-6 flex items-center justify-center mr-3">
               <span className="text-xs">{flight.airlineCode}</span>
             </div>
             <div>
               <div className="font-bold text-xs">{flight.airlineName} ({flight.airlineCode}) {flight.flightNumber}</div>
-              <div className="text-xs text-gray-600">Confirmation Number: {bookingReference}</div>
+              <div className="text-xs text-gray-600 mt-1">Confirmation Number: {bookingReference}</div>
             </div>
           </div>
           
           {/* Flight Times with Improved Layout */}
-          <div className="flex justify-between items-center px-2 py-1">
+          <div className="flex justify-between items-center px-4 py-3">
             <div className="flex-1">
-              <div className="uppercase text-xs font-bold text-gray-600">DEPART</div>
+              <div className="uppercase text-xs font-bold text-gray-600 mb-1">DEPART</div>
               <div className="flex items-baseline">
                 <div className="text-lg font-bold">{flight.departureTime.split(' ')[0]}</div>
                 <div className="text-xs ml-1 uppercase">{flight.departureTime.split(' ')[1]}</div>
               </div>
-              <div className="text-xs text-gray-600">{flight.departureCity}</div>
+              <div className="text-xs text-gray-600 mt-1">{flight.departureCity}</div>
             </div>
             
-            <div className="flex-none px-1">
-              <Plane className="h-5 w-5 text-gray-500" />
-              <div className="text-center mt-0.5">
+            <div className="flex-none px-3">
+              <Plane className="h-6 w-6 text-gray-500" />
+              <div className="text-center mt-1">
                 <div className="text-xs text-gray-500 font-mono">NON</div>
                 <div className="text-xs text-gray-500 font-mono">STOP</div>
               </div>
             </div>
             
             <div className="flex-1 text-right">
-              <div className="uppercase text-xs font-bold text-gray-600">ARRIVE</div>
+              <div className="uppercase text-xs font-bold text-gray-600 mb-1">ARRIVE</div>
               <div className="flex items-baseline justify-end">
                 <div className="text-lg font-bold">{flight.arrivalTime.split(' ')[0]}</div>
                 <div className="text-xs ml-1 uppercase">{flight.arrivalTime.split(' ')[1]}</div>
               </div>
-              <div className="text-xs text-gray-600">{flight.arrivalCity}</div>
+              <div className="text-xs text-gray-600 mt-1">{flight.arrivalCity}</div>
             </div>
           </div>
           
           {/* Flight Duration and Distance */}
-          <div className="flex justify-between border-t border-gray-200 px-2 py-1">
+          <div className="flex justify-between border-t border-gray-200 px-4 py-3">
             <div className="text-xs text-gray-600">
               <span className="font-semibold">Duration:</span> {flight.duration}
             </div>
@@ -239,76 +239,76 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         </div>
         
         {/* Passengers Section */}
-        <div className="border-b border-gray-300 p-2">
-          <div className="uppercase text-xs font-semibold mb-1">PASSENGERS</div>
+        <div className="border-b border-gray-300 p-4">
+          <div className="uppercase text-xs font-semibold mb-2">PASSENGERS</div>
           {passengers.map((passenger, index) => (
-            <div key={index} className="text-xs">
+            <div key={index} className="text-xs mb-1">
               {passenger.title.toUpperCase()}. {translateToEnglish(passenger.firstName).toUpperCase()} {translateToEnglish(passenger.lastName).toUpperCase()}
             </div>
           ))}
-          <div className="text-xs mt-1">Class Of Service: Economy</div>
+          <div className="text-xs mt-2">Class Of Service: Economy</div>
         </div>
         
         {/* Airport Info Section */}
-        <div className="border-b border-gray-300 p-2">
-          <div className="uppercase text-xs font-semibold mb-1">AIRPORT INFO</div>
-          <div className="text-xs mb-2">
-            <div>{flight.departureCity} Int'l Apt ({flight.departureAirport})</div>
-            <div>{flight.departureCity}, {flight.departureCountry}</div>
+        <div className="border-b border-gray-300 p-4">
+          <div className="uppercase text-xs font-semibold mb-2">AIRPORT INFO</div>
+          <div className="text-xs mb-3">
+            <div className="mb-0.5">{flight.departureCity} Int'l Apt ({flight.departureAirport})</div>
+            <div className="mb-0.5">{flight.departureCity}, {flight.departureCountry}</div>
             {flight.departureTerminal && <div>Terminal {flight.departureTerminal}</div>}
           </div>
           
-          <div className="flex items-center my-2">
+          <div className="flex items-center my-3">
             <div className="flex-grow border-b border-dotted border-gray-300"></div>
-            <div className="mx-2 text-xs text-gray-500 font-bold">TO</div>
+            <div className="mx-3 text-xs text-gray-500 font-bold">TO</div>
             <div className="flex-grow border-b border-dotted border-gray-300"></div>
           </div>
           
           <div className="text-xs">
-            <div>{flight.arrivalCity} Int'l Apt ({flight.arrivalAirport})</div>
-            <div>{flight.arrivalCity}, {flight.arrivalCountry}</div>
+            <div className="mb-0.5">{flight.arrivalCity} Int'l Apt ({flight.arrivalAirport})</div>
+            <div className="mb-0.5">{flight.arrivalCity}, {flight.arrivalCountry}</div>
             {flight.arrivalTerminal && <div>Terminal {flight.arrivalTerminal}</div>}
           </div>
         </div>
         
         {/* Flight Info Section */}
-        <div className="border-b border-gray-300 p-2">
-          <div className="uppercase text-xs font-semibold mb-1">FLIGHT INFO</div>
+        <div className="border-b border-gray-300 p-4">
+          <div className="uppercase text-xs font-semibold mb-2">FLIGHT INFO</div>
           <div className="flex justify-between items-center text-xs">
             <div>
-              <div>Boeing 777-300</div>
+              <div className="mb-0.5">Boeing 777-300</div>
               <div>Meal</div>
             </div>
             <div className="text-right">
-              <div className="font-semibold">Distance</div>
+              <div className="font-semibold mb-0.5">Distance</div>
               <div>{calculateDistance()} km</div>
             </div>
           </div>
         </div>
         
         {/* Footer with Disclaimers */}
-        <div className="p-2 text-xs text-gray-600 text-center">
-          <div>For visa application purposes only</div>
-          <div>This is not a valid ticket for travel - For reference only</div>
-          <div className="text-gray-400 text-xs mt-1">{ticketNumber}</div>
+        <div className="p-4 text-xs text-gray-600 text-center">
+          <div className="mb-1">For visa application purposes only</div>
+          <div className="mb-1">This is not a valid ticket for travel - For reference only</div>
+          <div className="text-gray-400 text-xs mt-2">{ticketNumber}</div>
         </div>
       </div>
       
       {/* Buttons Outside PDF Area */}
-      <div className="bg-white p-4 border-t border-gray-200 flex justify-center space-x-4">
+      <div className="bg-white p-6 border-t border-gray-200 flex justify-center space-x-6">
         <button
           onClick={generatePDF}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
         >
-          <Download className="w-4 h-4 mr-2" />
+          <Download className="w-5 h-5 mr-2" />
           {t('download_ticket')}
         </button>
         
         <button
           onClick={handlePrint}
-          className="flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+          className="flex items-center px-5 py-2.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors shadow-sm"
         >
-          <Printer className="w-4 h-4 mr-2" />
+          <Printer className="w-5 h-5 mr-2" />
           {t('print_ticket')}
         </button>
       </div>
