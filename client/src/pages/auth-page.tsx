@@ -185,8 +185,8 @@ function AuthPage() {
                   <TabsContent value="login">
                     <Card className="border-0 shadow-none">
                       <CardHeader className="pb-4">
-                        <CardTitle className="text-2xl font-bold text-blue-900">{t("auth_login_title")}</CardTitle>
-                        <CardDescription>
+                        <CardTitle className={cn("text-2xl font-bold text-blue-900", isRTL && "text-right")}>{t("auth_login_title")}</CardTitle>
+                        <CardDescription className={cn(isRTL && "text-right")}>
                           {t("auth_login_description")}
                         </CardDescription>
                       </CardHeader>
@@ -198,11 +198,15 @@ function AuthPage() {
                               name="username"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t("auth_username_label")}</FormLabel>
+                                  <FormLabel className={cn(isRTL && "text-right w-full")}>{t("auth_username_label")}</FormLabel>
                                   <FormControl>
-                                    <Input placeholder={t("auth_username_placeholder")} {...field} />
+                                    <Input 
+                                      placeholder={t("auth_username_placeholder")} 
+                                      className={cn(isRTL && "text-right")}
+                                      {...field} 
+                                    />
                                   </FormControl>
-                                  <FormMessage />
+                                  <FormMessage className={cn(isRTL && "text-right")} />
                                 </FormItem>
                               )}
                             />
@@ -211,12 +215,13 @@ function AuthPage() {
                               name="password"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t("auth_password_label")}</FormLabel>
+                                  <FormLabel className={cn(isRTL && "text-right w-full")}>{t("auth_password_label")}</FormLabel>
                                   <div className="relative">
                                     <FormControl>
                                       <Input 
                                         type={showLoginPassword ? "text" : "password"}
                                         placeholder={t("auth_password_placeholder")} 
+                                        className={cn(isRTL && "text-right")}
                                         {...field} 
                                       />
                                     </FormControl>
@@ -224,7 +229,10 @@ function AuthPage() {
                                       type="button"
                                       variant="ghost"
                                       size="sm"
-                                      className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                                      className={cn(
+                                        "absolute top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600",
+                                        isRTL ? "left-0" : "right-0"
+                                      )}
                                       onClick={() => setShowLoginPassword(!showLoginPassword)}
                                       tabIndex={-1}
                                     >
@@ -235,7 +243,7 @@ function AuthPage() {
                                       )}
                                     </Button>
                                   </div>
-                                  <FormMessage />
+                                  <FormMessage className={cn(isRTL && "text-right")} />
                                 </FormItem>
                               )}
                             />
@@ -246,7 +254,7 @@ function AuthPage() {
                             >
                               {loginMutation.isPending ? (
                                 <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  <Loader2 className={cn("h-4 w-4 animate-spin", isRTL ? "ml-2" : "mr-2")} />
                                   {t("auth_logging_in")}
                                 </>
                               ) : (
@@ -276,8 +284,8 @@ function AuthPage() {
                   <TabsContent value="register">
                     <Card className="border-0 shadow-none">
                       <CardHeader className="pb-4">
-                        <CardTitle className="text-2xl font-bold text-blue-900">{t("auth_register_title")}</CardTitle>
-                        <CardDescription>
+                        <CardTitle className={cn("text-2xl font-bold text-blue-900", isRTL && "text-right")}>{t("auth_register_title")}</CardTitle>
+                        <CardDescription className={cn(isRTL && "text-right")}>
                           {t("auth_register_description")}
                         </CardDescription>
                       </CardHeader>
@@ -289,11 +297,15 @@ function AuthPage() {
                               name="username"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t("auth_username_label")}</FormLabel>
+                                  <FormLabel className={cn(isRTL && "text-right w-full")}>{t("auth_username_label")}</FormLabel>
                                   <FormControl>
-                                    <Input placeholder={t("auth_register_username_placeholder")} {...field} />
+                                    <Input 
+                                      placeholder={t("auth_register_username_placeholder")} 
+                                      className={cn(isRTL && "text-right")}
+                                      {...field} 
+                                    />
                                   </FormControl>
-                                  <FormMessage />
+                                  <FormMessage className={cn(isRTL && "text-right")} />
                                 </FormItem>
                               )}
                             />
@@ -302,11 +314,16 @@ function AuthPage() {
                               name="email"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t("auth_email_label")}</FormLabel>
+                                  <FormLabel className={cn(isRTL && "text-right w-full")}>{t("auth_email_label")}</FormLabel>
                                   <FormControl>
-                                    <Input type="email" placeholder={t("auth_email_placeholder")} {...field} />
+                                    <Input 
+                                      type="email" 
+                                      placeholder={t("auth_email_placeholder")} 
+                                      className={cn(isRTL && "text-right")}
+                                      {...field} 
+                                    />
                                   </FormControl>
-                                  <FormMessage />
+                                  <FormMessage className={cn(isRTL && "text-right")} />
                                 </FormItem>
                               )}
                             />
@@ -315,12 +332,13 @@ function AuthPage() {
                               name="password"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t("auth_password_label")}</FormLabel>
+                                  <FormLabel className={cn(isRTL && "text-right w-full")}>{t("auth_password_label")}</FormLabel>
                                   <div className="relative">
                                     <FormControl>
                                       <Input 
                                         type={showRegisterPassword ? "text" : "password"} 
                                         placeholder={t("auth_create_password_placeholder")} 
+                                        className={cn(isRTL && "text-right")}
                                         {...field} 
                                       />
                                     </FormControl>
@@ -328,7 +346,10 @@ function AuthPage() {
                                       type="button"
                                       variant="ghost"
                                       size="sm"
-                                      className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                                      className={cn(
+                                        "absolute top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600",
+                                        isRTL ? "left-0" : "right-0"
+                                      )}
                                       onClick={() => setShowRegisterPassword(!showRegisterPassword)}
                                       tabIndex={-1}
                                     >
@@ -339,7 +360,7 @@ function AuthPage() {
                                       )}
                                     </Button>
                                   </div>
-                                  <FormMessage />
+                                  <FormMessage className={cn(isRTL && "text-right")} />
                                 </FormItem>
                               )}
                             />
@@ -348,12 +369,13 @@ function AuthPage() {
                               name="confirmPassword"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>{t("auth_confirm_password_label")}</FormLabel>
+                                  <FormLabel className={cn(isRTL && "text-right w-full")}>{t("auth_confirm_password_label")}</FormLabel>
                                   <div className="relative">
                                     <FormControl>
                                       <Input 
                                         type={showConfirmPassword ? "text" : "password"} 
                                         placeholder={t("auth_confirm_password_placeholder")} 
+                                        className={cn(isRTL && "text-right")}
                                         {...field} 
                                       />
                                     </FormControl>
@@ -361,7 +383,10 @@ function AuthPage() {
                                       type="button"
                                       variant="ghost"
                                       size="sm"
-                                      className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600"
+                                      className={cn(
+                                        "absolute top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-600",
+                                        isRTL ? "left-0" : "right-0"
+                                      )}
                                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                       tabIndex={-1}
                                     >
@@ -372,7 +397,7 @@ function AuthPage() {
                                       )}
                                     </Button>
                                   </div>
-                                  <FormMessage />
+                                  <FormMessage className={cn(isRTL && "text-right")} />
                                 </FormItem>
                               )}
                             />
@@ -383,7 +408,7 @@ function AuthPage() {
                             >
                               {registerMutation.isPending ? (
                                 <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  <Loader2 className={cn("h-4 w-4 animate-spin", isRTL ? "ml-2" : "mr-2")} />
                                   {t("auth_registering")}
                                 </>
                               ) : (
