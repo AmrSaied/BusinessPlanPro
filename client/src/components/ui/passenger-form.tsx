@@ -581,6 +581,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.firstName}
                   onChange={(e) => updatePassenger(index, 'firstName', e.target.value)}
                   placeholder={t('name_passport_placeholder')}
+                  className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
+                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.firstName && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].firstName}</p>
@@ -595,6 +597,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.lastName}
                   onChange={(e) => updatePassenger(index, 'lastName', e.target.value)}
                   placeholder={t('name_passport_placeholder')}
+                  className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
+                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.lastName && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].lastName}</p>
