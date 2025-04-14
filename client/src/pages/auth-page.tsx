@@ -15,6 +15,8 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useLocation } from "wouter";
 import MainLayout from "@/layout/main-layout";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/context/language-context";
+import { cn } from "@/lib/utils";
 
 // Login form schema
 const loginSchema = z.object({
@@ -42,6 +44,8 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 function AuthPage() {
   console.log("Auth page component rendering");
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
@@ -411,30 +415,30 @@ function AuthPage() {
             {/* Right side - Hero section */}
             <div className="w-full md:w-1/2 flex flex-col justify-center text-white">
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/20 shadow-xl">
-                <h2 className="text-3xl font-bold mb-4 text-white">{t("auth_hero_title")}</h2>
-                <p className="mb-6 text-white/90">
+                <h2 className={cn("text-3xl font-bold mb-4 text-white", isRTL && "text-right")}>{t("auth_hero_title")}</h2>
+                <p className={cn("mb-6 text-white/90", isRTL && "text-right")}>
                   {t("auth_hero_subtitle")}
                 </p>
                 <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>{t("auth_benefit_1")}</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                    <span className={cn(isRTL && "text-right")}>{t("auth_benefit_1")}</span>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>{t("auth_benefit_2")}</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                    <span className={cn(isRTL && "text-right")}>{t("auth_benefit_2")}</span>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>{t("auth_benefit_3")}</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                    <span className={cn(isRTL && "text-right")}>{t("auth_benefit_3")}</span>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>{t("auth_benefit_4")}</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                    <span className={cn(isRTL && "text-right")}>{t("auth_benefit_4")}</span>
                   </li>
-                  <li className="flex items-start">
-                    <span className="bg-white/20 rounded-full p-1 mr-2 text-white">✓</span>
-                    <span>{t("auth_benefit_5")}</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                    <span className={cn(isRTL && "text-right")}>{t("auth_benefit_5")}</span>
                   </li>
                 </ul>
               </div>
