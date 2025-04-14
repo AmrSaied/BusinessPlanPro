@@ -22,7 +22,7 @@ import { CheckedState } from "@radix-ui/react-checkbox";
 import { useLanguage } from '@/context/language-context';
 import { 
   getNationalitiesForLanguage, 
-  matchNationalityInAnyLanguage 
+  matchNationalityByEnglishName 
 } from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
 
@@ -75,13 +75,13 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Custom filter function for multi-language search of nationalities
+  // Custom filter function for English-only search of nationalities
   const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
     if (!item.englishName) return item.label.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Use our multi-language search function
-    return matchNationalityInAnyLanguage(item.englishName, searchTerm);
+    // Use our English-only search function
+    return matchNationalityByEnglishName(item.englishName, searchTerm);
   };
   
   // Map country values and translated labels with original English names for multi-language search

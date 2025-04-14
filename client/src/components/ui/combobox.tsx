@@ -86,7 +86,7 @@ export function Combobox({
       <PopoverContent className={cn("w-full p-0", isRTL && "ml-0 mr-0")} align={isRTL ? "end" : "start"}>
         <Command className={cn(isRTL && "rtl")} dir={isRTL ? "rtl" : "ltr"}>
           <CommandInput 
-            placeholder={t('search_placeholder', 'Search...')} 
+            placeholder={t('search_in_english', 'Search in English...')} 
             dir={isRTL ? "rtl" : "ltr"} 
             className={cn(isRTL && "text-right")} 
             onValueChange={setInputValue}
