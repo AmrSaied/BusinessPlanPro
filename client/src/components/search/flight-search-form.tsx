@@ -63,19 +63,19 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   // Handle origin airport selection
   const handleOriginSelect = (airport: Airport) => {
     setOriginAirport(airport);
-    setValue("origin", airport.iataCode, { shouldValidate: true });
+    setValue("origin", airport.iataCode, { shouldValidate: false });
   };
 
   // Handle destination airport selection
   const handleDestinationSelect = (airport: Airport) => {
     setDestinationAirport(airport);
-    setValue("destination", airport.iataCode, { shouldValidate: true });
+    setValue("destination", airport.iataCode, { shouldValidate: false });
   };
 
   // Handle trip type change
   const handleTripTypeChange = (type: "one-way" | "round-trip") => {
     setTripType(type);
-    setValue("tripType", type, { shouldValidate: true });
+    setValue("tripType", type, { shouldValidate: false });
 
     // Clear return date if changing to one-way
     if (type === "one-way") {
@@ -236,7 +236,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                               if (date < today) {
                                 // This should never happen due to disabled dates, but just in case
                                 setValue("departureDate", format(today, "yyyy-MM-dd"), {
-                                  shouldValidate: true
+                                  shouldValidate: false
                                 });
                               } else {
                                 field.onChange(format(date, "yyyy-MM-dd"));
@@ -250,7 +250,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                   if (returnDateObj < date) {
                                     // Auto-adjust return date to be the same as departure date
                                     setValue("returnDate", format(date, "yyyy-MM-dd"), {
-                                      shouldValidate: true
+                                      shouldValidate: false
                                     });
                                   }
                                 }
@@ -370,7 +370,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                   // This should never happen due to the disabled dates, but we keep this validation as a backup
                                   if (date <= departureDate) {
                                     setValue("returnDate", "", {
-                                      shouldValidate: true
+                                      shouldValidate: false
                                     });
                                     
                                     // Show error message
