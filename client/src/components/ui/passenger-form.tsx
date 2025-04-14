@@ -543,14 +543,21 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               {/* Nationality */}
               <div>
                 <Label htmlFor={`nationality-${index}`}>{t('nationality')}</Label>
-                <Combobox
-                  items={countries}
+                <Select
                   value={passenger.nationality || ""}
-                  onChange={(value) => updatePassenger(index, 'nationality', value)}
-                  placeholder={t('select_nationality')}
-                  id={`nationality-${index}`}
-                  customFilter={nationalityFilter}
-                />
+                  onValueChange={(value) => updatePassenger(index, 'nationality', value)}
+                >
+                  <SelectTrigger id={`nationality-${index}`} className={cn(isRTL && "text-right")} dir={isRTL ? "rtl" : "ltr"}>
+                    <SelectValue placeholder={t('select_nationality')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.value} value={country.value}>
+                        {country.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {errors[`passenger${index}`]?.nationality && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].nationality}</p>
                 )}
