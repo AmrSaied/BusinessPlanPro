@@ -7,13 +7,37 @@ type LanguageContextType = {
   currentLanguage: string;
   changeLanguage: (language: string) => Promise<void>;
   languages: typeof supportedLanguages;
+  isRtl: boolean;
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// Languages that use RTL (right-to-left) direction
+const rtlLanguages = ['ar'];
+
+// Helper function to check if a language is RTL
+const isRtlLanguage = (language: string): boolean => {
+  return rtlLanguages.includes(language);
+};
+
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { i18n } = useTranslation();
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
+  const [isRtl, setIsRtl] = useState(isRtlLanguage(i18n.language || 'en'));
+
+  // Function to apply RTL/LTR direction to document
+  const applyDirection = (language: string) => {
+    const rtl = isRtlLanguage(language);
+    setIsRtl(rtl);
+    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
+    
+    // Add/remove RTL class to body for additional styling hooks
+    if (rtl) {
+      document.body.classList.add('rtl');
+    } else {
+      document.body.classList.remove('rtl');
+    }
+  };
 
   useEffect(() => {
     // Get saved language from localStorage or use browser default
@@ -25,11 +49,12 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
       loadLanguageAsync(savedLanguage);
       i18n.changeLanguage(savedLanguage);
       
-      // Set RTL direction for Arabic
-      document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+      // Set RTL direction
+      applyDirection(savedLanguage);
     } else {
       // Otherwise default to English
       loadLanguageAsync('en');
+      applyDirection('en');
     }
   }, []);
 
@@ -48,7 +73,11 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         setCurrentLanguage(language);
         
         // Update document direction for RTL languages like Arabic
-        document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+        applyDirection(language);
+        
+        // Force reload the page to ensure all components update properly
+        // This is a more reliable way to ensure RTL is applied correctly
+        window.location.reload();
         
         console.log(`Language changed successfully to: ${language}`);
       }
@@ -58,7 +87,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, changeLanguage, languages: supportedLanguages }}>
+    <LanguageContext.Provider value={{ currentLanguage, changeLanguage, languages: supportedLanguages, isRtl }}>
       {children}
     </LanguageContext.Provider>
   );

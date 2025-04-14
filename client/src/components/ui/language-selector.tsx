@@ -43,8 +43,7 @@ const LanguageSelector = ({ variant = 'default' }: LanguageSelectorProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align={isRtl ? "start" : "end"} 
-        className="w-48"
-        dir={isRtl ? 'rtl' : 'ltr'}
+        className={`w-48 ${isRtl ? 'rtl-content' : 'ltr-content'}`}
       >
         {/* Quick Arabic/English toggle at top for convenience */}
         {currentLanguage !== 'ar' && (
