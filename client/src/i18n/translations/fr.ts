@@ -199,6 +199,25 @@ export default {
   footer_copyright: 'Tous droits réservés.',
   footer_payment_methods: 'Nous acceptons :',
   
+  // Passenger Information
+  nationality: 'Nationalité',
+  select_nationality: 'Sélectionner une nationalité',
+  first_name: 'Prénom',
+  last_name: 'Nom de famille',
+  name_passport_placeholder: 'Comme dans le passeport',
+  date_of_birth: 'Date de naissance',
+  passport_number: 'Numéro de passeport',
+  passport_expiry: 'Date d\'expiration du passeport',
+  save_passenger: 'Enregistrer ce passager pour les réservations futures',
+  load_saved_passenger: 'Charger enregistré',
+  select_saved_passenger: 'Sélectionner un passager enregistré',
+  no_saved_passengers: 'Aucun passager enregistré pour le moment',
+  save_passenger_first: 'Enregistrez un passager pour le sélectionner plus tard',
+  contact_info_title: 'Informations de contact',
+  email_placeholder: 'Pour la livraison du billet',
+  phone_placeholder: 'Avec l\'indicatif du pays',
+  save_contact_info: 'Enregistrer le numéro de téléphone et l\'email',
+  
   // Tips for Visa Applicants
   how_tips_title: 'Conseils pour les demandeurs de visa',
   how_tip1: 'Faites votre demande de visa au moins 4 à 6 semaines avant votre date de voyage prévue',
