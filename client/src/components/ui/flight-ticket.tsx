@@ -20,9 +20,9 @@ const TICKET_TEXT = {
   economy: "Economy",
   airportInfo: "AIRPORT INFO",
   terminal: "Terminal",
-  to: "TO",
+  to: "to",
   flightInfo: "FLIGHT INFO",
-  aircraft: "Boeing 777-300",
+  aircraft: "Airbus A321 NEO",
   meal: "Meal",
   visaPurpose: "For visa application purposes only",
   refOnly: "This is not a valid ticket for travel - For reference only",
@@ -31,6 +31,79 @@ const TICKET_TEXT = {
   confirmationNumber: "Confirmation Number",
   intApt: "Int'l Apt"
 };
+
+// Data for the multi-segment ViewTrip layout
+const MOCK_ITINERARY = [
+  {
+    date: "THU, DEC 12, 2024",
+    route: "Cairo (CAI) to Abu Dhabi (AUH)",
+    airline: "Etihad Airways (EY) 716",
+    confirmationNumber: "QYA69B",
+    departTime: "5:30",
+    departAmPm: "PM",
+    departCode: "CAI",
+    duration: "3H 15M",
+    arriveTime: "10:45",
+    arriveAmPm: "PM",
+    arriveCode: "AUH",
+    passengerName: "ELSAKAAN, AMR SAIED MR",
+    service: "Economy",
+    departAirport: "Cairo Intl Arpt (CAI)",
+    departCity: "Cairo, EG",
+    departTerminal: "Terminal 2",
+    arriveAirport: "Zayed International Apt (AUH)",
+    arriveCity: "Abu Dhabi, AE",
+    arriveTerminal: "Terminal A",
+    aircraft: "Airbus A321 NEO",
+    meal: "Meal"
+  },
+  {
+    date: "FRI, DEC 13, 2024",
+    route: "Abu Dhabi (AUH) to Bangkok (BKK)",
+    airline: "Etihad Airways (EY) 406",
+    confirmationNumber: "QYA69B",
+    departTime: "9:35",
+    departAmPm: "AM",
+    departCode: "AUH",
+    duration: "6H 0M",
+    arriveTime: "6:35",
+    arriveAmPm: "PM",
+    arriveCode: "BKK",
+    passengerName: "ELSAKAAN, AMR SAIED MR",
+    service: "Economy",
+    departAirport: "Zayed International Apt (AUH)",
+    departCity: "Abu Dhabi, AE",
+    departTerminal: "Terminal A",
+    arriveAirport: "Suvarnabhumi Intl Arpt (BKK)",
+    arriveCity: "Bangkok, TH",
+    arriveTerminal: "",
+    aircraft: "Boeing 777-300",
+    meal: "Meal"
+  },
+  {
+    date: "THU, DEC 26, 2024 - FRI, DEC 27, 2024",
+    route: "Bangkok (BKK) to Abu Dhabi (AUH)",
+    airline: "Etihad Airways (EY) 407",
+    confirmationNumber: "QYA69B",
+    departTime: "8:30",
+    departAmPm: "PM",
+    departCode: "BKK",
+    duration: "6H 30M",
+    arriveTime: "12:00",
+    arriveAmPm: "AM",
+    arriveCode: "AUH",
+    passengerName: "ELSAKAAN, AMR SAIED MR",
+    service: "Economy",
+    departAirport: "Suvarnabhumi Intl Arpt (BKK)",
+    departCity: "Bangkok, TH",
+    departTerminal: "",
+    arriveAirport: "Zayed International Apt (AUH)",
+    arriveCity: "Abu Dhabi, AE",
+    arriveTerminal: "Terminal A",
+    aircraft: "Boeing 777-300",
+    meal: "Meal"
+  }
+];
 
 interface Passenger {
   title: string;
@@ -180,15 +253,107 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
     window.print();
   };
 
+  // Helper function to render a flight segment
+  const renderFlightSegment = (segment: any, index: number) => {
+    return (
+      <div key={index} className="mb-0">
+        {/* Date and Route Header */}
+        <div className="p-3 font-bold text-xs border-b border-gray-300">
+          {segment.date} - {segment.route} - {TICKET_TEXT.confirmed}
+          <svg className="inline-block h-4 w-4 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+        </div>
+        
+        {/* Airline Info */}
+        <div className="flex items-start p-3">
+          <div className="bg-[#8B4513] text-white font-bold h-8 w-8 flex items-center justify-center mr-3">
+            <span className="text-xs">EY</span>
+          </div>
+          <div>
+            <div className="font-bold text-xs">{segment.airline}</div>
+            <div className="text-xs text-gray-600">{TICKET_TEXT.confirmationNumber}: {segment.confirmationNumber}</div>
+          </div>
+        </div>
+        
+        {/* Flight Times with ViewTrip Layout - All left aligned */}
+        <div className="pl-4 pr-4 py-3">
+          <div className="flex items-start">
+            <div className="mr-20">
+              <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.depart}</div>
+              <div className="flex items-baseline">
+                <div className="text-lg font-bold">{segment.departTime}</div>
+                <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
+                <div className="text-xs ml-1">{segment.departCode}</div>
+              </div>
+            </div>
+            
+            <div className="mr-16">
+              <div className="uppercase text-xs font-bold text-gray-500 mb-1">{TICKET_TEXT.nonStop}</div>
+              <div className="text-xs text-gray-500">{segment.duration}</div>
+            </div>
+            
+            <div>
+              <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.arrive}</div>
+              <div className="flex items-baseline">
+                <div className="text-lg font-bold">{segment.arriveTime}</div>
+                <div className="text-xs ml-1 uppercase">{segment.arriveAmPm}</div>
+                <div className="text-xs ml-1">{segment.arriveCode}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Passengers Section */}
+        <div className="border-b border-gray-300 p-4">
+          <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.passengers}</div>
+          <div className="text-xs mb-1">
+            {segment.passengerName}
+          </div>
+          <div className="text-xs mt-2">{TICKET_TEXT.classOfService}: {segment.service}</div>
+        </div>
+        
+        {/* Airport Info Section */}
+        <div className="border-b border-gray-300 p-4">
+          <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.airportInfo}</div>
+          <div className="text-xs mb-3">
+            <div className="mb-0.5">{segment.departAirport}</div>
+            <div className="mb-0.5">{segment.departCity}</div>
+            {segment.departTerminal && <div>{segment.departTerminal}</div>}
+          </div>
+          
+          <div className="flex items-center my-3">
+            <div className="text-xs text-gray-600">{TICKET_TEXT.to}</div>
+          </div>
+          
+          <div className="text-xs">
+            <div className="mb-0.5">{segment.arriveAirport}</div>
+            <div className="mb-0.5">{segment.arriveCity}</div>
+            {segment.arriveTerminal && <div>{segment.arriveTerminal}</div>}
+          </div>
+        </div>
+        
+        {/* Flight Info Section */}
+        <div className="border-b border-gray-300 p-4">
+          <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.flightInfo}</div>
+          <div className="text-xs">
+            <div className="mb-0.5">{segment.aircraft}</div>
+            <div>{segment.meal}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <div className="bg-white rounded-lg shadow-lg p-0 max-w-4xl mx-auto">
       {/* PDF Generation Container */}
       <div ref={ticketRef} className="ticket-container text-gray-900" dir="ltr" lang="en">
         {/* ViewTrip Header */}
-        <div className="bg-[#006699] p-3 text-white">
+        <div className="bg-[#065a9e] p-3 text-white">
           <div className="flex items-center">
             <div className="w-7 h-7 flex items-center justify-center rounded-full bg-white mr-3">
-              <span className="text-[#006699] font-bold text-base">V</span>
+              <span className="text-[#065a9e] font-bold text-base">T</span>
             </div>
             <span className="text-base font-bold">{TICKET_TEXT.viewTrip}</span>
           </div>
@@ -197,100 +362,10 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         {/* My Trip Header */}
         <div className="px-4 py-3 border-b border-gray-300">
           <h1 className="text-base font-medium">{TICKET_TEXT.myTrip}</h1>
-          <div className="text-sm leading-tight mt-1 text-gray-800">
-            <div className="font-bold">
-              THU, DEC 12, 2024 - {flight.departureCity} ({flight.departureAirport}) to {flight.arrivalCity} ({flight.arrivalAirport}) - {TICKET_TEXT.confirmed}
-              <svg className="inline-block h-4 w-4 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-          </div>
         </div>
         
-        {/* Flight Segment */}
-        <div className="border-b border-gray-200">
-          {/* Airline Info */}
-          <div className="flex items-start p-3">
-            <div className="bg-[#8B4513] text-white font-bold h-8 w-8 flex items-center justify-center mr-3">
-              <span className="text-xs">EY</span>
-            </div>
-            <div>
-              <div className="font-bold text-xs">Etihad Airways (EY) 716</div>
-              <div className="text-xs text-gray-600">Confirmation Number: QYA69B</div>
-            </div>
-          </div>
-          
-          {/* Flight Times with ViewTrip Layout - All left aligned */}
-          <div className="pl-4 pr-4 py-3">
-            <div className="flex items-start">
-              <div className="mr-20">
-                <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.depart}</div>
-                <div className="flex items-baseline">
-                  <div className="text-lg font-bold">5:30</div>
-                  <div className="text-xs ml-1 uppercase">PM</div>
-                </div>
-                <div className="text-xs text-gray-600 mt-1">{flight.departureAirport}</div>
-              </div>
-              
-              <div className="mr-16">
-                <div className="uppercase text-xs font-bold text-gray-500 mb-1">NON STOP</div>
-                <div className="text-xs text-gray-500">3H 15M</div>
-              </div>
-              
-              <div>
-                <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.arrive}</div>
-                <div className="flex items-baseline">
-                  <div className="text-lg font-bold">10:45</div>
-                  <div className="text-xs ml-1 uppercase">PM</div>
-                </div>
-                <div className="text-xs text-gray-600 mt-1">{flight.arrivalAirport}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Passengers Section */}
-        <div className="border-b border-gray-300 p-4">
-          <div className="uppercase text-xs font-semibold mb-2">PASSENGERS</div>
-          <div className="text-xs mb-1">
-            ELSAKAAN, AMR SAIED MR
-          </div>
-          <div className="text-xs mt-2">Class Of Service: Economy</div>
-        </div>
-        
-        {/* Airport Info Section */}
-        <div className="border-b border-gray-300 p-4">
-          <div className="uppercase text-xs font-semibold mb-2">AIRPORT INFO</div>
-          <div className="text-xs mb-3">
-            <div className="mb-0.5">Cairo Intl Arpt (CAI)</div>
-            <div className="mb-0.5">Cairo, EG</div>
-            <div>Terminal 2</div>
-          </div>
-          
-          <div className="flex items-center my-3">
-            <div className="text-xs text-gray-600">to</div>
-          </div>
-          
-          <div className="text-xs">
-            <div className="mb-0.5">Zayed International Apt (AUH)</div>
-            <div className="mb-0.5">Abu Dhabi, AE</div>
-            <div>Terminal A</div>
-          </div>
-        </div>
-        
-        {/* Flight Info Section */}
-        <div className="border-b border-gray-300 p-4">
-          <div className="uppercase text-xs font-semibold mb-2">FLIGHT INFO</div>
-          <div className="text-xs">
-            <div className="mb-0.5">Airbus A321 NEO</div>
-            <div>Meal</div>
-          </div>
-        </div>
-        
-        {/* Footer - Removed disclaimers as requested */}
-        <div className="p-4 text-xs text-gray-600 text-center">
-          
-        </div>
+        {/* Render all flight segments */}
+        {MOCK_ITINERARY.map((segment, index) => renderFlightSegment(segment, index))}
       </div>
       
       {/* Buttons Outside PDF Area */}
