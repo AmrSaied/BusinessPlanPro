@@ -258,7 +258,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
     return (
       <div key={index} className="mb-0">
         {/* Date and Route Header */}
-        <div className="p-3 font-bold text-xs border-b border-gray-300">
+        <div className="p-3 font-bold text-xs border-b border-gray-300 text-left">
           {segment.date} - {segment.route} - {TICKET_TEXT.confirmed}
           <svg className="inline-block h-4 w-4 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -307,28 +307,28 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         </div>
         
         {/* Passengers Section */}
-        <div className="border-b border-gray-300 p-4">
-          <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.passengers}</div>
-          <div className="text-xs mb-1">
+        <div className="border-b border-gray-300 p-4 text-left">
+          <div className="uppercase text-xs font-semibold mb-2 text-left">{TICKET_TEXT.passengers}</div>
+          <div className="text-xs mb-1 text-left">
             {segment.passengerName}
           </div>
-          <div className="text-xs mt-2">{TICKET_TEXT.classOfService}: {segment.service}</div>
+          <div className="text-xs mt-2 text-left">{TICKET_TEXT.classOfService}: {segment.service}</div>
         </div>
         
         {/* Airport Info Section */}
-        <div className="border-b border-gray-300 p-4">
-          <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.airportInfo}</div>
-          <div className="text-xs mb-1">
+        <div className="border-b border-gray-300 p-4 text-left">
+          <div className="uppercase text-xs font-semibold mb-2 text-left">{TICKET_TEXT.airportInfo}</div>
+          <div className="text-xs mb-1 text-left">
             <div className="mb-0.5 text-left">{segment.departAirport}</div>
             <div className="mb-0.5 text-left">{segment.departCity}</div>
             {segment.departTerminal && <div className="text-left">{segment.departTerminal}</div>}
           </div>
           
           <div className="my-2 text-left">
-            <div className="text-xs text-gray-600">{TICKET_TEXT.to}</div>
+            <div className="text-xs text-gray-600 text-left">{TICKET_TEXT.to}</div>
           </div>
           
-          <div className="text-xs mt-1">
+          <div className="text-xs mt-1 text-left">
             <div className="mb-0.5 text-left">{segment.arriveAirport}</div>
             <div className="mb-0.5 text-left">{segment.arriveCity}</div>
             {segment.arriveTerminal && <div className="text-left">{segment.arriveTerminal}</div>}
@@ -336,11 +336,11 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         </div>
         
         {/* Flight Info Section */}
-        <div className="border-b border-gray-300 p-4">
-          <div className="uppercase text-xs font-semibold mb-2">{TICKET_TEXT.flightInfo}</div>
-          <div className="text-xs">
-            <div className="mb-0.5">{segment.aircraft}</div>
-            <div>{segment.meal}</div>
+        <div className="border-b border-gray-300 p-4 text-left">
+          <div className="uppercase text-xs font-semibold mb-2 text-left">{TICKET_TEXT.flightInfo}</div>
+          <div className="text-xs text-left">
+            <div className="mb-0.5 text-left">{segment.aircraft}</div>
+            <div className="text-left">{segment.meal}</div>
           </div>
         </div>
       </div>
@@ -362,8 +362,8 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         </div>
         
         {/* My Trip Header */}
-        <div className="px-4 py-3 border-b border-gray-300">
-          <h1 className="text-base font-medium">{TICKET_TEXT.myTrip}</h1>
+        <div className="px-4 py-3 border-b border-gray-300 text-left">
+          <h1 className="text-base font-medium text-left">{TICKET_TEXT.myTrip}</h1>
         </div>
         
         {/* Render all flight segments */}
