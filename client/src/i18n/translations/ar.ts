@@ -2,7 +2,6 @@ export default {
   // Common
   language_name: 'العربية',
   app_name: 'تذكرة وهمية سريعة',
-  search_in_english: 'البحث باللغة الإنجليزية...',
 
   // Navigation
   nav_home: 'الرئيسية',

@@ -25,16 +25,4 @@ export function getNationalitiesForLanguage(language: Language): NationalityTran
   }
 }
 
-/**
- * Custom search function for nationality search using English names only
- * Returns true if the search term matches the English name of the country
- */
-export function matchNationalityByEnglishName(
-  englishName: string, 
-  searchTerm: string
-): boolean {
-  if (!searchTerm) return true;
-  
-  // Case-insensitive search on English name only
-  return englishName.toLowerCase().includes(searchTerm.toLowerCase());
-}
+// No custom search function needed - we're using the built-in filter in the component

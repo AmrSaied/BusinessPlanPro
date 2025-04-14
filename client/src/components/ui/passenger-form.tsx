@@ -75,13 +75,12 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Custom filter function for English-only search of nationalities
+  // Filter function for searching nationalities in current language
   const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
-    if (!item.englishName) return item.label.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Use our English-only search function
-    return matchNationalityByEnglishName(item.englishName, searchTerm);
+    // Match in the current language (using the label which is already translated)
+    return item.label.toLowerCase().includes(searchTerm.toLowerCase());
   };
   
   // Map country values and translated labels with original English names for multi-language search
