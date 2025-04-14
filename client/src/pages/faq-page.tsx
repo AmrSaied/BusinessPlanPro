@@ -32,24 +32,24 @@ const FaqPage = () => {
       answer: t('faq_5_a')
     },
     {
-      question: 'Can I use these tickets for actually boarding a flight?',
-      answer: 'No, these are flight reservations specifically designed for visa applications and similar purposes. They are not valid for boarding flights. Once your visa is approved, you should purchase a regular flight ticket.'
+      question: t('faq_6_q'),
+      answer: t('faq_6_a')
     },
     {
-      question: 'Do you guarantee visa approval with your flight reservations?',
-      answer: 'While our flight reservations meet the requirements specified by most embassies and consulates, we cannot guarantee visa approval as the final decision rests with the immigration authorities based on your complete application.'
+      question: t('faq_7_q'),
+      answer: t('faq_7_a')
     },
     {
-      question: 'What information do I need to provide to book a flight reservation?',
-      answer: 'You will need to provide your full name as it appears on your passport, passport number, nationality, date of birth, contact details, and your travel route (origin, destination, dates).'
+      question: t('faq_8_q'),
+      answer: t('faq_8_a')
     },
     {
-      question: 'How far in advance should I book my flight reservation for a visa application?',
-      answer: 'We recommend booking your flight reservation 1-2 weeks before your visa appointment. This ensures your reservation is valid during the visa processing period. However, if you need it urgently, our system can generate valid tickets in minutes.'
+      question: t('faq_9_q'),
+      answer: t('faq_9_a')
     },
     {
-      question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit and debit cards (Visa, MasterCard, American Express), PayPal, and in selected countries, local payment methods like Alipay, WeChat Pay, and bank transfers.'
+      question: t('faq_10_q'),
+      answer: t('faq_10_a')
     }
   ];
   
