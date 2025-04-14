@@ -167,8 +167,8 @@ function AuthPage() {
         </div>
       
         <div className="container mx-auto px-4 relative z-10">
-          <div className={cn("flex flex-col md:flex-row items-center gap-8", isRTL && "md:flex-row-reverse")}>
-            {/* Auth forms section (left side in LTR, right side in RTL) */}
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            {/* Auth forms section */}
             <div className="w-full md:w-1/2 backdrop-blur-sm bg-white/10 p-6 rounded-xl shadow-xl border border-white/20">
               <div className="bg-white rounded-lg shadow-xl p-6">
                 <Tabs
@@ -437,7 +437,7 @@ function AuthPage() {
               </div>
             </div>
 
-            {/* Hero section (right side in LTR, left side in RTL) */}
+            {/* Right side - Hero section */}
             <div className="w-full md:w-1/2 flex flex-col justify-center text-white">
               <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/20 shadow-xl">
                 <h2 className={cn("text-3xl font-bold mb-4 text-white", isRTL && "text-right")}>{t("auth_hero_title")}</h2>
