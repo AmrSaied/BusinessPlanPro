@@ -31,6 +31,8 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   const [tripType, setTripType] = useState<"one-way" | "round-trip">("round-trip"); // Set round-trip as default
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destinationAirport, setDestinationAirport] = useState<Airport | null>(null);
+  const [departureDateMonth, setDepartureDateMonth] = useState<Date | undefined>(undefined);
+  const [returnDateMonth, setReturnDateMonth] = useState<Date | undefined>(undefined);
   
   // Check if language is RTL
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
@@ -175,7 +177,16 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                   name="departureDate"
                   control={control}
                   render={({ field }) => (
-                    <Popover>
+                    <Popover onOpenChange={(open) => {
+                        if (open) {
+                          if (field.value) {
+                            setDepartureDateMonth(new Date(field.value));
+                          } else {
+                            // Default to current month for initial selection
+                            setDepartureDateMonth(new Date());
+                          }
+                        }
+                      }}>
                       <PopoverTrigger asChild>
                         <div className="relative">
                           <Button
@@ -214,7 +225,8 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         <Calendar
                           mode="single"
                           selected={field.value ? new Date(field.value) : undefined}
-                          month={field.value ? new Date(field.value) : undefined}
+                          month={departureDateMonth}
+                          onMonthChange={setDepartureDateMonth}
                           onSelect={(date) => {
                             if (date) {
                               const today = new Date();
@@ -290,7 +302,21 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                     name="returnDate"
                     control={control}
                     render={({ field }) => (
-                      <Popover>
+                      <Popover onOpenChange={(open) => {
+                        if (open) {
+                          if (field.value) {
+                            setReturnDateMonth(new Date(field.value));
+                          } else if (watchedDepartureDate) {
+                            // If departure date is selected but return isn't, start from the day after departure
+                            const nextDay = new Date(watchedDepartureDate);
+                            nextDay.setDate(nextDay.getDate() + 1);
+                            setReturnDateMonth(nextDay);
+                          } else {
+                            // Default to current month if neither date is selected
+                            setReturnDateMonth(new Date());
+                          }
+                        }
+                      }}>
                         <PopoverTrigger asChild>
                           <div className="relative">
                             <Button
@@ -329,7 +355,8 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           <Calendar
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            month={field.value ? new Date(field.value) : undefined}
+                            month={returnDateMonth}
+                            onMonthChange={setReturnDateMonth}
                             onSelect={(date) => {
                               if (date) {
                                 field.onChange(format(date, "yyyy-MM-dd"));
