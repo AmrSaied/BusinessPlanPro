@@ -75,13 +75,22 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Enhanced multi-language nationality filter using the search utility
+  // Helper function to normalize Arabic text (remove diacritics)
+  const normalizeArabic = (text: string) => {
+    // Remove Arabic diacritics and tatweel
+    return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
+  };
+  
+  // Simple nationality filter that works with the current language only
   const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
     
-    // Use our multi-language search utility to properly handle different scripts
-    const searchResults = multiLanguageSearch([item], searchTerm);
-    return searchResults.length > 0;
+    // Basic filter with Arabic text normalization support
+    const normalizedInput = normalizeArabic(searchTerm.toLowerCase());
+    const normalizedLabel = normalizeArabic(item.label.toLowerCase());
+    
+    return normalizedLabel.includes(normalizedInput) || 
+           item.label.toLowerCase().includes(searchTerm.toLowerCase());
   };
   
   // Map country values and translated labels with original English names for multi-language search
