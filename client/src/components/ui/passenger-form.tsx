@@ -547,12 +547,20 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.nationality || ""}
                   onValueChange={(value) => updatePassenger(index, 'nationality', value)}
                 >
-                  <SelectTrigger id={`nationality-${index}`} className={cn(isRTL && "text-right")} dir={isRTL ? "rtl" : "ltr"}>
+                  <SelectTrigger 
+                    id={`nationality-${index}`} 
+                    className={cn(currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "")} 
+                    dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  >
                     <SelectValue placeholder={t('select_nationality')} />
                   </SelectTrigger>
                   <SelectContent>
                     {countries.map((country) => (
-                      <SelectItem key={country.value} value={country.value}>
+                      <SelectItem 
+                        key={country.value} 
+                        value={country.value}
+                        className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
+                      >
                         {country.label}
                       </SelectItem>
                     ))}
