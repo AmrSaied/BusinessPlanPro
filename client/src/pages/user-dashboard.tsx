@@ -23,6 +23,8 @@ import { cn } from '@/lib/utils';
 
 const UserDashboard = () => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
   
   // Mock user ID
   const userId = 1;
@@ -66,7 +68,9 @@ const UserDashboard = () => {
       createdAt: new Date('2023-10-15'),
       contactEmail: 'user@example.com',
       contactPhone: '+1234567890',
-      travelPurpose: 'visa'
+      travelPurpose: 'visa',
+      paymentId: 1,
+      specialRequests: ''
     },
     {
       id: 2,
@@ -83,7 +87,9 @@ const UserDashboard = () => {
       createdAt: new Date('2023-11-05'),
       contactEmail: 'user@example.com',
       contactPhone: '+1234567890',
-      travelPurpose: 'immigration'
+      travelPurpose: 'immigration',
+      paymentId: 2,
+      specialRequests: ''
     }
   ];
   
@@ -126,22 +132,22 @@ const UserDashboard = () => {
         <div className="max-w-5xl mx-auto">
           {/* User Greeting */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div className="flex items-center">
-              <div className="bg-primary/10 rounded-full p-3 mr-4">
+            <div className={cn("flex items-center", isRTL && "flex-row-reverse")}>
+              <div className={cn("bg-primary/10 rounded-full p-3", isRTL ? "ml-4" : "mr-4")}>
                 <User className="h-8 w-8 text-primary" />
               </div>
-              <div>
+              <div className={cn(isRTL && "text-right")}>
                 <h1 className="font-heading text-2xl font-bold text-gray-800">
                   {t('dashboard_title')}
                 </h1>
                 <p className="text-gray-600">
-                  {t('dashboard_welcome')}, {currentUser.name}
+                  {isRTL ? `${currentUser.name} ،${t('dashboard_welcome')}` : `${t('dashboard_welcome')}, ${currentUser.name}`}
                 </p>
               </div>
-              <div className="ml-auto">
+              <div className={cn(isRTL ? "mr-auto" : "ml-auto")}>
                 <Link href="/search">
                   <Button className="bg-primary text-white hover:bg-primary/90">
-                    <Plus className="mr-2 h-4 w-4" />
+                    <Plus className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
                     {t('dashboard_create_booking')}
                   </Button>
                 </Link>
@@ -159,10 +165,10 @@ const UserDashboard = () => {
             {/* Bookings Tab */}
             <TabsContent value="bookings">
               <Card>
-                <CardHeader>
+                <CardHeader className={cn(isRTL && "text-right")}>
                   <CardTitle>{t('dashboard_bookings')}</CardTitle>
                   <CardDescription>
-                    View and manage your flight reservations
+                    {t('dashboard_bookings_description', 'View and manage your flight reservations')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -173,7 +179,7 @@ const UserDashboard = () => {
                   ) : isBookingsError ? (
                     <div className="text-center py-8">
                       <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-                      <p className="text-gray-600">Error loading bookings</p>
+                      <p className="text-gray-600">{t('error_loading_bookings', 'Error loading bookings')}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -181,18 +187,22 @@ const UserDashboard = () => {
                         (bookings || mockBookings).map((booking) => (
                           <div 
                             key={booking.id}
-                            className="border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between"
+                            className={cn(
+                              "border border-gray-200 rounded-lg p-4 flex flex-col md:items-center",
+                              isRTL ? "md:flex-row-reverse" : "md:flex-row",
+                              "md:justify-between"
+                            )}
                           >
-                            <div className="mb-4 md:mb-0">
+                            <div className={cn("mb-4 md:mb-0", isRTL && "text-right")}>
                               <div className="font-medium">
-                                Booking Reference: {booking.bookingReference}
+                                {isRTL ? `${booking.bookingReference} :${t('booking_reference')}` : `${t('booking_reference', 'Booking Reference')}: ${booking.bookingReference}`}
                               </div>
                               <div className="text-sm text-gray-600">
-                                {new Date(booking.createdAt).toLocaleDateString()}
+                                {booking.createdAt instanceof Date ? booking.createdAt.toLocaleDateString() : new Date(booking.createdAt as any).toLocaleDateString()}
                               </div>
                             </div>
                             
-                            <div className="flex flex-col md:items-center mb-4 md:mb-0">
+                            <div className={cn("flex flex-col mb-4 md:mb-0", isRTL ? "md:items-end" : "md:items-center")}>
                               <div className="text-sm text-gray-600">{t('dashboard_booking_status')}</div>
                               <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                                 booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
@@ -201,7 +211,7 @@ const UserDashboard = () => {
                               </span>
                             </div>
                             
-                            <div className="flex flex-col md:items-center mb-4 md:mb-0">
+                            <div className={cn("flex flex-col mb-4 md:mb-0", isRTL ? "md:items-end" : "md:items-center")}>
                               <div className="text-sm text-gray-600">{t('dashboard_booking_amount')}</div>
                               <div className="font-medium">${booking.totalPrice.toFixed(2)} {booking.currency}</div>
                             </div>
@@ -209,7 +219,7 @@ const UserDashboard = () => {
                             <div>
                               <Link href={`/confirmation/${booking.id}`}>
                                 <Button size="sm" className="w-full md:w-auto">
-                                  <Download className="mr-2 h-4 w-4" />
+                                  <Download className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
                                   {t('dashboard_view_ticket')}
                                 </Button>
                               </Link>
@@ -235,10 +245,10 @@ const UserDashboard = () => {
             {/* Passengers Tab */}
             <TabsContent value="passengers">
               <Card>
-                <CardHeader>
+                <CardHeader className={cn(isRTL && "text-right")}>
                   <CardTitle>{t('dashboard_saved_passengers')}</CardTitle>
                   <CardDescription>
-                    Your saved passenger information for quick booking
+                    {t('dashboard_passengers_description', 'Your saved passenger information for quick booking')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -249,7 +259,7 @@ const UserDashboard = () => {
                   ) : isPassengersError ? (
                     <div className="text-center py-8">
                       <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-                      <p className="text-gray-600">Error loading passengers</p>
+                      <p className="text-gray-600">{t('error_loading_passengers', 'Error loading passengers')}</p>
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -259,22 +269,31 @@ const UserDashboard = () => {
                             key={passenger.id}
                             className="border border-gray-200 rounded-lg p-4"
                           >
-                            <div className="flex justify-between items-start">
-                              <div>
+                            <div className={cn(
+                              "flex justify-between items-start",
+                              isRTL && "flex-row-reverse"
+                            )}>
+                              <div className={cn(isRTL && "text-right")}>
                                 <div className="font-medium">
                                   {passenger.title.toUpperCase()}. {passenger.firstName} {passenger.lastName}
                                 </div>
                                 <div className="text-sm text-gray-600 mt-1">
-                                  Passport: {passenger.passportNumber} | Nationality: {passenger.nationality.toUpperCase()}
+                                  {isRTL 
+                                    ? `${passenger.nationality.toUpperCase()} :${t('nationality')} | ${passenger.passportNumber} :${t('passport')}`
+                                    : `${t('passport', 'Passport')}: ${passenger.passportNumber} | ${t('nationality', 'Nationality')}: ${passenger.nationality.toUpperCase()}`
+                                  }
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                  DOB: {passenger.dateOfBirth} | Passport Expiry: {passenger.passportExpiry}
+                                  {isRTL 
+                                    ? `${passenger.passportExpiry} :${t('passport_expiry')} | ${passenger.dateOfBirth} :${t('dob')}`
+                                    : `${t('dob', 'DOB')}: ${passenger.dateOfBirth} | ${t('passport_expiry', 'Passport Expiry')}: ${passenger.passportExpiry}`
+                                  }
                                 </div>
                               </div>
                               <div>
                                 <Link href="/search">
                                   <Button size="sm" variant="outline">
-                                    Book Ticket
+                                    {t('book_ticket', 'Book Ticket')}
                                   </Button>
                                 </Link>
                               </div>
