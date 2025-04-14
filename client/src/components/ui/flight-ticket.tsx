@@ -265,54 +265,53 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </svg>
         </div>
         
-        {/* Airline Info */}
-        <div className="flex items-start p-3">
-          <div className="bg-[#8B4513] text-white font-bold h-8 w-8 flex items-center justify-center mr-3">
-            <span className="text-xs">EY</span>
-          </div>
-          <div>
-            <div className="font-bold text-xs">{segment.airline}</div>
-            <div className="text-xs text-gray-600">{TICKET_TEXT.confirmationNumber}: {segment.confirmationNumber}</div>
-          </div>
-        </div>
+        {/* Airline Info removed as duplicate */}
         
-        {/* Flight Times with ViewTrip Layout - Exact match to reference image */}
-        <div className="pl-4 pr-4 py-3">
-          <div>
-            <div className="grid grid-cols-12 gap-2 items-start text-left">
-              {/* DEPART Section */}
-              <div className="col-span-3 text-left">
-                <div className="uppercase text-xs font-bold text-gray-700 mb-1">DEPART</div>
-                <div className="flex items-center gap-2 mb-1">
-                  {/* Plane icon - exact match to reference */}
-                  <span className="text-black text-xl">✈</span>
-                  <div className="flex items-baseline">
-                    <div className="text-lg font-bold">{segment.departTime}</div>
-                    <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
-                    <div className="text-xs ml-1">{segment.departCode}</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* NON STOP Section */}
-              <div className="col-span-3 text-left mx-4">
-                <div className="uppercase text-xs font-bold text-gray-700 mb-1 text-left">NON STOP</div>
-                <div className="flex justify-center">
-                  <div className="text-center">
-                    <div className="w-16 border-t border-gray-400 border-dashed mb-1"></div>
-                    <div className="text-xs text-gray-600 text-center">{segment.duration}</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* ARRIVE Section */}
-              <div className="col-span-3 text-left">
-                <div className="uppercase text-xs font-bold text-gray-700 mb-1">ARRIVE</div>
+        {/* Airline Info Section - Matching reference image */}
+        <div className="px-4 py-4 border-b border-gray-300">
+          <div className="flex items-center mb-4">
+            <div className="w-8 h-8 bg-amber-700 text-white flex items-center justify-center mr-3">
+              <span className="font-bold">EY</span>
+            </div>
+            <div>
+              <div className="text-sm font-medium">Etihad Airways (EY) {segment.flightNumber}</div>
+              <div className="text-xs text-gray-600">Confirmation Number: {segment.confirmationNumber}</div>
+            </div>
+          </div>
+          
+          {/* Flight Times Layout - Exact match to final reference */}
+          <div className="grid grid-cols-12 gap-x-2 pt-2 items-start">
+            {/* DEPART Section */}
+            <div className="col-span-4 text-left">
+              <div className="uppercase text-xs font-bold text-gray-700 mb-2">DEPART</div>
+              <div className="flex items-center">
+                <span className="text-black text-xl mr-1.5 -mt-0.5">✈</span>
                 <div className="flex items-baseline">
-                  <div className="text-lg font-bold">{segment.arriveTime}</div>
-                  <div className="text-xs ml-1 uppercase">{segment.arriveAmPm}</div>
-                  <div className="text-xs ml-1">{segment.arriveCode}</div>
+                  <div className="text-lg font-bold">{segment.departTime}</div>
+                  <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
+                  <div className="text-xs ml-1">{segment.departCode}</div>
                 </div>
+              </div>
+            </div>
+            
+            {/* NON STOP Section */}
+            <div className="col-span-4 text-center">
+              <div className="uppercase text-xs font-bold text-gray-700 mb-2">NON STOP</div>
+              <div className="flex justify-center">
+                <div className="text-center">
+                  <div className="w-20 border-t border-gray-400 border-dashed mb-1 mx-auto"></div>
+                  <div className="text-xs text-gray-600 text-center">{segment.duration}</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* ARRIVE Section */}
+            <div className="col-span-4 text-right">
+              <div className="uppercase text-xs font-bold text-gray-700 mb-2">ARRIVE</div>
+              <div className="flex items-baseline justify-end">
+                <div className="text-lg font-bold">{segment.arriveTime}</div>
+                <div className="text-xs ml-1 uppercase">{segment.arriveAmPm}</div>
+                <div className="text-xs ml-1">{segment.arriveCode}</div>
               </div>
             </div>
           </div>
