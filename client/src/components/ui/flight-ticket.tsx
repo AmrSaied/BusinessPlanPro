@@ -378,7 +378,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                 <div className="bg-blue-600 text-white p-3">
                   <div className="flex items-center rtl:flex-row-reverse rtl:justify-end">
                     <Phone className="h-5 w-5 ltr:mr-2 rtl:ml-2" />
-                    <h3 className="font-bold text-lg">{t('contact_information')}</h3>
+                    <h3 className="font-bold text-lg">{t('ticket_contact_information')}</h3>
                   </div>
                 </div>
                 
@@ -389,7 +389,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                       <Mail className="h-4 w-4 text-blue-700" />
                     </div>
                     <div className="rtl:text-right">
-                      <div className="text-xs text-gray-500 uppercase font-medium">{t('email')}</div>
+                      <div className="text-xs text-gray-500 uppercase font-medium">{t('ticket_email')}</div>
                       <div className="font-medium">{contactEmail}</div>
                     </div>
                   </div>
@@ -399,7 +399,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                       <Phone className="h-4 w-4 text-blue-700" />
                     </div>
                     <div className="rtl:text-right">
-                      <div className="text-xs text-gray-500 uppercase font-medium">{t('phone')}</div>
+                      <div className="text-xs text-gray-500 uppercase font-medium">{t('ticket_phone')}</div>
                       <div className="font-medium">{contactPhone}</div>
                     </div>
                   </div>
