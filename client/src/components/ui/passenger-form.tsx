@@ -475,35 +475,42 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             
             {/* Saved passenger selector - shown only if user is authenticated */}
             {savedPassengers !== undefined && (
-              <Select 
-                onValueChange={(value) => {
-                  const savedPassenger = savedPassengers.find(p => p.id === parseInt(value));
-                  if (savedPassenger) {
-                    loadSavedPassenger(index, savedPassenger);
-                  }
-                }}
-                disabled={savedPassengers.length === 0}
-              >
-                <SelectTrigger className="w-[220px]">
-                  <SelectValue placeholder={savedPassengers.length > 0 ? 
-                    "Load saved passenger" : 
-                    "No saved passengers yet"} 
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {savedPassengers.length > 0 ? (
-                    savedPassengers.map((savedPassenger) => (
-                      <SelectItem key={savedPassenger.id} value={savedPassenger.id?.toString() || ''}>
-                        {savedPassenger.firstName} {savedPassenger.lastName}
+              <div className={cn("flex items-center gap-2", currentLanguage === 'ar' || currentLanguage === 'he' ? "flex-row-reverse" : "")}>
+                <span className="text-sm text-gray-600">{t('load_saved_passenger', 'Load saved')}:</span>
+                <Select 
+                  onValueChange={(value) => {
+                    if (value === "none") return;
+                    const savedPassenger = savedPassengers.find(p => p.id === parseInt(value));
+                    if (savedPassenger) {
+                      loadSavedPassenger(index, savedPassenger);
+                    }
+                  }}
+                  disabled={savedPassengers.length === 0}
+                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                >
+                  <SelectTrigger className={cn("w-[220px]", currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left")}>
+                    <SelectValue placeholder={t(savedPassengers.length > 0 ? 
+                      'select_saved_passenger' : 
+                      'no_saved_passengers', 
+                      savedPassengers.length > 0 ? "Load saved passenger" : "No saved passengers yet")} 
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t('select_saved_passenger', 'Select a saved passenger')}</SelectItem>
+                    {savedPassengers.length > 0 ? (
+                      savedPassengers.map((savedPassenger) => (
+                        <SelectItem key={savedPassenger.id} value={savedPassenger.id?.toString() || ''}>
+                          {savedPassenger.title}. {savedPassenger.firstName} {savedPassenger.lastName}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="none" disabled>
+                        {t('save_passenger_first', 'Save a passenger to select it later')}
                       </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="none" disabled>
-                      Save a passenger to select it later
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </div>
           
@@ -677,7 +684,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
             {savedPassengers !== undefined && (
               <div className="mt-4">
-                <div className="flex items-center space-x-2">
+                <div className={cn(
+                  "flex items-center", 
+                  currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2"
+                )}>
                   <Checkbox 
                     id={`save-passenger-${index}`} 
                     checked={!!passenger.isSaved}
@@ -687,7 +697,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                     htmlFor={`save-passenger-${index}`}
                     className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    {t('save_passenger')}
+                    {t('save_passenger', 'Save this passenger for future bookings')}
                   </label>
                 </div>
               </div>
@@ -738,7 +748,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           {/* Save contact information checkbox - only show if user is authenticated */}
           {savedPassengers !== undefined && (
             <div className="mt-4">
-              <div className="flex items-center space-x-2">
+              <div className={cn(
+                "flex items-center", 
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2"
+              )}>
                 <Checkbox 
                   id="save-contact-info" 
                   checked={!!contactInfo.saveInfo}
@@ -750,7 +763,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   htmlFor="save-contact-info"
                   className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {t('save_contact_info')}
+                  {t('save_contact_info', 'Save contact information for future bookings')}
                 </label>
               </div>
             </div>
@@ -775,12 +788,15 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
       </div>
       
       {/* Continue Button */}
-      <div className="flex justify-end">
+      <div className={cn(
+        "flex", 
+        currentLanguage === 'ar' || currentLanguage === 'he' ? "justify-start" : "justify-end"
+      )}>
         <Button 
           onClick={handleSubmit}
           className="bg-primary text-white hover:bg-primary/90 px-6 py-3"
         >
-          {t('continue_payment')}
+          {t('continue_payment', 'Continue to Payment')}
         </Button>
       </div>
     </div>
