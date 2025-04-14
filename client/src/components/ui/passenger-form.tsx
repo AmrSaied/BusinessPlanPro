@@ -24,7 +24,7 @@ import {
   getNationalitiesForLanguage 
 } from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
-import { multiLanguageSearch } from '@/utils/search-utils';
+// Simple multi-language search helper - no external dependency
 
 interface PassengerFormProps {
   passengerCount: number;

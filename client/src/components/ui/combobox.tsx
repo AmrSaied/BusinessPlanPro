@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/language-context";
-import { multiLanguageSearch } from "@/utils/search-utils";
 
 type ComboboxItem = {
   value: string;
@@ -42,14 +41,18 @@ export function Combobox({
   placeholder = "Select an option", 
   id,
   customFilter 
-}: ComboboxProps) {
+}: ComboboxProps): React.JSX.Element {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
   
-  // We've imported normalizeArabic from search-utils, so the local function can be removed
+  // Helper function to normalize Arabic text (remove diacritics)
+  const normalizeArabic = (text: string) => {
+    // Remove Arabic diacritics and tatweel
+    return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
+  };
 
   // Find the selected item to display its label
   const selectedItem = items.find((item) => item.value === value);
@@ -58,13 +61,18 @@ export function Combobox({
   const filteredItems = React.useMemo(() => {
     if (!inputValue) return items;
     
-    // If using a custom filter, apply it directly to each item
-    if (customFilter) {
-      return items.filter(item => customFilter(item, inputValue));
-    }
-    
-    // Use the imported multiLanguageSearch utility for consistent multi-language filtering
-    return multiLanguageSearch(items, inputValue);
+    return items.filter(item => {
+      if (customFilter) {
+        return customFilter(item, inputValue);
+      }
+      
+      // Default filter behavior with enhanced Arabic support
+      const normalizedInput = normalizeArabic(inputValue.toLowerCase());
+      const normalizedLabel = normalizeArabic(item.label.toLowerCase());
+      
+      return normalizedLabel.includes(normalizedInput) || 
+             item.label.toLowerCase().includes(inputValue.toLowerCase());
+    });
   }, [items, inputValue, customFilter]);
 
   return (
