@@ -444,31 +444,31 @@ function AuthPage() {
             </div>
 
             {/* Right side - Hero section */}
-            <div className="w-full md:w-1/2 flex flex-col justify-center text-white">
+            <div className={cn("w-full md:w-1/2 flex flex-col justify-center text-white", isRTL && "items-start")}>
               <div className={cn("bg-white/10 backdrop-blur-sm p-8 rounded-xl border border-white/20 shadow-xl", isRTL && "text-right flex flex-col items-end")}>
                 <h2 className={cn("text-3xl font-bold mb-4 text-white w-full", isRTL && "text-right")}>{t("auth_hero_title")}</h2>
                 <p className={cn("mb-6 text-white/90 w-full", isRTL && "text-right")}>
                   {t("auth_hero_subtitle")}
                 </p>
-                <ul className="space-y-3">
-                  <li className={cn("flex items-start justify-end", isRTL && "flex-row-reverse")}>
-                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                <ul className="space-y-3 w-full">
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white flex-shrink-0", isRTL ? "ml-2" : "mr-2")}>✓</span>
                     <span className={cn("flex-1", isRTL && "text-right")}>{t("auth_benefit_1")}</span>
                   </li>
-                  <li className={cn("flex items-start justify-end", isRTL && "flex-row-reverse")}>
-                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white flex-shrink-0", isRTL ? "ml-2" : "mr-2")}>✓</span>
                     <span className={cn("flex-1", isRTL && "text-right")}>{t("auth_benefit_2")}</span>
                   </li>
-                  <li className={cn("flex items-start justify-end", isRTL && "flex-row-reverse")}>
-                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white flex-shrink-0", isRTL ? "ml-2" : "mr-2")}>✓</span>
                     <span className={cn("flex-1", isRTL && "text-right")}>{t("auth_benefit_3")}</span>
                   </li>
-                  <li className={cn("flex items-start justify-end", isRTL && "flex-row-reverse")}>
-                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white flex-shrink-0", isRTL ? "ml-2" : "mr-2")}>✓</span>
                     <span className={cn("flex-1", isRTL && "text-right")}>{t("auth_benefit_4")}</span>
                   </li>
-                  <li className={cn("flex items-start justify-end", isRTL && "flex-row-reverse")}>
-                    <span className={cn("bg-white/20 rounded-full p-1 text-white", isRTL ? "ml-2" : "mr-2")}>✓</span>
+                  <li className={cn("flex items-start", isRTL && "flex-row-reverse")}>
+                    <span className={cn("bg-white/20 rounded-full p-1 text-white flex-shrink-0", isRTL ? "ml-2" : "mr-2")}>✓</span>
                     <span className={cn("flex-1", isRTL && "text-right")}>{t("auth_benefit_5")}</span>
                   </li>
                 </ul>
