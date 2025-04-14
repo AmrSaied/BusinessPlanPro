@@ -39,7 +39,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
       title: '',
       firstName: '',
       lastName: '',
-      nationality: '',
+      nationality: '', // Always initialize as empty string, not undefined
       dateOfBirth: '',
       passportNumber: '',
       passportExpiry: '',
@@ -535,7 +535,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 <Label htmlFor={`nationality-${index}`}>{t('nationality')}</Label>
                 <Combobox
                   items={countries}
-                  value={passenger.nationality}
+                  value={passenger.nationality || ""}
                   onChange={(value) => updatePassenger(index, 'nationality', value)}
                   placeholder={t('select_nationality')}
                   id={`nationality-${index}`}

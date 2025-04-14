@@ -24,7 +24,7 @@ type ComboboxItem = {
 
 interface ComboboxProps {
   items: ComboboxItem[];
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   placeholder?: string;
   id?: string;
@@ -60,7 +60,7 @@ export function Combobox({
           )}
         >
           {selectedItem ? selectedItem.label : placeholder}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className={cn("h-4 w-4 shrink-0 opacity-50", isRTL ? "mr-2" : "ml-2")} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
