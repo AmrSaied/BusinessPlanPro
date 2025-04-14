@@ -276,34 +276,36 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </div>
         </div>
         
-        {/* Flight Times with ViewTrip Layout - All left aligned, with airplane icon */}
+        {/* Flight Times with ViewTrip Layout - Exact match to reference image */}
         <div className="pl-4 pr-4 py-3">
           <div>
             <div className="grid grid-cols-12 gap-2 items-start text-left">
-              <div className="col-span-3 text-left relative">
+              {/* DEPART Section */}
+              <div className="col-span-3 text-left">
                 <div className="uppercase text-xs font-bold text-gray-700 mb-1">DEPART</div>
-                <div className="flex items-baseline">
-                  <div className="text-lg font-bold">{segment.departTime}</div>
-                  <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
-                  <div className="text-xs ml-1">{segment.departCode}</div>
-                </div>
-              </div>
-              
-              <div className="col-span-3 text-left mx-4">
-                <div className="uppercase text-xs font-bold text-gray-700 mb-1 text-left">NON STOP</div>
-                <div className="flex items-start mt-0.5">
-                  <div className="flex items-center">
-                    <div className="text-black mr-1">▶</div>
-                    <div className="text-xs text-gray-600">{segment.duration}</div>
+                <div className="flex items-center gap-2 mb-1">
+                  {/* Plane icon - exact match to reference */}
+                  <span className="text-black text-xl">✈</span>
+                  <div className="flex items-baseline">
+                    <div className="text-lg font-bold">{segment.departTime}</div>
+                    <div className="text-xs ml-1 uppercase">{segment.departAmPm}</div>
+                    <div className="text-xs ml-1">{segment.departCode}</div>
                   </div>
                 </div>
-                <div className="w-full flex justify-start mt-1.5">
-                  <svg width="100" height="8" viewBox="0 0 100 8" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-300">
-                    <line x1="0" y1="4" x2="100" y2="4" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2"/>
-                  </svg>
+              </div>
+              
+              {/* NON STOP Section */}
+              <div className="col-span-3 text-left mx-4">
+                <div className="uppercase text-xs font-bold text-gray-700 mb-1 text-left">NON STOP</div>
+                <div className="flex justify-center">
+                  <div className="text-center">
+                    <div className="w-16 border-t border-gray-400 border-dashed mb-1"></div>
+                    <div className="text-xs text-gray-600 text-center">{segment.duration}</div>
+                  </div>
                 </div>
               </div>
               
+              {/* ARRIVE Section */}
               <div className="col-span-3 text-left">
                 <div className="uppercase text-xs font-bold text-gray-700 mb-1">ARRIVE</div>
                 <div className="flex items-baseline">
