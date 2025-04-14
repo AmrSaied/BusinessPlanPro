@@ -244,9 +244,9 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
               </div>
             </div>
             
-            <div className="flex-1 text-right">
+            <div className="flex-1">
               <div className="uppercase text-xs font-bold text-gray-600 mb-1">{TICKET_TEXT.arrive}</div>
-              <div className="flex items-baseline justify-end">
+              <div className="flex items-baseline">
                 <div className="text-lg font-bold">{flight.arrivalTime.split(' ')[0]}</div>
                 <div className="text-xs ml-1 uppercase">{flight.arrivalTime.split(' ')[1]}</div>
               </div>
@@ -306,7 +306,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
               <div className="mb-0.5">{TICKET_TEXT.aircraft}</div>
               <div>{TICKET_TEXT.meal}</div>
             </div>
-            <div className="text-right">
+            <div>
               <div className="font-semibold mb-0.5">{TICKET_TEXT.distance}</div>
               <div>{calculateDistance()} km</div>
             </div>
