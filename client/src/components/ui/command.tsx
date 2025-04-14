@@ -49,25 +49,37 @@ const CommandInput = React.forwardRef<
     isRTLPlaceholder ? 'rtl' : 'auto'
   );
   
-  // This function will update direction without using onChange
-  const handleValueChange = React.useCallback((text: string) => {
-    // If input contains RTL characters, set direction to RTL
-    if (text && isRTLRegex.test(text)) {
+  // Create a custom onValueChange handler
+  const handleCustomValueChange = React.useCallback((value: string) => {
+    // First, update the direction
+    if (value && isRTLRegex.test(value)) {
       setInputDirection('rtl');
-    } else if (text) {
+    } else if (value) {
       setInputDirection('ltr');
     } else {
-      // When empty, default to auto or the placeholder's direction
       setInputDirection(isRTLPlaceholder ? 'rtl' : 'auto');
     }
-  }, [isRTLRegex, isRTLPlaceholder]);
-  
-  // Set up the effect to watch for changes to the value prop
-  React.useEffect(() => {
-    if (typeof props.value === 'string') {
-      handleValueChange(props.value);
+    
+    // Then call the original onValueChange if it exists
+    if (props.onValueChange) {
+      props.onValueChange(value);
     }
-  }, [props.value, handleValueChange]);
+  }, [isRTLRegex, isRTLPlaceholder, props.onValueChange]);
+  
+  // Track initial value
+  React.useEffect(() => {
+    if (props.value && typeof props.value === 'string') {
+      // Set initial direction
+      if (isRTLRegex.test(props.value)) {
+        setInputDirection('rtl');
+      } else {
+        setInputDirection('ltr');
+      }
+    }
+  }, []);
+  
+  // Create a new props object without onValueChange
+  const { onValueChange, ...restProps } = props;
   
   return (
     <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
@@ -80,8 +92,8 @@ const CommandInput = React.forwardRef<
           className
         )}
         dir={inputDirection}
-        onInput={(e) => handleValueChange(e.currentTarget.value)}
-        {...props}
+        onValueChange={handleCustomValueChange}
+        {...restProps}
       />
     </div>
   );
