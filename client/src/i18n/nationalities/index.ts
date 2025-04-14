@@ -42,8 +42,17 @@ export function getAllNationalityTranslations(): Record<string, string[]> {
     if (nationalities_fr[englishName]) translations.push(nationalities_fr[englishName]);
     if (nationalities_ru[englishName]) translations.push(nationalities_ru[englishName]);
     
-    // Remove duplicates
-    allTranslations[englishName] = [...new Set(translations)];
+    // Remove duplicates by using a more compatible approach
+    const uniqueTranslations: string[] = [];
+    
+    translations.forEach(translation => {
+      // Only add if not already in the array
+      if (!uniqueTranslations.includes(translation)) {
+        uniqueTranslations.push(translation);
+      }
+    });
+    
+    allTranslations[englishName] = uniqueTranslations;
   });
   
   return allTranslations;
