@@ -18,6 +18,8 @@ import {
   User
 } from 'lucide-react';
 import { Booking, Passenger } from '@shared/schema';
+import { useLanguage } from '@/context/language-context';
+import { cn } from '@/lib/utils';
 
 const UserDashboard = () => {
   const { t } = useTranslation();
