@@ -41,6 +41,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
     formState: { errors },
     setValue,
     watch,
+    setError,
   } = useForm<FlightSearch>({
     resolver: zodResolver(flightSearchSchema),
     defaultValues: {
@@ -336,10 +337,17 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                   const departureDate = new Date(watchedDepartureDate);
                                   departureDate.setHours(0, 0, 0, 0);
                                   
-                                  if (date < departureDate) {
-                                    // Set custom error message
-                                    setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                  // Return date should be at least one day after departure date
+                                  // This should never happen due to the disabled dates, but we keep this validation as a backup
+                                  if (date <= departureDate) {
+                                    setValue("returnDate", "", {
                                       shouldValidate: true
+                                    });
+                                    
+                                    // Show error message
+                                    setError("returnDate", {
+                                      type: "manual",
+                                      message: "return_date_after_departure_error"
                                     });
                                   }
                                 }
@@ -347,11 +355,12 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                             }}
                             initialFocus
                             disabled={(date) => {
-                              // For round trips, disable dates before departure date
+                              // For round trips, disable dates before or equal to departure date
                               if (watchedDepartureDate) {
                                 const departureDate = new Date(watchedDepartureDate);
                                 departureDate.setHours(0, 0, 0, 0);
-                                return date < departureDate;
+                                // Ensure return date is at least one day after departure date
+                                return date <= departureDate;
                               }
                               // If no departure date is set, disable dates in the past
                               return date < new Date();
@@ -359,7 +368,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                             footer={
                               watchedDepartureDate ? (
                                 <p className="p-2 text-center text-sm text-muted-foreground">
-                                  {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
+                                  {t("return_date_must_be_after")} {format(new Date(watchedDepartureDate), "PPP")}
                                 </p>
                               ) : null
                             }
