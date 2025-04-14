@@ -85,12 +85,12 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     
     // Use the client-side method from FlightTicket component
     try {
-      // Get booking ID from reference
+      // Get booking ID from reference or use the current bookingId prop
       const matches = ticketData.bookingReference.match(/\d+/);
-      const bookingId = matches ? parseInt(matches[0]) : parseInt(bookingId);
+      const extractedId = matches ? parseInt(matches[0]) : parseInt(bookingId as string);
       
       // Open the PDF download endpoint in a new tab/window
-      const downloadUrl = `/api/bookings/${bookingId}/ticket/download`;
+      const downloadUrl = `/api/bookings/${extractedId}/ticket/download`;
       window.open(downloadUrl, '_blank');
     } catch (error) {
       console.error('Error downloading ticket:', error);
