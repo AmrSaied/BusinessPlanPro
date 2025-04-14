@@ -274,6 +274,33 @@ export default {
   dashboard_booking_amount: 'Amount',
   dashboard_view_ticket: 'View Ticket',
   
+  // Ticket component translations
+  my_trip: 'My Trip',
+  to: 'to',
+  confirmed: 'Confirmed',
+  ticket_passengers: 'Passengers',
+  airport_info: 'Airport Info',
+  terminal: 'Terminal',
+  flight_info: 'Flight Info',
+  class_of_service: 'Class of Service',
+  economy: 'Economy',
+  depart: 'Depart',
+  arrive: 'Arrive',
+  additional_services: 'Additional Services',
+  express_processing: 'Express Processing',
+  premium_service: 'Premium Service',
+  editable_ticket: 'Editable Ticket',
+  flexible_changes: 'Flexible Changes',
+  hotel_reservation: 'Hotel Reservation',
+  accommodation_included: 'Accommodation Included',
+  insurance_letter: 'Insurance Letter',
+  travel_protection: 'Travel Protection',
+  ticket_contact_information: 'Contact Information',
+  ticket_email: 'Email',
+  ticket_phone: 'Phone',
+  purpose: 'Purpose',
+  confirmation_number: 'Confirmation Number',
+  
   // Support page
   support_title: 'Contact Support',
   support_subtitle: 'We\'re here to help with any questions or issues you might have.',
@@ -322,7 +349,7 @@ export default {
   schedule_session: 'Schedule a Session',
   session_scheduled: 'Session Scheduled',
   session_scheduled_description: 'Your support session has been scheduled. You will receive an email with details shortly.',
-  contact_information: 'Contact Information',
+  support_contact_information: 'Contact Information',
   
   // Error messages
   error_required: 'This field is required',
