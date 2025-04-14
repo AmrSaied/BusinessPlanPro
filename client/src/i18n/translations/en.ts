@@ -226,6 +226,18 @@ export default {
   faq_4_a: 'The flight reservations are usually valid for 2 weeks from the date of issue, which is sufficient for most visa applications. If you need a longer validity period, you can select our extended validity option during checkout.',
   faq_5_q: 'Can I modify my reservation after purchase?',
   faq_5_a: 'Yes, you can modify your reservation if you purchased the Editable Ticket option. Otherwise, changes require a small admin fee. Contact our support team for assistance with modifications.',
+  faq_6_q: 'Can I use these tickets for actually boarding a flight?',
+  faq_6_a: 'No, these are flight reservations specifically designed for visa applications and similar purposes. They are not valid for boarding flights. Once your visa is approved, you should purchase a regular flight ticket.',
+  faq_7_q: 'Do you guarantee visa approval with your flight reservations?',
+  faq_7_a: 'While our flight reservations meet the requirements specified by most embassies and consulates, we cannot guarantee visa approval as the final decision rests with the immigration authorities based on your complete application.',
+  faq_8_q: 'What information do I need to provide to book a flight reservation?',
+  faq_8_a: 'You will need to provide your full name as it appears on your passport, passport number, nationality, date of birth, contact details, and your travel route (origin, destination, dates).',
+  faq_9_q: 'How far in advance should I book my flight reservation for a visa application?',
+  faq_9_a: 'We recommend booking your flight reservation 1-2 weeks before your visa appointment. This ensures your reservation is valid during the visa processing period. However, if you need it urgently, our system can generate valid tickets in minutes.',
+  faq_10_q: 'What payment methods do you accept?',
+  faq_10_a: 'We accept all major credit and debit cards (Visa, MasterCard, American Express), PayPal, and in selected countries, local payment methods like Alipay, WeChat Pay, and bank transfers.',
+  faq_still_have_questions: 'Still have questions?',
+  faq_support_available: 'Our support team is available 24/7 to assist you with any questions or concerns.',
   
   // Footer
   footer_description: 'Providing verifiable flight reservations for visa applications worldwide.',

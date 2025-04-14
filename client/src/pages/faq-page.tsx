@@ -98,7 +98,7 @@ const FaqPage = () => {
                 href="mailto:support@fastdummyticket.com" 
                 className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-md font-medium text-center hover:bg-gray-50 transition"
               >
-                <i className="fas fa-envelope mr-2"></i> {t('footer_email_support')}
+                <i className="fas fa-envelope mr-2"></i> {t('footer_email')}
               </a>
             </div>
           </div>
