@@ -479,8 +479,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             {/* Saved passenger selector - shown only if user is authenticated */}
             {savedPassengers !== undefined && (
               <div className={cn(
-                "flex items-center gap-2 mt-2", 
-                currentLanguage === 'ar' || currentLanguage === 'he' ? "flex-row-reverse justify-end" : ""
+                "flex items-center gap-2 mt-2 w-full", 
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "justify-end" : ""
               )}>
                 <span className="text-sm text-gray-600" dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}>
                   {t('load_saved_passenger', 'Load saved')}:
@@ -743,13 +743,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             
             {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
             {savedPassengers !== undefined && (
-              <div className={cn(
-                "mt-4",
-                currentLanguage === 'ar' || currentLanguage === 'he' ? "flex justify-end" : ""
-              )}>
+              <div className="mt-4 w-full">
                 <div className={cn(
                   "flex items-center", 
-                  currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse rtl-checkbox" : "space-x-2"
+                  currentLanguage === 'ar' || currentLanguage === 'he' ? "justify-end space-x-reverse space-x-2" : "space-x-2"
                 )}>
                   <Checkbox 
                     id={`save-passenger-${index}`} 
@@ -815,13 +812,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           
           {/* Save contact information checkbox - only show if user is authenticated */}
           {savedPassengers !== undefined && (
-            <div className={cn(
-              "mt-4",
-              currentLanguage === 'ar' || currentLanguage === 'he' ? "flex justify-end" : ""
-            )}>
+            <div className="mt-4 w-full">
               <div className={cn(
                 "flex items-center", 
-                currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse rtl-checkbox" : "space-x-2"
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "justify-end space-x-reverse space-x-2" : "space-x-2"
               )}>
                 <Checkbox 
                   id="save-contact-info" 
