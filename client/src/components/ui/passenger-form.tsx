@@ -21,8 +21,7 @@ import { InsertPassenger, Passenger } from '@shared/schema';
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useLanguage } from '@/context/language-context';
 import { 
-  getNationalitiesForLanguage, 
-  matchNationalityByEnglishName 
+  getNationalitiesForLanguage 
 } from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
 
@@ -75,12 +74,21 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Filter function for searching nationalities in current language
+  // Dynamic filter function for searching nationalities in multiple languages
   const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
     
+    const searchTermLower = searchTerm.toLowerCase();
+    
     // Match in the current language (using the label which is already translated)
-    return item.label.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCurrentLanguage = item.label.toLowerCase().includes(searchTermLower);
+    
+    // Also match in English if englishName is available (for cross-language searching)
+    const matchesEnglish = item.englishName ? 
+      item.englishName.toLowerCase().includes(searchTermLower) : false;
+    
+    // Return true if it matches either in current language or in English
+    return matchesCurrentLanguage || matchesEnglish;
   };
   
   // Map country values and translated labels with original English names for multi-language search
@@ -94,25 +102,25 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     { value: 'ar', label: getTranslatedCountryName('Argentina'), englishName: 'Argentina' },
     { value: 'am', label: getTranslatedCountryName('Armenia'), englishName: 'Armenia' },
     { value: 'au', label: getTranslatedCountryName('Australia'), englishName: 'Australia' },
-    { value: 'at', label: getTranslatedCountryName('Austria') },
-    { value: 'az', label: getTranslatedCountryName('Azerbaijan') },
-    { value: 'bs', label: getTranslatedCountryName('Bahamas') },
-    { value: 'bh', label: getTranslatedCountryName('Bahrain') },
-    { value: 'bd', label: getTranslatedCountryName('Bangladesh') },
-    { value: 'bb', label: getTranslatedCountryName('Barbados') },
-    { value: 'by', label: getTranslatedCountryName('Belarus') },
-    { value: 'be', label: getTranslatedCountryName('Belgium') },
-    { value: 'bz', label: getTranslatedCountryName('Belize') },
-    { value: 'bj', label: getTranslatedCountryName('Benin') },
-    { value: 'bt', label: getTranslatedCountryName('Bhutan') },
-    { value: 'bo', label: getTranslatedCountryName('Bolivia') },
-    { value: 'ba', label: getTranslatedCountryName('Bosnia and Herzegovina') },
-    { value: 'bw', label: getTranslatedCountryName('Botswana') },
-    { value: 'br', label: getTranslatedCountryName('Brazil') },
-    { value: 'bn', label: getTranslatedCountryName('Brunei') },
-    { value: 'bg', label: getTranslatedCountryName('Bulgaria') },
-    { value: 'bf', label: getTranslatedCountryName('Burkina Faso') },
-    { value: 'bi', label: getTranslatedCountryName('Burundi') },
+    { value: 'at', label: getTranslatedCountryName('Austria'), englishName: 'Austria' },
+    { value: 'az', label: getTranslatedCountryName('Azerbaijan'), englishName: 'Azerbaijan' },
+    { value: 'bs', label: getTranslatedCountryName('Bahamas'), englishName: 'Bahamas' },
+    { value: 'bh', label: getTranslatedCountryName('Bahrain'), englishName: 'Bahrain' },
+    { value: 'bd', label: getTranslatedCountryName('Bangladesh'), englishName: 'Bangladesh' },
+    { value: 'bb', label: getTranslatedCountryName('Barbados'), englishName: 'Barbados' },
+    { value: 'by', label: getTranslatedCountryName('Belarus'), englishName: 'Belarus' },
+    { value: 'be', label: getTranslatedCountryName('Belgium'), englishName: 'Belgium' },
+    { value: 'bz', label: getTranslatedCountryName('Belize'), englishName: 'Belize' },
+    { value: 'bj', label: getTranslatedCountryName('Benin'), englishName: 'Benin' },
+    { value: 'bt', label: getTranslatedCountryName('Bhutan'), englishName: 'Bhutan' },
+    { value: 'bo', label: getTranslatedCountryName('Bolivia'), englishName: 'Bolivia' },
+    { value: 'ba', label: getTranslatedCountryName('Bosnia and Herzegovina'), englishName: 'Bosnia and Herzegovina' },
+    { value: 'bw', label: getTranslatedCountryName('Botswana'), englishName: 'Botswana' },
+    { value: 'br', label: getTranslatedCountryName('Brazil'), englishName: 'Brazil' },
+    { value: 'bn', label: getTranslatedCountryName('Brunei'), englishName: 'Brunei' },
+    { value: 'bg', label: getTranslatedCountryName('Bulgaria'), englishName: 'Bulgaria' },
+    { value: 'bf', label: getTranslatedCountryName('Burkina Faso'), englishName: 'Burkina Faso' },
+    { value: 'bi', label: getTranslatedCountryName('Burundi'), englishName: 'Burundi' },
     { value: 'cv', label: getTranslatedCountryName('Cabo Verde') },
     { value: 'kh', label: getTranslatedCountryName('Cambodia') },
     { value: 'cm', label: getTranslatedCountryName('Cameroon') },
