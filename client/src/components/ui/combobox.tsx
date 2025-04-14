@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/language-context";
+import { multiLanguageSearch } from "@/utils/search-utils";
 
 type ComboboxItem = {
   value: string;
@@ -61,18 +62,13 @@ export function Combobox({
   const filteredItems = React.useMemo(() => {
     if (!inputValue) return items;
     
-    return items.filter(item => {
-      if (customFilter) {
-        return customFilter(item, inputValue);
-      }
-      
-      // Default filter behavior with enhanced Arabic support
-      const normalizedInput = normalizeArabic(inputValue.toLowerCase());
-      const normalizedLabel = normalizeArabic(item.label.toLowerCase());
-      
-      return normalizedLabel.includes(normalizedInput) || 
-             item.label.toLowerCase().includes(inputValue.toLowerCase());
-    });
+    // If using a custom filter, apply it directly to each item
+    if (customFilter) {
+      return items.filter(item => customFilter(item, inputValue));
+    }
+    
+    // Use the imported multiLanguageSearch utility for consistent multi-language filtering
+    return multiLanguageSearch(items, inputValue);
   }, [items, inputValue, customFilter]);
 
   return (

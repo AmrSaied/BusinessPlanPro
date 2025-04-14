@@ -24,6 +24,7 @@ import {
   getNationalitiesForLanguage 
 } from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
+import { multiLanguageSearch } from '@/utils/search-utils';
 
 interface PassengerFormProps {
   passengerCount: number;
@@ -74,34 +75,13 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Enhanced filter function for searching nationalities in multiple languages
-  // with special handling for Arabic text
+  // Enhanced multi-language nationality filter using the search utility
   const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
     
-    // Normalize the search term by removing diacritics and vowel marks for Arabic
-    const normalizeArabic = (text: string) => {
-      // Remove Arabic diacritics (harakaat) and tatweel
-      return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
-    };
-    
-    const searchTermLower = searchTerm.toLowerCase();
-    const normalizedSearchTerm = normalizeArabic(searchTermLower);
-    
-    // Use normalized and non-normalized searches for better matching
-    const normalizedLabel = normalizeArabic(item.label.toLowerCase());
-    
-    // Check if item label matches search term (with and without normalization)
-    const matchesCurrentLanguage = 
-      item.label.toLowerCase().includes(searchTermLower) || 
-      normalizedLabel.includes(normalizedSearchTerm);
-    
-    // Also match in English if englishName is available (for cross-language searching)
-    const matchesEnglish = item.englishName ? 
-      item.englishName.toLowerCase().includes(searchTermLower) : false;
-    
-    // Return true if it matches in either language
-    return matchesCurrentLanguage || matchesEnglish;
+    // Use our multi-language search utility to properly handle different scripts
+    const searchResults = multiLanguageSearch([item], searchTerm);
+    return searchResults.length > 0;
   };
   
   // Map country values and translated labels with original English names for multi-language search
