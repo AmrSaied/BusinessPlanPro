@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useLocation } from "wouter";
 import MainLayout from "@/layout/main-layout";
+import { useTranslation } from "react-i18next";
 
 // Login form schema
 const loginSchema = z.object({

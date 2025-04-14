@@ -416,5 +416,42 @@ export default {
   how_to_work_contact_phone_text: 'Our team is available to help you with any technical or booking issues.',
   
   // Footer translations
-  footer_support_title: 'Support'
+  footer_support_title: 'Support',
+  
+  // Authentication Page
+  auth_login_tab: 'Login',
+  auth_register_tab: 'Register',
+  auth_login_title: 'Login to your account',
+  auth_login_description: 'Enter your credentials to access your account',
+  auth_register_title: 'Create an account',
+  auth_register_description: 'Sign up to save your bookings and track your tickets',
+  auth_username_label: 'Username',
+  auth_username_placeholder: 'Enter your username',
+  auth_register_username_placeholder: 'Choose a username',
+  auth_password_label: 'Password',
+  auth_password_placeholder: 'Enter your password',
+  auth_create_password_placeholder: 'Create a password',
+  auth_email_label: 'Email',
+  auth_email_placeholder: 'Enter your email',
+  auth_confirm_password_label: 'Confirm Password',
+  auth_confirm_password_placeholder: 'Confirm your password',
+  auth_first_name_label: 'First Name',
+  auth_first_name_placeholder: 'Enter your first name',
+  auth_last_name_label: 'Last Name',
+  auth_last_name_placeholder: 'Enter your last name',
+  auth_login_button: 'Login',
+  auth_logging_in: 'Logging in...',
+  auth_register_button: 'Register',
+  auth_registering: 'Creating account...',
+  auth_no_account: 'Don\'t have an account?',
+  auth_have_account: 'Already have an account?',
+  auth_success_login: 'You have successfully logged in',
+  auth_success_register: 'Your account has been created and you are now logged in',
+  auth_failed_register: 'Registration failed',
+  
+  // Validation messages
+  validation_username_min: 'Username must be at least 3 characters',
+  validation_password_min: 'Password must be at least 6 characters',
+  validation_email_invalid: 'Please enter a valid email address',
+  validation_passwords_match: 'Passwords do not match'
 };
