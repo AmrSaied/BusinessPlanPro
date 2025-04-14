@@ -49,11 +49,7 @@ export function Combobox({
   const { currentLanguage } = useLanguage();
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
   
-  // Helper function to normalize Arabic text (remove diacritics)
-  const normalizeArabic = (text: string) => {
-    // Remove Arabic diacritics and tatweel
-    return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
-  };
+  // We've imported normalizeArabic from search-utils, so the local function can be removed
 
   // Find the selected item to display its label
   const selectedItem = items.find((item) => item.value === value);
@@ -100,7 +96,7 @@ export function Combobox({
           />
           <CommandEmpty>{t('no_results', 'No results found.')}</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-y-auto">
-            {filteredItems.map((item) => (
+            {filteredItems.map((item: ComboboxItem) => (
               <CommandItem
                 key={item.value}
                 value={item.value}
