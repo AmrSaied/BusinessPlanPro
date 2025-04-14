@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/select';
 import { InsertPassenger, Passenger } from '@shared/schema';
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { useLanguage } from '@/context/language-context';
+import { getNationalitiesForLanguage } from '@/i18n/nationalities';
 
 interface PassengerFormProps {
   passengerCount: number;
