@@ -75,17 +75,26 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
+  // Custom filter function for multi-language search of nationalities
+  const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
+    if (!searchTerm) return true;
+    if (!item.englishName) return item.label.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Use our multi-language search function
+    return matchNationalityInAnyLanguage(item.englishName, searchTerm);
+  };
+  
   // Map country values and translated labels with original English names for multi-language search
   const countries = [
     { value: 'af', label: getTranslatedCountryName('Afghanistan'), englishName: 'Afghanistan' },
     { value: 'al', label: getTranslatedCountryName('Albania'), englishName: 'Albania' },
     { value: 'dz', label: getTranslatedCountryName('Algeria'), englishName: 'Algeria' },
-    { value: 'ad', label: getTranslatedCountryName('Andorra') },
-    { value: 'ao', label: getTranslatedCountryName('Angola') },
-    { value: 'ag', label: getTranslatedCountryName('Antigua and Barbuda') },
-    { value: 'ar', label: getTranslatedCountryName('Argentina') },
-    { value: 'am', label: getTranslatedCountryName('Armenia') },
-    { value: 'au', label: getTranslatedCountryName('Australia') },
+    { value: 'ad', label: getTranslatedCountryName('Andorra'), englishName: 'Andorra' },
+    { value: 'ao', label: getTranslatedCountryName('Angola'), englishName: 'Angola' },
+    { value: 'ag', label: getTranslatedCountryName('Antigua and Barbuda'), englishName: 'Antigua and Barbuda' },
+    { value: 'ar', label: getTranslatedCountryName('Argentina'), englishName: 'Argentina' },
+    { value: 'am', label: getTranslatedCountryName('Armenia'), englishName: 'Armenia' },
+    { value: 'au', label: getTranslatedCountryName('Australia'), englishName: 'Australia' },
     { value: 'at', label: getTranslatedCountryName('Austria') },
     { value: 'az', label: getTranslatedCountryName('Azerbaijan') },
     { value: 'bs', label: getTranslatedCountryName('Bahamas') },
@@ -549,6 +558,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   onChange={(value) => updatePassenger(index, 'nationality', value)}
                   placeholder={t('select_nationality')}
                   id={`nationality-${index}`}
+                  customFilter={nationalityFilter}
                 />
                 {errors[`passenger${index}`]?.nationality && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].nationality}</p>
