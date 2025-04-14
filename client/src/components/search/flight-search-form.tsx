@@ -214,6 +214,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         <Calendar
                           mode="single"
                           selected={field.value ? new Date(field.value) : undefined}
+                          month={field.value ? new Date(field.value) : undefined}
                           onSelect={(date) => {
                             if (date) {
                               const today = new Date();
@@ -328,6 +329,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           <Calendar
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
+                            month={field.value ? new Date(field.value) : undefined}
                             onSelect={(date) => {
                               if (date) {
                                 field.onChange(format(date, "yyyy-MM-dd"));
