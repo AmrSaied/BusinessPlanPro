@@ -21,7 +21,8 @@ import { InsertPassenger, Passenger } from '@shared/schema';
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { useLanguage } from '@/context/language-context';
 import { 
-  getNationalitiesForLanguage 
+  getNationalitiesForLanguage, 
+  matchNationalityInAnyLanguage 
 } from '@/i18n/nationalities';
 import { Combobox } from '@/components/ui/combobox';
 
@@ -74,35 +75,26 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     return nationalityTranslations[englishName] || englishName;
   };
   
-  // Helper function to normalize Arabic text (remove diacritics)
-  const normalizeArabic = (text: string) => {
-    // Remove Arabic diacritics and tatweel
-    return text.replace(/[\u064B-\u065F\u0670\u0610-\u061A\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0640]/g, '');
-  };
-  
-  // Simple nationality filter for the current language with special handling for Arabic
-  const nationalityFilter = (item: { value: string; label: string }, searchTerm: string) => {
+  // Custom filter function for multi-language search of nationalities
+  const nationalityFilter = (item: { value: string; label: string; englishName?: string }, searchTerm: string) => {
     if (!searchTerm) return true;
+    if (!item.englishName) return item.label.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Basic filter with Arabic text normalization support
-    const normalizedInput = normalizeArabic(searchTerm.toLowerCase());
-    const normalizedLabel = normalizeArabic(item.label.toLowerCase());
-    
-    return normalizedLabel.includes(normalizedInput) || 
-           item.label.toLowerCase().includes(searchTerm.toLowerCase());
+    // Use our multi-language search function
+    return matchNationalityInAnyLanguage(item.englishName, searchTerm);
   };
   
-  // Map country values and translated labels based on current language
+  // Map country values and translated labels with original English names for multi-language search
   const countries = [
-    { value: 'af', label: getTranslatedCountryName('Afghanistan') },
-    { value: 'al', label: getTranslatedCountryName('Albania') },
-    { value: 'dz', label: getTranslatedCountryName('Algeria') },
-    { value: 'ad', label: getTranslatedCountryName('Andorra') },
-    { value: 'ao', label: getTranslatedCountryName('Angola') },
-    { value: 'ag', label: getTranslatedCountryName('Antigua and Barbuda') },
-    { value: 'ar', label: getTranslatedCountryName('Argentina') },
-    { value: 'am', label: getTranslatedCountryName('Armenia') },
-    { value: 'au', label: getTranslatedCountryName('Australia') },
+    { value: 'af', label: getTranslatedCountryName('Afghanistan'), englishName: 'Afghanistan' },
+    { value: 'al', label: getTranslatedCountryName('Albania'), englishName: 'Albania' },
+    { value: 'dz', label: getTranslatedCountryName('Algeria'), englishName: 'Algeria' },
+    { value: 'ad', label: getTranslatedCountryName('Andorra'), englishName: 'Andorra' },
+    { value: 'ao', label: getTranslatedCountryName('Angola'), englishName: 'Angola' },
+    { value: 'ag', label: getTranslatedCountryName('Antigua and Barbuda'), englishName: 'Antigua and Barbuda' },
+    { value: 'ar', label: getTranslatedCountryName('Argentina'), englishName: 'Argentina' },
+    { value: 'am', label: getTranslatedCountryName('Armenia'), englishName: 'Armenia' },
+    { value: 'au', label: getTranslatedCountryName('Australia'), englishName: 'Australia' },
     { value: 'at', label: getTranslatedCountryName('Austria') },
     { value: 'az', label: getTranslatedCountryName('Azerbaijan') },
     { value: 'bs', label: getTranslatedCountryName('Bahamas') },
@@ -288,103 +280,82 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     { value: 'zm', label: getTranslatedCountryName('Zambia') },
     { value: 'zw', label: getTranslatedCountryName('Zimbabwe') }
   ];
-
-  // Update a specific passenger's property
-  const updatePassenger = (index: number, field: keyof Partial<InsertPassenger>, value: any) => {
+  
+  const updatePassenger = (index: number, field: string, value: any) => {
     const updatedPassengers = [...passengers];
-    updatedPassengers[index] = { ...updatedPassengers[index], [field]: value };
+    updatedPassengers[index] = {
+      ...updatedPassengers[index],
+      [field]: value
+    };
+    
+    // Clear error for this field if it exists
+    if (errors[`passenger${index}`]?.[field]) {
+      const updatedErrors = { ...errors };
+      delete updatedErrors[`passenger${index}`][field];
+      setErrors(updatedErrors);
+    }
+    
     setPassengers(updatedPassengers);
   };
-
-  // Update contact information
-  const updateContactInfo = (field: keyof typeof contactInfo, value: any) => {
-    setContactInfo({ ...contactInfo, [field]: value });
+  
+  const loadSavedPassenger = (index: number, savedPassenger: Passenger) => {
+    const updatedPassengers = [...passengers];
+    // Take fields from the saved passenger but omit the id and userId
+    const { id, userId, ...passengerData } = savedPassenger;
+    updatedPassengers[index] = { 
+      ...passengerData,
+      isSaved: true
+    };
+    setPassengers(updatedPassengers);
   };
-
-  // Load saved passengers if available for first passenger slots
-  useEffect(() => {
-    if (savedPassengers.length > 0) {
-      const updatedPassengers = [...passengers];
-      
-      // Fill in saved passenger data for the first slots
-      savedPassengers.slice(0, passengerCount).forEach((savedPassenger, index) => {
-        if (index < passengerCount) {
-          updatedPassengers[index] = {
-            title: savedPassenger.title,
-            firstName: savedPassenger.firstName,
-            lastName: savedPassenger.lastName,
-            nationality: savedPassenger.nationality,
-            dateOfBirth: savedPassenger.dateOfBirth,
-            passportNumber: savedPassenger.passportNumber,
-            passportExpiry: savedPassenger.passportExpiry,
-            isSaved: true
-          };
-        }
-      });
-      
-      setPassengers(updatedPassengers);
-    }
-  }, [savedPassengers, passengerCount]);
-
-  // Validate passenger data
-  const validatePassengers = () => {
+  
+  const validateForm = () => {
     const newErrors: Record<string, Record<string, string>> = {};
     let isValid = true;
     
+    // Validate each passenger
     passengers.forEach((passenger, index) => {
       const passengerErrors: Record<string, string> = {};
       
       if (!passenger.title) {
-        passengerErrors.title = t('field_required');
+        passengerErrors.title = t('error_required');
         isValid = false;
       }
       
       if (!passenger.firstName) {
-        passengerErrors.firstName = t('field_required');
+        passengerErrors.firstName = t('error_required');
         isValid = false;
       }
       
       if (!passenger.lastName) {
-        passengerErrors.lastName = t('field_required');
+        passengerErrors.lastName = t('error_required');
         isValid = false;
       }
       
       if (!passenger.nationality) {
-        passengerErrors.nationality = t('field_required');
+        passengerErrors.nationality = t('error_required');
         isValid = false;
       }
       
       if (!passenger.dateOfBirth) {
-        passengerErrors.dateOfBirth = t('field_required');
+        passengerErrors.dateOfBirth = t('error_required');
         isValid = false;
-      } else {
-        // Check that the date is in the past
-        const dob = new Date(passenger.dateOfBirth);
-        const today = new Date();
-        
-        if (dob > today) {
-          passengerErrors.dateOfBirth = t('date_of_birth_future');
-          isValid = false;
-        }
+      } else if (!/^\d{2}\/\d{2}\/\d{4}$/.test(passenger.dateOfBirth)) {
+        passengerErrors.dateOfBirth = t('error_date_format');
+        isValid = false;
       }
       
       if (!passenger.passportNumber) {
-        passengerErrors.passportNumber = t('field_required');
+        passengerErrors.passportNumber = t('error_required');
         isValid = false;
       }
       
       if (!passenger.passportExpiry) {
-        passengerErrors.passportExpiry = t('field_required');
+        passengerErrors.passportExpiry = t('error_required');
         isValid = false;
-      } else {
-        // Check that the passport is not expired
-        const expiry = new Date(passenger.passportExpiry);
-        const today = new Date();
-        
-        if (expiry < today) {
-          passengerErrors.passportExpiry = t('passport_expired');
-          isValid = false;
-        }
+      } else if (!/^\d{2}\/\d{2}\/\d{4}$/.test(passenger.passportExpiry)) {
+        passengerErrors.passportExpiry = t('error_date_format');
+        isValid = false;
       }
       
       if (Object.keys(passengerErrors).length > 0) {
@@ -392,14 +363,20 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
       }
     });
     
-    // Validate contact information
+    // Validate contact info
     const contactErrors: Record<string, string> = {};
     
     if (!contactInfo.email) {
-      contactErrors.email = t('field_required');
+      contactErrors.email = t('error_required');
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(contactInfo.email)) {
-      contactErrors.email = t('invalid_email');
+      contactErrors.email = t('error_email');
+      isValid = false;
+    }
+    
+    // Phone is optional, but if provided should have a valid format
+    if (contactInfo.phone && !/^[\d\+\-\s\(\)\.]+$/.test(contactInfo.phone)) {
+      contactErrors.phone = t('error_phone');
       isValid = false;
     }
     
@@ -410,65 +387,160 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     setErrors(newErrors);
     return isValid;
   };
-
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (validatePassengers()) {
-      // Create complete passenger objects
-      const completePassengers = passengers.map(passenger => ({
-        title: passenger.title || '',
-        firstName: passenger.firstName || '',
-        lastName: passenger.lastName || '',
-        nationality: passenger.nationality || '',
-        dateOfBirth: passenger.dateOfBirth || '',
-        passportNumber: passenger.passportNumber || '',
-        passportExpiry: passenger.passportExpiry || '',
-        isSaved: passenger.isSaved || false
-      }));
+  
+  const handleSubmit = () => {
+    if (validateForm()) {
+      // Add logging to debug contactInfo
+      console.log('Submitting passenger form with contactInfo:', contactInfo);
       
-      onSubmit(completePassengers, contactInfo, specialRequests);
+      // Convert passengers to proper type and submit
+      const validPassengers = passengers as InsertPassenger[];
+      onSubmit(validPassengers, contactInfo, specialRequests);
     }
   };
-
-  // Format date for display
-  const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return '';
-    return format(new Date(dateString), 'PPP');
-  };
   
-  // Get text direction based on current language
-  const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
-
+  // Pre-fill first passenger with first saved passenger if available
+  useEffect(() => {
+    if (savedPassengers && savedPassengers.length > 0 && passengers.length > 0) {
+      // Only pre-fill if passenger data is empty (to avoid overwriting user input)
+      const firstPassenger = passengers[0];
+      const isEmpty = !firstPassenger.firstName && 
+                      !firstPassenger.lastName && 
+                      !firstPassenger.passportNumber;
+      
+      if (isEmpty) {
+        loadSavedPassenger(0, savedPassengers[0]);
+      }
+    }
+  }, [savedPassengers]);
+  
+  // Pre-fill contact information if user has it saved
+  useEffect(() => {
+    if (savedPassengers !== undefined && savedPassengers.length > 0) {
+      // Get user from first passenger (all passengers belong to same user)
+      const firstPassenger = savedPassengers[0];
+      if (firstPassenger.userId) {
+        // Fetch user data to get preferred contact info
+        fetch(`/api/users/${firstPassenger.userId}`)
+          .then(res => res.json())
+          .then(userData => {
+            if (userData.phone || userData.preferredEmail) {
+              setContactInfo(prevInfo => ({
+                ...prevInfo,
+                phone: userData.phone || prevInfo.phone,
+                email: userData.preferredEmail || prevInfo.email
+              }));
+            }
+          })
+          .catch(err => console.error('Error fetching user contact info:', err));
+      }
+    }
+  }, [savedPassengers]);
+  
   return (
-    <form onSubmit={handleSubmit} className="passenger-form space-y-8">
-      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-semibold mb-6">{t('passenger_information')}</h2>
-        
-        {/* Passenger Inputs */}
-        {passengers.map((passenger, index) => (
-          <div key={index} className="border border-gray-200 rounded-lg p-4 mb-6">
-            <h3 className="text-lg font-medium mb-4">
-              {t('passenger')} {index + 1}
+    <div>
+      <div className="mb-6">
+        <h2 className="font-heading font-semibold text-2xl mb-2">{t('passenger_title')}</h2>
+        <p className="text-gray-600">{t('passenger_subtitle')}</p>
+      </div>
+      
+      {/* Progress Indicator */}
+      <div className="mb-8">
+        <div className="flex items-center">
+          <div className="flex items-center text-primary relative">
+            <div className="rounded-full transition h-8 w-8 flex items-center justify-center bg-primary text-white">
+              <i className="fas fa-check text-xs"></i>
+            </div>
+            <div className="absolute top-0 -ml-10 text-center mt-10 w-32 text-xs font-medium text-primary">{t('progress_flight')}</div>
+          </div>
+          <div className="flex-auto border-t-2 border-primary"></div>
+          <div className="flex items-center text-primary relative">
+            <div className="rounded-full transition h-8 w-8 flex items-center justify-center bg-primary text-white">
+              <i className="fas fa-check text-xs"></i>
+            </div>
+            <div className="absolute top-0 -ml-10 text-center mt-10 w-32 text-xs font-medium text-primary">{t('progress_options')}</div>
+          </div>
+          <div className="flex-auto border-t-2 border-primary"></div>
+          <div className="flex items-center text-primary relative">
+            <div className="rounded-full transition h-8 w-8 flex items-center justify-center bg-primary text-white">
+              <span className="text-xs">3</span>
+            </div>
+            <div className="absolute top-0 -ml-10 text-center mt-10 w-32 text-xs font-medium text-primary">{t('progress_passenger')}</div>
+          </div>
+          <div className="flex-auto border-t-2 transition border-gray-300"></div>
+          <div className="flex items-center text-gray-500 relative">
+            <div className="rounded-full transition h-8 w-8 border-2 border-gray-300 flex items-center justify-center">
+              <span className="text-xs">4</span>
+            </div>
+            <div className="absolute top-0 -ml-10 text-center mt-10 w-32 text-xs font-medium text-gray-500">{t('progress_payment')}</div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Passenger Forms */}
+      {passengers.map((passenger, index) => (
+        <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6">
+          <div className="p-5 border-b border-gray-200 flex justify-between items-center">
+            <h3 className="font-heading font-semibold text-lg">
+              {t('passenger_number')} {index + 1}
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {/* Saved passenger selector - shown only if user is authenticated */}
+            {savedPassengers !== undefined && (
+              <div className={cn("flex items-center gap-2", currentLanguage === 'ar' || currentLanguage === 'he' ? "flex-row-reverse" : "")}>
+                <span className="text-sm text-gray-600">{t('load_saved_passenger', 'Load saved')}:</span>
+                <Select 
+                  onValueChange={(value) => {
+                    if (value === "none") return;
+                    const savedPassenger = savedPassengers.find(p => p.id === parseInt(value));
+                    if (savedPassenger) {
+                      loadSavedPassenger(index, savedPassenger);
+                    }
+                  }}
+                  disabled={savedPassengers.length === 0}
+                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                >
+                  <SelectTrigger className={cn("w-[220px]", currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left")}>
+                    <SelectValue placeholder={t(savedPassengers.length > 0 ? 
+                      'select_saved_passenger' : 
+                      'no_saved_passengers', 
+                      savedPassengers.length > 0 ? "Load saved passenger" : "No saved passengers yet")} 
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t('select_saved_passenger', 'Select a saved passenger')}</SelectItem>
+                    {savedPassengers.length > 0 ? (
+                      savedPassengers.map((savedPassenger) => (
+                        <SelectItem key={savedPassenger.id} value={savedPassenger.id?.toString() || ''}>
+                          {savedPassenger.title}. {savedPassenger.firstName} {savedPassenger.lastName}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="none" disabled>
+                        {t('save_passenger_first', 'Save a passenger to select it later')}
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+          
+          <div className="p-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               {/* Title */}
               <div>
-                <Label htmlFor={`title-${index}`}>{t('title')}</Label>
-                <Select
-                  value={passenger.title || ""}
+                <Label htmlFor={`title-${index}`}>{t('passenger_title_label')}</Label>
+                <Select 
+                  value={passenger.title} 
                   onValueChange={(value) => updatePassenger(index, 'title', value)}
                 >
-                  <SelectTrigger id={`title-${index}`} className="w-full">
-                    <SelectValue placeholder={t('select_title')} />
+                  <SelectTrigger id={`title-${index}`}>
+                    <SelectValue placeholder={t('passenger_select_title')} />
                   </SelectTrigger>
                   <SelectContent>
                     {titles.map((title) => (
-                      <SelectItem key={title.value} value={title.value}>
-                        {title.label}
-                      </SelectItem>
+                      <SelectItem key={title.value} value={title.value}>{title.label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -500,12 +572,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 <Label htmlFor={`firstName-${index}`}>{t('first_name')}</Label>
                 <Input
                   id={`firstName-${index}`}
-                  type="text"
-                  placeholder={t('enter_first_name')}
-                  value={passenger.firstName || ""}
+                  value={passenger.firstName}
                   onChange={(e) => updatePassenger(index, 'firstName', e.target.value)}
-                  className={errors[`passenger${index}`]?.firstName ? "border-red-500" : ""}
-                  dir="auto"
+                  placeholder={t('name_passport_placeholder')}
                 />
                 {errors[`passenger${index}`]?.firstName && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].firstName}</p>
@@ -517,12 +586,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 <Label htmlFor={`lastName-${index}`}>{t('last_name')}</Label>
                 <Input
                   id={`lastName-${index}`}
-                  type="text"
-                  placeholder={t('enter_last_name')}
-                  value={passenger.lastName || ""}
+                  value={passenger.lastName}
                   onChange={(e) => updatePassenger(index, 'lastName', e.target.value)}
-                  className={errors[`passenger${index}`]?.lastName ? "border-red-500" : ""}
-                  dir="auto"
+                  placeholder={t('name_passport_placeholder')}
                 />
                 {errors[`passenger${index}`]?.lastName && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].lastName}</p>
@@ -531,49 +597,45 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              {/* Date of Birth */}
+              {/* Date of Birth with Datepicker */}
               <div>
-                <Label>{t('date_of_birth')}</Label>
-                <div className="relative">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !passenger.dateOfBirth && "text-muted-foreground",
-                          errors[`passenger${index}`]?.dateOfBirth && "border-red-500"
-                        )}
-                      >
-                        {passenger.dateOfBirth ? (
-                          formatDate(passenger.dateOfBirth)
-                        ) : (
-                          <span>{t('select_date')}</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={passenger.dateOfBirth ? new Date(passenger.dateOfBirth) : undefined}
-                        onSelect={(date) => {
-                          if (date) {
-                            updatePassenger(index, 'dateOfBirth', format(date, 'yyyy-MM-dd'));
-                          }
-                        }}
-                        disabled={(date) => {
-                          // Disable future dates
-                          return date > new Date();
-                        }}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  {errors[`passenger${index}`]?.dateOfBirth && (
-                    <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].dateOfBirth}</p>
-                  )}
-                </div>
+                <Label htmlFor={`dateOfBirth-${index}`}>{t('date_of_birth')}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id={`dateOfBirth-${index}`}
+                      variant="outline"
+                      className={cn(
+                        "w-full text-left font-normal flex justify-between items-center",
+                        !passenger.dateOfBirth && "text-muted-foreground",
+                        errors[`passenger${index}`]?.dateOfBirth && "border-red-500"
+                      )}
+                    >
+                      {passenger.dateOfBirth ? format(new Date(passenger.dateOfBirth.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      <CalendarIcon className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      captionLayout="dropdown-buttons"
+                      fromYear={1920}
+                      toYear={new Date().getFullYear()}
+                      defaultMonth={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
+                      selected={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const formattedDate = format(date, "dd/MM/yyyy");
+                          updatePassenger(index, 'dateOfBirth', formattedDate);
+                        }
+                      }}
+                      disabled={(date) => date > new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {errors[`passenger${index}`]?.dateOfBirth && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].dateOfBirth}</p>
+                )}
               </div>
               
               {/* Passport Number */}
@@ -581,160 +643,176 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 <Label htmlFor={`passportNumber-${index}`}>{t('passport_number')}</Label>
                 <Input
                   id={`passportNumber-${index}`}
-                  type="text"
-                  placeholder={t('enter_passport_number')}
-                  value={passenger.passportNumber || ""}
+                  value={passenger.passportNumber}
                   onChange={(e) => updatePassenger(index, 'passportNumber', e.target.value)}
-                  className={errors[`passenger${index}`]?.passportNumber ? "border-red-500" : ""}
+                  placeholder={t('passport_number')}
                 />
                 {errors[`passenger${index}`]?.passportNumber && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].passportNumber}</p>
                 )}
               </div>
               
-              {/* Passport Expiry */}
+              {/* Passport Expiry with Datepicker */}
               <div>
-                <Label>{t('passport_expiry')}</Label>
-                <div className="relative">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !passenger.passportExpiry && "text-muted-foreground",
-                          errors[`passenger${index}`]?.passportExpiry && "border-red-500"
-                        )}
-                      >
-                        {passenger.passportExpiry ? (
-                          formatDate(passenger.passportExpiry)
-                        ) : (
-                          <span>{t('select_date')}</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={passenger.passportExpiry ? new Date(passenger.passportExpiry) : undefined}
-                        onSelect={(date) => {
-                          if (date) {
-                            updatePassenger(index, 'passportExpiry', format(date, 'yyyy-MM-dd'));
-                          }
-                        }}
-                        disabled={(date) => {
-                          // Disable dates in the past
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
-                          return date < today;
-                        }}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  {errors[`passenger${index}`]?.passportExpiry && (
-                    <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].passportExpiry}</p>
-                  )}
-                </div>
+                <Label htmlFor={`passportExpiry-${index}`}>{t('passport_expiry')}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id={`passportExpiry-${index}`}
+                      variant="outline"
+                      className={cn(
+                        "w-full text-left font-normal flex justify-between items-center",
+                        !passenger.passportExpiry && "text-muted-foreground",
+                        errors[`passenger${index}`]?.passportExpiry && "border-red-500"
+                      )}
+                    >
+                      {passenger.passportExpiry ? format(new Date(passenger.passportExpiry.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      <CalendarIcon className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      captionLayout="dropdown-buttons"
+                      fromYear={new Date().getFullYear()}
+                      toYear={new Date().getFullYear() + 20}
+                      defaultMonth={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : new Date()}
+                      selected={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          const formattedDate = format(date, "dd/MM/yyyy");
+                          updatePassenger(index, 'passportExpiry', formattedDate);
+                        }
+                      }}
+                      disabled={(date) => date < new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {errors[`passenger${index}`]?.passportExpiry && (
+                  <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].passportExpiry}</p>
+                )}
               </div>
             </div>
             
-            {index === 0 && (
-              <div className="flex items-center space-x-2 mt-4">
-                <Checkbox 
-                  id={`save-passenger-${index}`} 
-                  checked={passenger.isSaved || false}
-                  onCheckedChange={(checked: CheckedState) => 
-                    updatePassenger(index, 'isSaved', checked === true)
-                  }
-                />
-                <label
-                  htmlFor={`save-passenger-${index}`}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {t('save_passenger_info')}
-                </label>
+            {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
+            {savedPassengers !== undefined && (
+              <div className="mt-4">
+                <div className={cn(
+                  "flex items-center", 
+                  currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2"
+                )}>
+                  <Checkbox 
+                    id={`save-passenger-${index}`} 
+                    checked={!!passenger.isSaved}
+                    onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
+                  />
+                  <label 
+                    htmlFor={`save-passenger-${index}`}
+                    className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {t('save_passenger', 'Save this passenger for future bookings')}
+                  </label>
+                </div>
               </div>
             )}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
       
-      {/* Contact Information */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-semibold mb-6">{t('contact_information')}</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <Label htmlFor="email">{t('email')} *</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder={t('enter_email')}
-              value={contactInfo.email}
-              onChange={(e) => updateContactInfo('email', e.target.value)}
-              className={errors.contact?.email ? "border-red-500" : ""}
-              dir="ltr"
-            />
-            {errors.contact?.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.contact.email}</p>
-            )}
-          </div>
-          
-          <div>
-            <Label htmlFor="phone">{t('phone')} ({t('optional')})</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder={t('enter_phone')}
-              value={contactInfo.phone || ""}
-              onChange={(e) => updateContactInfo('phone', e.target.value)}
-              dir="ltr"
-            />
-          </div>
+      {/* Email & Contact Information */}
+      <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6">
+        <div className="p-5 border-b border-gray-200">
+          <h3 className="font-heading font-semibold text-lg">{t('contact_info_title')}</h3>
         </div>
         
-        <div className="flex items-center space-x-2 mt-4">
-          <Checkbox 
-            id="save-contact" 
-            checked={contactInfo.saveInfo}
-            onCheckedChange={(checked: CheckedState) => 
-              updateContactInfo('saveInfo', checked === true)
-            }
-          />
-          <label
-            htmlFor="save-contact"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            {t('save_contact_info')}
-          </label>
+        <div className="p-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Email */}
+            <div>
+              <Label htmlFor="contact-email">{t('email')}</Label>
+              <Input
+                id="contact-email"
+                type="email"
+                value={contactInfo.email}
+                onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                placeholder={t('email_placeholder')}
+              />
+              {errors.contact?.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.contact.email}</p>
+              )}
+            </div>
+            
+            {/* Phone */}
+            <div>
+              <Label htmlFor="contact-phone">{t('phone')}</Label>
+              <Input
+                id="contact-phone"
+                type="tel"
+                value={contactInfo.phone}
+                onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                placeholder={t('phone_placeholder')}
+              />
+              {errors.contact?.phone && (
+                <p className="text-red-500 text-sm mt-1">{errors.contact.phone}</p>
+              )}
+            </div>
+          </div>
+          
+          {/* Save contact information checkbox - only show if user is authenticated */}
+          {savedPassengers !== undefined && (
+            <div className="mt-4">
+              <div className={cn(
+                "flex items-center", 
+                currentLanguage === 'ar' || currentLanguage === 'he' ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2"
+              )}>
+                <Checkbox 
+                  id="save-contact-info" 
+                  checked={!!contactInfo.saveInfo}
+                  onCheckedChange={(checked: CheckedState) => 
+                    setContactInfo({ ...contactInfo, saveInfo: checked === true })
+                  }
+                />
+                <label 
+                  htmlFor="save-contact-info"
+                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {t('save_contact_info', 'Save contact information for future bookings')}
+                </label>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       
       {/* Special Requests */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-semibold mb-6">{t('special_requests')}</h2>
+      <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6">
+        <div className="p-5 border-b border-gray-200">
+          <h3 className="font-heading font-semibold text-lg">{t('special_requests_title')}</h3>
+        </div>
         
-        <div>
-          <Label htmlFor="special-requests">{t('special_requests_description')}</Label>
+        <div className="p-5">
           <Textarea
-            id="special-requests"
-            placeholder={t('enter_special_requests')}
             value={specialRequests}
             onChange={(e) => setSpecialRequests(e.target.value)}
-            rows={4}
-            dir="auto"
+            placeholder={t('special_requests_placeholder')}
+            rows={3}
           />
         </div>
       </div>
       
-      <div className="flex justify-end">
-        <Button type="submit" size="lg" className="px-6">
-          {t('continue_to_payment')}
+      {/* Continue Button */}
+      <div className={cn(
+        "flex", 
+        currentLanguage === 'ar' || currentLanguage === 'he' ? "justify-start" : "justify-end"
+      )}>
+        <Button 
+          onClick={handleSubmit}
+          className="bg-primary text-white hover:bg-primary/90 px-6 py-3"
+        >
+          {t('continue_payment', 'Continue to Payment')}
         </Button>
       </div>
-    </form>
+    </div>
   );
 };
 

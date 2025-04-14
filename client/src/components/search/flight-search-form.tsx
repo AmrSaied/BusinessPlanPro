@@ -31,8 +31,6 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   const [tripType, setTripType] = useState<"one-way" | "round-trip">("round-trip"); // Set round-trip as default
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destinationAirport, setDestinationAirport] = useState<Airport | null>(null);
-  const [departureDateMonth, setDepartureDateMonth] = useState<Date | undefined>(undefined);
-  const [returnDateMonth, setReturnDateMonth] = useState<Date | undefined>(undefined);
   
   // Check if language is RTL
   const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
@@ -43,7 +41,6 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
     formState: { errors },
     setValue,
     watch,
-    setError,
   } = useForm<FlightSearch>({
     resolver: zodResolver(flightSearchSchema),
     defaultValues: {
@@ -63,19 +60,19 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   // Handle origin airport selection
   const handleOriginSelect = (airport: Airport) => {
     setOriginAirport(airport);
-    setValue("origin", airport.iataCode, { shouldValidate: false });
+    setValue("origin", airport.iataCode, { shouldValidate: true });
   };
 
   // Handle destination airport selection
   const handleDestinationSelect = (airport: Airport) => {
     setDestinationAirport(airport);
-    setValue("destination", airport.iataCode, { shouldValidate: false });
+    setValue("destination", airport.iataCode, { shouldValidate: true });
   };
 
   // Handle trip type change
   const handleTripTypeChange = (type: "one-way" | "round-trip") => {
     setTripType(type);
-    setValue("tripType", type, { shouldValidate: false });
+    setValue("tripType", type, { shouldValidate: true });
 
     // Clear return date if changing to one-way
     if (type === "one-way") {
@@ -177,16 +174,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                   name="departureDate"
                   control={control}
                   render={({ field }) => (
-                    <Popover onOpenChange={(open) => {
-                        if (open) {
-                          if (field.value) {
-                            setDepartureDateMonth(new Date(field.value));
-                          } else {
-                            // Default to current month for initial selection
-                            setDepartureDateMonth(new Date());
-                          }
-                        }
-                      }}>
+                    <Popover>
                       <PopoverTrigger asChild>
                         <div className="relative">
                           <Button
@@ -225,8 +213,6 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         <Calendar
                           mode="single"
                           selected={field.value ? new Date(field.value) : undefined}
-                          month={departureDateMonth}
-                          onMonthChange={setDepartureDateMonth}
                           onSelect={(date) => {
                             if (date) {
                               const today = new Date();
@@ -236,7 +222,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                               if (date < today) {
                                 // This should never happen due to disabled dates, but just in case
                                 setValue("departureDate", format(today, "yyyy-MM-dd"), {
-                                  shouldValidate: false
+                                  shouldValidate: true
                                 });
                               } else {
                                 field.onChange(format(date, "yyyy-MM-dd"));
@@ -250,7 +236,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                   if (returnDateObj < date) {
                                     // Auto-adjust return date to be the same as departure date
                                     setValue("returnDate", format(date, "yyyy-MM-dd"), {
-                                      shouldValidate: false
+                                      shouldValidate: true
                                     });
                                   }
                                 }
@@ -302,21 +288,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                     name="returnDate"
                     control={control}
                     render={({ field }) => (
-                      <Popover onOpenChange={(open) => {
-                        if (open) {
-                          if (field.value) {
-                            setReturnDateMonth(new Date(field.value));
-                          } else if (watchedDepartureDate) {
-                            // If departure date is selected but return isn't, start from the day after departure
-                            const nextDay = new Date(watchedDepartureDate);
-                            nextDay.setDate(nextDay.getDate() + 1);
-                            setReturnDateMonth(nextDay);
-                          } else {
-                            // Default to current month if neither date is selected
-                            setReturnDateMonth(new Date());
-                          }
-                        }
-                      }}>
+                      <Popover>
                         <PopoverTrigger asChild>
                           <div className="relative">
                             <Button
@@ -355,8 +327,6 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           <Calendar
                             mode="single"
                             selected={field.value ? new Date(field.value) : undefined}
-                            month={returnDateMonth}
-                            onMonthChange={setReturnDateMonth}
                             onSelect={(date) => {
                               if (date) {
                                 field.onChange(format(date, "yyyy-MM-dd"));
@@ -366,17 +336,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                   const departureDate = new Date(watchedDepartureDate);
                                   departureDate.setHours(0, 0, 0, 0);
                                   
-                                  // Return date should be at least one day after departure date
-                                  // This should never happen due to the disabled dates, but we keep this validation as a backup
-                                  if (date <= departureDate) {
-                                    setValue("returnDate", "", {
-                                      shouldValidate: false
-                                    });
-                                    
-                                    // Show error message
-                                    setError("returnDate", {
-                                      type: "manual",
-                                      message: "return_date_after_departure_error"
+                                  if (date < departureDate) {
+                                    // Set custom error message
+                                    setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                      shouldValidate: true
                                     });
                                   }
                                 }
@@ -384,12 +347,11 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                             }}
                             initialFocus
                             disabled={(date) => {
-                              // For round trips, disable dates before or equal to departure date
+                              // For round trips, disable dates before departure date
                               if (watchedDepartureDate) {
                                 const departureDate = new Date(watchedDepartureDate);
                                 departureDate.setHours(0, 0, 0, 0);
-                                // Ensure return date is at least one day after departure date
-                                return date <= departureDate;
+                                return date < departureDate;
                               }
                               // If no departure date is set, disable dates in the past
                               return date < new Date();
@@ -397,7 +359,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                             footer={
                               watchedDepartureDate ? (
                                 <p className="p-2 text-center text-sm text-muted-foreground">
-                                  {t("return_date_must_be_after")} {format(new Date(watchedDepartureDate), "PPP")}
+                                  {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
                                 </p>
                               ) : null
                             }
