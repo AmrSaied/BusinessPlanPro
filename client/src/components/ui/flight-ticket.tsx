@@ -475,23 +475,38 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         {renderFlightSegment()}
       </div>
       
-      {/* Buttons Outside PDF Area */}
-      <div className="bg-white p-6 border-t border-gray-200 flex justify-center space-x-6">
-        <button
-          onClick={generatePDF}
-          className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-        >
-          <Download className="w-5 h-5 mr-2" />
-          {TICKET_TEXT.download}
-        </button>
+      {/* Buttons Directly Below Ticket */}
+      <div className="bg-white p-6 border-t border-gray-200 text-center">
+        <div className="flex justify-center space-x-6 mb-6">
+          <button
+            onClick={generatePDF}
+            className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            <Download className="w-5 h-5 mr-2" />
+            {TICKET_TEXT.download}
+          </button>
+          
+          <button
+            onClick={handlePrint}
+            className="flex items-center px-5 py-2.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors shadow-sm"
+          >
+            <Printer className="w-5 h-5 mr-2" />
+            {TICKET_TEXT.print}
+          </button>
+        </div>
         
-        <button
-          onClick={handlePrint}
-          className="flex items-center px-5 py-2.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors shadow-sm"
-        >
-          <Printer className="w-5 h-5 mr-2" />
-          {TICKET_TEXT.print}
-        </button>
+        {/* Additional Download Button */}
+        <div className="mt-3">
+          <a
+            href={`/api/bookings/${ticketNumber.replace('TKT', '')}/ticket/download`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
+          >
+            <Download className="w-4 h-4 mr-1.5" />
+            Direct Download
+          </a>
+        </div>
       </div>
     </div>
   );
