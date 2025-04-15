@@ -270,7 +270,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         arrivalTime: flights.arrivalTime,
         duration: flights.duration,
         basePrice: flights.basePrice,
-        price: flights.price,
+        // Don't select price as it might not exist
+        // price: flights.price,
         currency: flights.currency,
         seatsAvailable: flights.seatsAvailable,
         // Avoid selecting columns that might not exist yet
