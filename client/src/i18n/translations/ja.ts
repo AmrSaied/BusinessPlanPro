@@ -119,6 +119,7 @@ export default {
   london: 'ロンドン',
   download_ticket: 'チケットをダウンロード',
   print_ticket: 'チケットを印刷',
+  direct_download: '直接ダウンロード',
 
   // Search form
   search_title: 'フライトを検索',

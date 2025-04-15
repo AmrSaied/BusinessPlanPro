@@ -119,6 +119,7 @@ export default {
   london: 'लंदन',
   download_ticket: 'टिकट डाउनलोड करें',
   print_ticket: 'टिकट प्रिंट करें',
+  direct_download: 'सीधा डाउनलोड',
 
   // Search form
   search_title: 'अपनी उड़ान खोजें',

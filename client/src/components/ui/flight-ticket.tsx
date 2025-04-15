@@ -28,6 +28,7 @@ const TICKET_TEXT = {
   refOnly: "This is not a valid ticket for travel - For reference only",
   download: "Download Ticket",
   print: "Print Ticket",
+  direct_download: "Direct Download",
   confirmationNumber: "Confirmation Number",
   intApt: "Int'l Apt"
 };

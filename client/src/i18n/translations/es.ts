@@ -184,6 +184,7 @@ export default {
   download_ticket: 'Descargar Boleto',
   email_sent: 'Hemos enviado una copia de su boleto a',
   print_ticket: 'Imprimir Boleto',
+  direct_download: 'Descarga Directa',
   book_another: 'Reservar Otro Boleto',
   view_bookings: 'Ver Mis Reservas',
   booking_details: 'Detalles de la Reserva',

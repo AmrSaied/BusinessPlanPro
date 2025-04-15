@@ -119,6 +119,7 @@ export default {
   london: 'London',
   download_ticket: 'Ticket herunterladen',
   print_ticket: 'Ticket drucken',
+  direct_download: 'Direkter Download',
 
   // Search form
   search_title: 'Flug suchen',
