@@ -316,7 +316,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                   <div className="text-xs uppercase ml-0.5">{segment.arriveAmPm}</div>
                   <div className="text-xs ml-0.5">{segment.arriveCode}</div>
                 </div>
-                <span className="text-[#3585e6] text-sm ml-0.5 transform -rotate-45">✈</span>
+                <span className="text-[#3585e6] text-sm ml-0.5 transform rotate-90">✈</span>
               </div>
             </div>
           </div>
