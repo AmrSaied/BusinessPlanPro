@@ -50,6 +50,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
   
+  // Admin login endpoint
+  app.post("/api/admin/login", (req, res, next) => {
+    passport.authenticate("local", (err: Error, user: User) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+      if (user.role !== "admin") {
+        return res.status(403).json({ message: "Not authorized. Admin access required." });
+      }
+      req.login(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return res.status(200).json(user);
+      });
+    })(req, res, next);
+  });
+  
   // Admin authentication check endpoint
   app.get("/api/admin/check-auth", isAdmin, (req: Request, res: Response) => {
     const user = req.user as User;
@@ -63,21 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
-  // Admin specific login endpoint
-  app.post("/api/admin/login", passport.authenticate("local"), (req, res) => {
-    const user = req.user as User;
-    if (user.role !== "admin") {
-      req.logout((err) => {
-        if (err) {
-          console.error("Error logging out:", err);
-        }
-        res.status(403).json({ message: "Not authorized as admin" });
-      });
-      return;
-    }
-    
-    res.status(200).json(user);
-  });
+
   
   // Admin routes - protected by admin middleware
   app.get("/api/admin/dashboard/stats", isAdmin, async (req, res) => {
