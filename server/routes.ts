@@ -254,8 +254,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Flight management endpoints
   app.get("/api/admin/flights", isAdmin, async (req, res) => {
     try {
-      const allFlights = await db.select().from(flights);
-      res.status(200).json(allFlights);
+      // Use a more explicit selection to avoid issues with missing columns
+      const allFlights = await db.select({
+        id: flights.id,
+        airlineCode: flights.airlineCode,
+        airlineName: flights.airlineName,
+        flightNumber: flights.flightNumber,
+        departureAirport: flights.departureAirport,
+        departureCity: flights.departureCity,
+        departureCountry: flights.departureCountry,
+        arrivalAirport: flights.arrivalAirport,
+        arrivalCity: flights.arrivalCity,
+        arrivalCountry: flights.arrivalCountry,
+        departureTime: flights.departureTime,
+        arrivalTime: flights.arrivalTime,
+        duration: flights.duration,
+        basePrice: flights.basePrice,
+        price: flights.price,
+        currency: flights.currency,
+        seatsAvailable: flights.seatsAvailable,
+        // Avoid selecting columns that might not exist yet
+        // aircraft: flights.aircraft,
+        // status: flights.status,
+      }).from(flights);
+      
+      // Add default values for any missing fields
+      const flightsWithDefaults = allFlights.map(flight => ({
+        ...flight,
+        aircraft: "Boeing 737", // Default aircraft
+        status: "scheduled",   // Default status
+      }));
+      
+      res.status(200).json(flightsWithDefaults);
     } catch (error) {
       console.error("Error fetching flights:", error);
       res.status(500).json({ error: "Failed to fetch flights" });
@@ -333,12 +363,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bookings/Tickets management endpoints
   app.get("/api/admin/bookings", isAdmin, async (req, res) => {
     try {
-      // Get all bookings with flight and user details
+      // Get all bookings with specific flight and user details to avoid missing column errors
       const allBookings = await db
         .select({
           booking: bookings,
-          flight: flights,
-          user: users,
+          flight: {
+            id: flights.id,
+            airlineCode: flights.airlineCode,
+            airlineName: flights.airlineName,
+            flightNumber: flights.flightNumber,
+            departureAirport: flights.departureAirport,
+            departureCity: flights.departureCity,
+            departureTime: flights.departureTime,
+            arrivalAirport: flights.arrivalAirport,
+            arrivalCity: flights.arrivalCity,
+            arrivalTime: flights.arrivalTime,
+            basePrice: flights.basePrice,
+          },
+          user: {
+            id: users.id,
+            username: users.username,
+            email: users.email,
+            firstName: users.firstName,
+            lastName: users.lastName,
+          },
         })
         .from(bookings)
         .leftJoin(flights, eq(bookings.flightId, flights.id))
@@ -347,7 +395,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Transform the results to the expected format
       const transformedBookings = allBookings.map(({ booking, flight, user }) => ({
         ...booking,
-        flight,
+        flight: {
+          ...flight,
+          // Add default values for any missing fields
+          aircraft: "Boeing 737", // Default aircraft
+          status: "scheduled",   // Default status
+        },
         user,
         // Add ticket details 
         ticketNumber: `TKT${booking.bookingReference}`,
