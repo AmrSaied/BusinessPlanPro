@@ -279,45 +279,44 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             </div>
           </div>
           
-          {/* Flight Times Layout - Exact match to reference image with arrow */}
-          <div className="flex items-center justify-between pt-1 pb-0 px-2">
-            {/* DEPART Section with blue takeoff plane */}
+          {/* Flight Times Layout - Exact match to reference with arrow */}
+          <div className="flex items-center justify-between py-0.5 mx-1">
+            {/* DEPART Section */}
             <div className="text-left">
-              <div className="uppercase text-[10px] font-bold text-gray-700 mb-0.5">DEPART</div>
+              <div className="uppercase text-xs font-bold text-gray-700 mb-0.5">DEPART</div>
               <div className="flex items-center">
-                <span className="text-[#3b82f6] text-base mr-0.5 inline-block translate-y-px">🛫</span>
+                <span className="text-black text-xl mr-1 -mt-0.5">✈</span>
                 <div className="flex items-baseline">
                   <div className="text-lg font-bold">{segment.departTime}</div>
-                  <div className="text-[10px] uppercase ml-0.5">{segment.departAmPm}</div>
-                  <div className="text-[10px] ml-0.5">{segment.departCode}</div>
+                  <div className="text-xs ml-0.5 uppercase">{segment.departAmPm}</div>
+                  <div className="text-xs ml-0.5">{segment.departCode}</div>
                 </div>
               </div>
             </div>
             
-            {/* NON STOP Section with blue square arrow */}
-            <div className="text-center mx-2">
-              <div className="uppercase text-[10px] font-bold text-gray-700 mb-0.5">NON STOP</div>
+            {/* NON STOP Section with arrow */}
+            <div className="text-center mx-1">
+              <div className="uppercase text-xs font-bold text-gray-700 mb-0.5">NON STOP</div>
               <div className="flex justify-center items-center">
-                <div className="relative flex items-center justify-center" style={{ width: '60px', height: '18px' }}>
-                  <div className="h-[1px] bg-gray-400 w-full absolute"></div>
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                    <span className="text-[#3b82f6] text-xs">■</span>
+                <div className="relative flex items-center" style={{ width: '55px', height: '16px' }}>
+                  <div className="flex absolute -left-1 top-1/2 -translate-y-1/2">
+                    <span className="text-gray-400 inline-block whitespace-nowrap tracking-tighter">----------&gt;</span>
                   </div>
-                  <div className="text-[10px] text-gray-600 text-center absolute w-full top-2.5">{segment.duration}</div>
+                  <div className="text-xs text-gray-600 text-center absolute w-full top-2">{segment.duration}</div>
                 </div>
               </div>
             </div>
             
-            {/* ARRIVE Section with blue landing plane */}
+            {/* ARRIVE Section */}
             <div className="text-right">
-              <div className="uppercase text-[10px] font-bold text-gray-700 mb-0.5">ARRIVE</div>
+              <div className="uppercase text-xs font-bold text-gray-700 mb-0.5">ARRIVE</div>
               <div className="flex items-center justify-end">
-                <div className="flex items-baseline mr-0.5">
+                <div className="flex items-baseline">
                   <div className="text-lg font-bold">{segment.arriveTime}</div>
-                  <div className="text-[10px] uppercase ml-0.5">{segment.arriveAmPm}</div>
-                  <div className="text-[10px] ml-0.5">{segment.arriveCode}</div>
+                  <div className="text-xs ml-0.5 uppercase">{segment.arriveAmPm}</div>
+                  <div className="text-xs ml-0.5">{segment.arriveCode}</div>
                 </div>
-                <span className="text-[#3b82f6] text-base inline-block translate-y-px">🛬</span>
+                <span className="text-black text-xl ml-1 -mt-0.5">✈</span>
               </div>
             </div>
           </div>
