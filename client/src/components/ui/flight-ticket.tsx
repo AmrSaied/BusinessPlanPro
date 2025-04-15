@@ -187,18 +187,55 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
     }
   };
   
-  // Convert non-English text to English if needed
-  const translateToEnglish = (text: string) => {
-    // This is a simple function to check if text contains non-Latin characters
-    // and provide a fallback name if needed
-    const nonLatinRegex = /[^\u0000-\u007F]/;
+  // Advanced function to translate Arabic names to English with proper transliteration
+  const translateToEnglish = (text: string, defaultText: string = "") => {
+    if (!text) return defaultText || "PASSENGER NAME";
     
-    if (nonLatinRegex.test(text)) {
-      // For simplicity, return a generic name if non-Latin characters are found
-      return "PASSENGER NAME";
+    // Check if text contains Arabic characters
+    const arabicRegex = /[\u0600-\u06FF]/;
+    if (!arabicRegex.test(text)) return text;
+    
+    // Arabic to English character mapping (simplified version)
+    const arabicToEnglish: Record<string, string> = {
+      'ا': 'A', 'أ': 'A', 'إ': 'E', 'آ': 'A',
+      'ب': 'B', 'ت': 'T', 'ث': 'TH',
+      'ج': 'J', 'ح': 'H', 'خ': 'KH',
+      'د': 'D', 'ذ': 'TH', 'ر': 'R',
+      'ز': 'Z', 'س': 'S', 'ش': 'SH',
+      'ص': 'S', 'ض': 'D', 'ط': 'T',
+      'ظ': 'Z', 'ع': 'A', 'غ': 'GH',
+      'ف': 'F', 'ق': 'Q', 'ك': 'K',
+      'ل': 'L', 'م': 'M', 'ن': 'N',
+      'ه': 'H', 'و': 'W', 'ي': 'Y', 'ى': 'A',
+      'ة': 'A', 'ء': '', 'ؤ': 'O',
+      'ئ': 'E', 'َ': 'A', 'ُ': 'U',
+      'ِ': 'I', 'ّ': '', 'ْ': '',
+      'ً': 'AN', 'ٌ': 'UN', 'ٍ': 'IN'
+    };
+    
+    // Simple transliteration
+    let transliterated = '';
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (arabicToEnglish[char]) {
+        transliterated += arabicToEnglish[char];
+      } else if (char === ' ') {
+        transliterated += ' ';
+      } else if (!/[\u0600-\u06FF]/.test(char)) {
+        // Keep non-Arabic characters as is (numbers, punctuation, etc.)
+        transliterated += char;
+      }
     }
     
-    return text;
+    // Format name as LASTNAME, FIRSTNAME style
+    const parts = transliterated.trim().split(' ');
+    if (parts.length >= 2) {
+      const lastName = parts[parts.length - 1].toUpperCase();
+      const firstName = parts.slice(0, parts.length - 1).join(' ').toUpperCase();
+      return `${lastName}, ${firstName}`;
+    }
+    
+    return transliterated.toUpperCase() || defaultText || "PASSENGER NAME";
   };
   
   // Calculate flight distance (approximate)
@@ -253,29 +290,75 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
     window.print();
   };
 
-  // Helper function to render a flight segment
-  const renderFlightSegment = (segment: any, index: number) => {
+  // Helper function to render a flight segment with real data
+  const renderFlightSegment = () => {
+    // Split time and AM/PM
+    const formatTimeAmPm = (timeStr: string) => {
+      // If the timeStr is in 24 hour format, convert to 12 hour with AM/PM
+      if (!timeStr) return { time: "00:00", amPm: "AM" };
+      
+      const timeParts = timeStr.split(':');
+      if (timeParts.length !== 2) return { time: timeStr, amPm: "" };
+      
+      let hours = parseInt(timeParts[0]);
+      const minutes = timeParts[1];
+      const amPm = hours >= 12 ? 'PM' : 'AM';
+      
+      // Convert to 12-hour format
+      hours = hours % 12;
+      hours = hours ? hours : 12; // Convert 0 to 12
+      
+      return {
+        time: `${hours}:${minutes}`,
+        amPm: amPm
+      };
+    };
+    
+    // Extract departure time components
+    const departTimeParts = formatTimeAmPm(flight.departureTime);
+    const departTime = departTimeParts.time.split(':')[0]; // Just the hour
+    const departAmPm = departTimeParts.amPm;
+    const departCode = flight.departureAirport;
+    
+    // Extract arrival time components
+    const arriveTimeParts = formatTimeAmPm(flight.arrivalTime);
+    const arriveTime = arriveTimeParts.time.split(':')[0]; // Just the hour
+    const arriveAmPm = arriveTimeParts.amPm;
+    const arriveCode = flight.arrivalAirport;
+    
+    // Format passenger names - translate if needed
+    const passengerNamesList = passengers.map(passenger => {
+      const title = passenger.title.toUpperCase();
+      const firstName = translateToEnglish(passenger.firstName);
+      const lastName = translateToEnglish(passenger.lastName);
+      return `${lastName}, ${firstName} ${title}`;
+    });
+    
+    // Construct route
+    const route = `${flight.departureCity} (${flight.departureAirport}) to ${flight.arrivalCity} (${flight.arrivalAirport})`;
+    
+    // Format date
+    const formattedDate = formatTicketDate(issueDate);
+    
     return (
-      <div key={index} className="mb-0">
+      <div className="mb-0">
         {/* Date and Route Header */}
         <div className="p-3 font-bold text-xs border-b border-gray-300 text-left">
-          {segment.date} - {segment.route} - {TICKET_TEXT.confirmed}
+          {formattedDate} - {route} - {TICKET_TEXT.confirmed}
           <svg className="inline-block h-4 w-4 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
         </div>
         
-        {/* Airline Info removed as duplicate */}
-        
-        {/* Airline Info Section - Matching reference image */}
+        {/* Airline Info Section - Using real data */}
         <div className="px-4 py-4 border-b border-gray-300">
           <div className="flex items-center mb-4">
             <div className="w-8 h-8 bg-amber-700 text-white flex items-center justify-center mr-3">
-              <span className="font-bold">EY</span>
+              <span className="font-bold">{flight.airlineCode}</span>
             </div>
             <div>
-              <div className="text-sm font-medium">Etihad Airways (EY) {segment.flightNumber}</div>
-              <div className="text-xs text-gray-600">Confirmation Number: {segment.confirmationNumber}</div>
+              <div className="text-sm font-medium">{flight.airlineName} ({flight.airlineCode}) {flight.flightNumber}</div>
+              <div className="text-xs text-gray-600">Confirmation Number: {bookingReference}</div>
             </div>
           </div>
           
@@ -287,9 +370,9 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
               <div className="flex items-center">
                 <span className="text-[#3585e6] text-sm mr-0.5 transform rotate-45">✈</span>
                 <div className="flex items-baseline">
-                  <div className="text-lg font-bold">{segment.departTime}</div>
-                  <div className="text-xs uppercase ml-0.5">{segment.departAmPm}</div>
-                  <div className="text-xs ml-0.5">{segment.departCode}</div>
+                  <div className="text-lg font-bold">{departTime}</div>
+                  <div className="text-xs uppercase ml-0.5">{departAmPm}</div>
+                  <div className="text-xs ml-0.5">{departCode}</div>
                 </div>
               </div>
             </div>
@@ -297,7 +380,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             {/* NON STOP Section with arrow */}
             <div className="mx-3">
               <div className="uppercase text-xs font-bold text-gray-700 mb-0.5 text-center">NON STOP</div>
-              <div className="text-xs text-gray-600 text-center">{segment.duration}</div>
+              <div className="text-xs text-gray-600 text-center">{flight.duration}</div>
               <div className="flex justify-center items-center overflow-hidden mt-1 relative">
                 <div className="w-full h-px border-t border-gray-300 border-dashed relative">
                   <div className="absolute top-[-2px] right-0 flex items-center">
@@ -312,9 +395,9 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
               <div className="uppercase text-xs font-bold text-gray-700 mb-0.5 text-right">ARRIVE</div>
               <div className="flex items-center justify-end">
                 <div className="flex items-baseline">
-                  <div className="text-lg font-bold">{segment.arriveTime}</div>
-                  <div className="text-xs uppercase ml-0.5">{segment.arriveAmPm}</div>
-                  <div className="text-xs ml-0.5">{segment.arriveCode}</div>
+                  <div className="text-lg font-bold">{arriveTime}</div>
+                  <div className="text-xs uppercase ml-0.5">{arriveAmPm}</div>
+                  <div className="text-xs ml-0.5">{arriveCode}</div>
                 </div>
                 <span className="text-[#3585e6] text-sm ml-0.5 transform rotate-90">✈</span>
               </div>
@@ -325,19 +408,23 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         {/* Passengers Section */}
         <div className="border-b border-gray-300 p-4 text-left">
           <div className="uppercase text-xs font-semibold mb-2 text-left">{TICKET_TEXT.passengers}</div>
-          <div className="text-xs mb-1 text-left">
-            {segment.passengerName}
-          </div>
-          <div className="text-xs mt-2 text-left">{TICKET_TEXT.classOfService}: {segment.service}</div>
+          {passengerNamesList.map((name, idx) => (
+            <div key={idx} className="text-xs mb-1 text-left">
+              {name}
+            </div>
+          ))}
+          <div className="text-xs mt-2 text-left">{TICKET_TEXT.classOfService}: {TICKET_TEXT.economy}</div>
         </div>
         
         {/* Airport Info Section */}
         <div className="border-b border-gray-300 p-4 text-left">
           <div className="uppercase text-xs font-semibold mb-2 text-left">{TICKET_TEXT.airportInfo}</div>
           <div className="text-xs mb-1 text-left">
-            <div className="mb-0.5 text-left">{segment.departAirport}</div>
-            <div className="mb-0.5 text-left">{segment.departCity}</div>
-            {segment.departTerminal && <div className="text-left">{segment.departTerminal}</div>}
+            <div className="mb-0.5 text-left">{flight.departureAirport} {TICKET_TEXT.intApt}</div>
+            <div className="mb-0.5 text-left">{flight.departureCity}, {flight.departureCountry}</div>
+            {flight.departureTerminal && (
+              <div className="text-left">{TICKET_TEXT.terminal} {flight.departureTerminal}</div>
+            )}
           </div>
           
           <div className="my-2 text-left">
@@ -345,9 +432,11 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </div>
           
           <div className="text-xs mt-1 text-left">
-            <div className="mb-0.5 text-left">{segment.arriveAirport}</div>
-            <div className="mb-0.5 text-left">{segment.arriveCity}</div>
-            {segment.arriveTerminal && <div className="text-left">{segment.arriveTerminal}</div>}
+            <div className="mb-0.5 text-left">{flight.arrivalAirport} {TICKET_TEXT.intApt}</div>
+            <div className="mb-0.5 text-left">{flight.arrivalCity}, {flight.arrivalCountry}</div>
+            {flight.arrivalTerminal && (
+              <div className="text-left">{TICKET_TEXT.terminal} {flight.arrivalTerminal}</div>
+            )}
           </div>
         </div>
         
@@ -355,8 +444,8 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
         <div className="border-b border-gray-300 p-4 text-left">
           <div className="uppercase text-xs font-semibold mb-2 text-left">{TICKET_TEXT.flightInfo}</div>
           <div className="text-xs text-left">
-            <div className="mb-0.5 text-left">{segment.aircraft}</div>
-            <div className="text-left">{segment.meal}</div>
+            <div className="mb-0.5 text-left">{flight.aircraft || TICKET_TEXT.aircraft}</div>
+            <div className="text-left">{TICKET_TEXT.meal}</div>
           </div>
         </div>
       </div>
@@ -382,8 +471,8 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           <h1 className="text-base font-medium text-left">{TICKET_TEXT.myTrip}</h1>
         </div>
         
-        {/* Render all flight segments */}
-        {MOCK_ITINERARY.map((segment, index) => renderFlightSegment(segment, index))}
+        {/* Render actual flight data from props */}
+        {renderFlightSegment()}
       </div>
       
       {/* Buttons Outside PDF Area */}
