@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../components/AdminLayout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
@@ -110,18 +110,7 @@ const SettingsPage = () => {
     error,
   } = useQuery({
     queryKey: ["/api/admin/settings"],
-    queryFn: getQueryFn(),
-    onSuccess: (data) => {
-      if (data?.general) {
-        setGeneralSettings(data.general);
-      }
-      if (data?.email) {
-        setEmailSettings(data.email);
-      }
-      if (data?.api) {
-        setApiSettings(data.api);
-      }
-    },
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Update settings mutations
@@ -210,10 +199,10 @@ const SettingsPage = () => {
         title: "Email test successful",
         description: "Test email was sent successfully",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Email test failed",
-        description: error.message,
+        description: error.message || "An unknown error occurred",
         variant: "destructive",
       });
     }
@@ -226,10 +215,10 @@ const SettingsPage = () => {
         title: "API test successful",
         description: `Connection to ${api} API was successful`,
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "API test failed",
-        description: error.message,
+        description: error.message || "An unknown error occurred",
         variant: "destructive",
       });
     }
@@ -243,10 +232,10 @@ const SettingsPage = () => {
         description: "The server is now restarting. This may take a few moments.",
       });
       setIsRestartRequired(false);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Restart failed",
-        description: error.message,
+        description: error.message || "An unknown error occurred",
         variant: "destructive",
       });
     }

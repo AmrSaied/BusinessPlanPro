@@ -3,6 +3,7 @@ import AdminLayout from "../components/AdminLayout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Airport } from "@shared/schema";
 import {
   Table,
   TableBody,
