@@ -731,7 +731,7 @@ export class MemStorage implements IStorage {
 import { DatabaseStorage } from './db-storage';
 
 // Select the storage implementation based on environment
-const USE_DATABASE = false; // Temporarily using in-memory storage for debugging
+const USE_DATABASE = true; // Using database storage
 
 export const storage = USE_DATABASE 
   ? new DatabaseStorage() 
