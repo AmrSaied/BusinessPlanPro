@@ -142,23 +142,23 @@ const PricingPage = () => {
   // Fetch pricing data
   const { data: basePricing, isLoading: isBasePricingLoading } = useQuery<BasePricing[]>({
     queryKey: ["/api/admin/pricing/base"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   const { data: discounts, isLoading: isDiscountsLoading } = useQuery<DiscountRule[]>({
     queryKey: ["/api/admin/pricing/discounts"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   const { data: fees, isLoading: isFeesLoading } = useQuery<ServiceFee[]>({
     queryKey: ["/api/admin/pricing/fees"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Fetch airports for route selection
-  const { data: airports } = useQuery({
+  const { data: airports } = useQuery<Airport[]>({
     queryKey: ["/api/airports"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // CRUD mutations for base pricing

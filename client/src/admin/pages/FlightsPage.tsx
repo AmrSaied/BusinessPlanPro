@@ -76,7 +76,7 @@ const FlightsPage = () => {
     error: flightsError,
   } = useQuery<Flight[]>({
     queryKey: ["/api/admin/flights"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Fetch airports data for select dropdowns
@@ -86,7 +86,7 @@ const FlightsPage = () => {
     error: airportsError,
   } = useQuery<Airport[]>({
     queryKey: ["/api/admin/airports"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Create flight mutation

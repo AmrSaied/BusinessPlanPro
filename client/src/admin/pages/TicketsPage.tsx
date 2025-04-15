@@ -77,7 +77,7 @@ const TicketsPage = () => {
     error,
   } = useQuery<BookingWithTicket[]>({
     queryKey: ["/api/admin/bookings"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Regenerate ticket mutation
@@ -317,7 +317,9 @@ const TicketsPage = () => {
                       <span className="font-medium">Created:</span>
                       <span>
                         {selectedBooking.createdAt
-                          ? format(parseISO(selectedBooking.createdAt), "PPp")
+                          ? format(typeof selectedBooking.createdAt === 'string' 
+                              ? parseISO(selectedBooking.createdAt) 
+                              : selectedBooking.createdAt, "PPp")
                           : "—"}
                       </span>
                     </div>
@@ -372,7 +374,9 @@ const TicketsPage = () => {
                         <span className="font-medium">Departure:</span>
                         <span>
                           {selectedBooking.flight.departureTime
-                            ? format(parseISO(selectedBooking.flight.departureTime), "PPp")
+                            ? format(typeof selectedBooking.flight.departureTime === 'string' 
+                                ? parseISO(selectedBooking.flight.departureTime) 
+                                : selectedBooking.flight.departureTime, "PPp")
                             : "—"}
                         </span>
                       </div>
@@ -380,7 +384,9 @@ const TicketsPage = () => {
                         <span className="font-medium">Arrival:</span>
                         <span>
                           {selectedBooking.flight.arrivalTime
-                            ? format(parseISO(selectedBooking.flight.arrivalTime), "PPp")
+                            ? format(typeof selectedBooking.flight.arrivalTime === 'string' 
+                                ? parseISO(selectedBooking.flight.arrivalTime) 
+                                : selectedBooking.flight.arrivalTime, "PPp")
                             : "—"}
                         </span>
                       </div>
@@ -589,7 +595,9 @@ const TicketsPage = () => {
                     </TableCell>
                     <TableCell>
                       {booking.flight && booking.flight.departureTime
-                        ? format(parseISO(booking.flight.departureTime), "PP")
+                        ? format(typeof booking.flight.departureTime === 'string' 
+                            ? parseISO(booking.flight.departureTime) 
+                            : booking.flight.departureTime, "PP")
                         : "—"}
                     </TableCell>
                     <TableCell>
