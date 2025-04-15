@@ -24,6 +24,7 @@ import HowToWorkPage from "@/pages/how-to-work-page";
 import MainLayout from "./layout/main-layout";
 
 // Admin Panel Imports
+import { AdminProtectedRoute } from "@/admin/components/AdminProtectedRoute";
 import AdminLoginPage from "@/admin/pages/AdminLoginPage";
 import DashboardPage from "@/admin/pages/DashboardPage";
 import UsersPage from "@/admin/pages/UsersPage";
@@ -99,12 +100,12 @@ function Router() {
       
       {/* Admin Panel Routes */}
       <Route path="/admin/login" component={AdminLoginPage} />
-      <Route path="/admin/dashboard" component={DashboardPage} />
-      <Route path="/admin/users" component={UsersPage} />
-      <Route path="/admin/flights" component={FlightsPage} />
-      <Route path="/admin/tickets" component={TicketsPage} />
-      <Route path="/admin/pricing" component={PricingPage} />
-      <Route path="/admin/settings" component={SettingsPage} />
+      <AdminProtectedRoute path="/admin/dashboard" component={() => <DashboardPage />} />
+      <AdminProtectedRoute path="/admin/users" component={() => <UsersPage />} />
+      <AdminProtectedRoute path="/admin/flights" component={() => <FlightsPage />} />
+      <AdminProtectedRoute path="/admin/tickets" component={() => <TicketsPage />} />
+      <AdminProtectedRoute path="/admin/pricing" component={() => <PricingPage />} />
+      <AdminProtectedRoute path="/admin/settings" component={() => <SettingsPage />} />
       
       {/* 404 Route */}
       <Route component={() => (

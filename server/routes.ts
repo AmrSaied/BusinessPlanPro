@@ -50,6 +50,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
   
+  // Admin authentication check endpoint
+  app.get("/api/admin/check-auth", isAdmin, (req: Request, res: Response) => {
+    const user = req.user as User;
+    res.status(200).json({
+      isAdmin: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email
+      }
+    });
+  });
+  
   // Admin specific login endpoint
   app.post("/api/admin/login", passport.authenticate("local"), (req, res) => {
     const user = req.user as User;
