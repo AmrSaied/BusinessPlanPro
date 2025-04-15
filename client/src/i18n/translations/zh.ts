@@ -119,6 +119,7 @@ export default {
   london: '伦敦',
   download_ticket: '下载机票',
   print_ticket: '打印机票',
+  direct_download: '直接下载',
 
   // Search form
   search_title: '搜索您的航班',

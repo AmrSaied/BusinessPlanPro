@@ -119,6 +119,7 @@ export default {
   london: 'Londres',
   download_ticket: 'Baixar Bilhete',
   print_ticket: 'Imprimir Bilhete',
+  direct_download: 'Download Direto',
 
   // Search form
   search_title: 'Buscar Seu Voo',

@@ -119,6 +119,7 @@ export default {
   london: 'Лондон',
   download_ticket: 'Скачать билет',
   print_ticket: 'Распечатать билет',
+  direct_download: 'Прямое скачивание',
 
   // Search form
   search_title: 'Найти ваш рейс',
