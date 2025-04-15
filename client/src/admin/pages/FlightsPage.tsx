@@ -40,7 +40,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, Plus, Edit, Trash2, AlertCircle } from "lucide-react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -200,6 +200,18 @@ const FlightsPage = () => {
     ? [...new Set(flights.map((flight) => flight.airlineCode))]
     : [];
 
+  // Helper function to format ISO date string for datetime-local input
+  const formatDateTimeForInput = (isoString: string | null | undefined): string => {
+    if (!isoString) return "";
+    try {
+      const date = parseISO(isoString);
+      if (!isValid(date)) return "";
+      return isoString.substring(0, 16); // YYYY-MM-DDThh:mm format required by datetime-local
+    } catch (error) {
+      return "";
+    }
+  };
+
   // Open edit modal with flight data
   const openEditModal = (flight: Flight) => {
     setSelectedFlight(flight);
@@ -209,8 +221,8 @@ const FlightsPage = () => {
       flightNumber: flight.flightNumber || "",
       departureAirport: flight.departureAirport || "",
       arrivalAirport: flight.arrivalAirport || "",
-      departureTime: flight.departureTime || "",
-      arrivalTime: flight.arrivalTime || "",
+      departureTime: formatDateTimeForInput(flight.departureTime),
+      arrivalTime: formatDateTimeForInput(flight.arrivalTime),
       aircraft: flight.aircraft || "",
       price: flight.price || 0,
       currency: flight.currency || "USD",
@@ -655,12 +667,26 @@ const FlightsPage = () => {
                     </TableCell>
                     <TableCell>
                       {flight.departureTime
-                        ? format(parseISO(flight.departureTime), "PPp")
+                        ? (() => {
+                            try {
+                              const date = parseISO(flight.departureTime);
+                              return isValid(date) ? format(date, "PPp") : "Invalid date";
+                            } catch (error) {
+                              return "Invalid date";
+                            }
+                          })()
                         : "—"}
                     </TableCell>
                     <TableCell>
                       {flight.arrivalTime
-                        ? format(parseISO(flight.arrivalTime), "PPp")
+                        ? (() => {
+                            try {
+                              const date = parseISO(flight.arrivalTime);
+                              return isValid(date) ? format(date, "PPp") : "Invalid date";
+                            } catch (error) {
+                              return "Invalid date";
+                            }
+                          })()
                         : "—"}
                     </TableCell>
                     <TableCell>
