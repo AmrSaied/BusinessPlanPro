@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
@@ -8,7 +8,11 @@ import {
   insertPassengerSchema, 
   insertBookingSchema,
   paymentSchema,
-  InsertAirport
+  InsertAirport,
+  User,
+  users,
+  flights,
+  bookings
 } from "@shared/schema";
 import { randomBytes } from "crypto";
 import { FlightService } from "./services/flight-service";
@@ -17,6 +21,9 @@ import { ViewTripTicketService } from "./services/viewtrip-ticket-service";
 import { PaymentService } from "./services/payment-service";
 import { AmadeusService } from "./services/amadeus-service";
 import { setupAuth } from "./auth";
+import passport from "passport";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 // Initialize services
 const flightService = new FlightService(storage);

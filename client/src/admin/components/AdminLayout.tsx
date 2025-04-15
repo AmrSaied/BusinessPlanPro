@@ -1,209 +1,399 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
-import { useAuth } from "@/hooks/use-auth";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect } from "react";
+import { useLocation, Link } from "wouter";
+import { useTheme } from "next-themes";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn, queryClient } from "@/lib/queryClient";
+import { User } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
 import {
-  LayoutDashboard,
-  Users,
-  Plane,
-  Ticket,
-  DollarSign,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Loader2,
   Settings,
+  Users,
+  Ticket,
+  LayoutDashboard,
   LogOut,
   Menu,
-  X,
+  Moon,
+  Plane,
+  Sun,
+  Tags,
+  ChevronDown,
+  Laptop,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { user, logoutMutation } = useAuth();
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+  const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [location] = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
+  const { theme, setTheme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Fetch current user data
+  const { data: user, isLoading } = useQuery<User | null>({
+    queryKey: ["/api/user"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  // Check if user is authenticated and has admin role
   useEffect(() => {
-    // After initial mount, set initialLoad to false
-    setInitialLoad(false);
-  }, []);
+    if (!isLoading && (!user || user.role !== "admin")) {
+      toast({
+        title: "Access denied",
+        description: "You must be logged in as an administrator to access this area",
+        variant: "destructive",
+      });
+      navigate("/admin/login");
+    }
+  }, [isLoading, user, navigate, toast]);
 
-  // Close mobile menu when changing routes
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location]);
-
-  // Admin navigation links
-  const navItems = [
-    {
-      title: "Dashboard",
-      href: "/admin/dashboard",
-      icon: <LayoutDashboard className="w-5 h-5" />,
-    },
-    {
-      title: "Users",
-      href: "/admin/users",
-      icon: <Users className="w-5 h-5" />,
-    },
-    {
-      title: "Flights",
-      href: "/admin/flights",
-      icon: <Plane className="w-5 h-5" />,
-    },
-    {
-      title: "Tickets",
-      href: "/admin/tickets",
-      icon: <Ticket className="w-5 h-5" />,
-    },
-    {
-      title: "Pricing",
-      href: "/admin/pricing",
-      icon: <DollarSign className="w-5 h-5" />,
-    },
-    {
-      title: "Settings",
-      href: "/admin/settings",
-      icon: <Settings className="w-5 h-5" />,
-    },
-  ];
-
+  // Handle logout
   const handleLogout = async () => {
     try {
-      await logoutMutation.mutateAsync();
-      window.location.href = "/"; // Redirect to home page after logout
+      await fetch("/api/logout", { method: "POST" });
+      queryClient.setQueryData(["/api/user"], null);
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully",
+      });
+      navigate("/admin/login");
     } catch (error) {
-      console.error("Logout failed:", error);
+      toast({
+        title: "Logout failed",
+        description: "An error occurred while trying to log out",
+        variant: "destructive",
+      });
     }
   };
 
-  // If initial load, don't render anything to prevent flash of content before redirect
-  if (initialLoad) {
-    return null;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
-  // Check if user is logged in and has admin role
-  if (!user || user.role !== "admin") {
-    // If accessed directly, redirect to login
-    if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
-      window.location.href = "/admin/login";
-    }
-    return null;
-  }
+  const navigationItems = [
+    { name: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+    { name: "Users", href: "/admin/users", icon: <Users className="h-5 w-5" /> },
+    { name: "Flights", href: "/admin/flights", icon: <Plane className="h-5 w-5" /> },
+    { name: "Tickets", href: "/admin/tickets", icon: <Ticket className="h-5 w-5" /> },
+    { name: "Pricing", href: "/admin/pricing", icon: <Tags className="h-5 w-5" /> },
+    { name: "Settings", href: "/admin/settings", icon: <Settings className="h-5 w-5" /> },
+  ];
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
-      </div>
-
-      {/* Sidebar for desktop */}
-      <div
-        className={cn(
-          "bg-white w-64 flex-shrink-0 border-r h-full fixed lg:static",
-          mobileMenuOpen ? "block z-40" : "hidden lg:block"
-        )}
-      >
-        <div className="flex flex-col h-full">
-          <div className="p-4 border-b">
-            <Link href="/admin/dashboard">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">A</span>
-                </div>
-                <h1 className="font-semibold text-lg">Admin Panel</h1>
-              </div>
-            </Link>
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Desktop Sidebar */}
+      <div className="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col flex-grow pt-5 overflow-y-auto">
+          <div className="flex items-center flex-shrink-0 px-4 mb-5">
+            <img
+              className="h-8 w-auto"
+              src="/logo.svg"
+              alt="Logo"
+              onError={(e) => {
+                e.currentTarget.src = "https://via.placeholder.com/32x32";
+              }}
+            />
+            <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+              Admin Panel
+            </h1>
           </div>
-
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <a
-                  className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                    location === item.href
-                      ? "bg-primary text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                  )}
-                >
-                  {item.icon}
-                  <span>{item.title}</span>
-                </a>
-              </Link>
-            ))}
-          </nav>
-
-          <div className="p-4 border-t">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Avatar>
-                  <AvatarFallback className="bg-primary text-white">
-                    {user.username ? user.username.charAt(0).toUpperCase() : "U"}
-                  </AvatarFallback>
+          <div className="mt-5 flex-grow flex flex-col">
+            <nav className="flex-1 px-2 space-y-1">
+              {navigationItems.map((item) => {
+                const isActive = location === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <div
+                      className={`mr-3 ${
+                        isActive ? "text-primary-foreground" : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                      }`}
+                    >
+                      {item.icon}
+                    </div>
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+          <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center">
+              <div>
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src="" alt="Profile" />
+                  <AvatarFallback>{user?.username?.charAt(0).toUpperCase() || "A"}</AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="text-sm font-medium">{user.username}</p>
-                  <p className="text-xs text-gray-500">Administrator</p>
-                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                disabled={logoutMutation.isPending}
-              >
-                <LogOut className="h-5 w-5 text-gray-500" />
-              </Button>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                  {user?.username || "Admin"}
+                </p>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  {user?.role === "admin" ? "Administrator" : "User"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b h-16 flex items-center justify-between px-6">
-          <h1 className="text-xl font-semibold">
-            {navItems.find((item) => item.href === location)?.title || "Admin Panel"}
-          </h1>
-          <div className="flex items-center space-x-4">
-            <Avatar className="hidden lg:flex">
-              <AvatarFallback className="bg-primary text-white">
-                {user.username ? user.username.charAt(0).toUpperCase() : "U"}
-              </AvatarFallback>
-            </Avatar>
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 w-full">
+        <div className="flex items-center">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-0">
+              <SheetHeader className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <SheetTitle className="flex items-center">
+                  <img
+                    className="h-8 w-auto"
+                    src="/logo.svg"
+                    alt="Logo"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://via.placeholder.com/32x32";
+                    }}
+                  />
+                  <span className="ml-2">Admin Panel</span>
+                </SheetTitle>
+              </SheetHeader>
+              <div className="py-4">
+                <nav className="space-y-1 px-2">
+                  {navigationItems.map((item) => {
+                    const isActive = location === item.href;
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
+                          isActive
+                            ? "bg-primary text-primary-foreground"
+                            : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                        }`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <div
+                          className={`mr-4 ${
+                            isActive ? "text-primary-foreground" : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                          }`}
+                        >
+                          {item.icon}
+                        </div>
+                        {item.name}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 p-4">
+                <div className="flex items-center">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src="" alt="Profile" />
+                    <AvatarFallback>{user?.username?.charAt(0).toUpperCase() || "A"}</AvatarFallback>
+                  </Avatar>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                      {user?.username || "Admin"}
+                    </p>
+                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                      {user?.role === "admin" ? "Administrator" : "User"}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <Button variant="destructive" className="w-full" onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+          <div className="ml-4 flex items-center">
+            <img
+              className="h-8 w-auto"
+              src="/logo.svg"
+              alt="Logo"
+              onError={(e) => {
+                e.currentTarget.src = "https://via.placeholder.com/32x32";
+              }}
+            />
+            <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+              Admin
+            </h1>
           </div>
-        </header>
+        </div>
+        <div className="flex items-center space-x-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                {theme === "light" ? (
+                  <Sun className="h-5 w-5" />
+                ) : theme === "dark" ? (
+                  <Moon className="h-5 w-5" />
+                ) : (
+                  <Laptop className="h-5 w-5" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setTheme("light")}>
+                <Sun className="mr-2 h-4 w-4" />
+                <span>Light</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
+                <Moon className="mr-2 h-4 w-4" />
+                <span>Dark</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme("system")}>
+                <Laptop className="mr-2 h-4 w-4" />
+                <span>System</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
-
-        <footer className="bg-white border-t py-3 px-6">
-          <div className="text-center text-sm text-gray-500">
-            © {new Date().getFullYear()} Flight Ticket Admin Panel. All rights reserved.
-          </div>
-        </footer>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>{user?.username?.charAt(0).toUpperCase() || "A"}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
-      {/* Mobile menu overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
+      {/* Main Content */}
+      <div className="md:pl-64 flex flex-col flex-1">
+        {/* Desktop Header */}
+        <div className="sticky top-0 z-10 md:flex items-center justify-end h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 hidden">
+          <div className="flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 gap-1">
+                  {theme === "light" ? (
+                    <Sun className="h-4 w-4" />
+                  ) : theme === "dark" ? (
+                    <Moon className="h-4 w-4" />
+                  ) : (
+                    <Laptop className="h-4 w-4" />
+                  )}
+                  <span>Theme</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  <Sun className="mr-2 h-4 w-4" />
+                  <span>Light</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  <Moon className="mr-2 h-4 w-4" />
+                  <span>Dark</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  <Laptop className="mr-2 h-4 w-4" />
+                  <span>System</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Separator orientation="vertical" className="h-8" />
+
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+              Visit Site
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>{user?.username?.charAt(0).toUpperCase() || "A"}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user?.username}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

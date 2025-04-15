@@ -23,9 +23,19 @@ import SupportPage from "@/pages/support-page";
 import HowToWorkPage from "@/pages/how-to-work-page";
 import MainLayout from "./layout/main-layout";
 
+// Admin Panel Imports
+import AdminLoginPage from "@/admin/pages/AdminLoginPage";
+import DashboardPage from "@/admin/pages/DashboardPage";
+import UsersPage from "@/admin/pages/UsersPage";
+import FlightsPage from "@/admin/pages/FlightsPage";
+import TicketsPage from "@/admin/pages/TicketsPage";
+import PricingPage from "@/admin/pages/PricingPage";
+import SettingsPage from "@/admin/pages/SettingsPage";
+
 function Router() {
   return (
     <Switch>
+      {/* Main Application Routes */}
       <Route path="/" component={() => (
         <MainLayout>
           <HomePage />
@@ -86,6 +96,17 @@ function Router() {
           </MainLayout>
         )} 
       />
+      
+      {/* Admin Panel Routes */}
+      <Route path="/admin/login" component={AdminLoginPage} />
+      <Route path="/admin/dashboard" component={DashboardPage} />
+      <Route path="/admin/users" component={UsersPage} />
+      <Route path="/admin/flights" component={FlightsPage} />
+      <Route path="/admin/tickets" component={TicketsPage} />
+      <Route path="/admin/pricing" component={PricingPage} />
+      <Route path="/admin/settings" component={SettingsPage} />
+      
+      {/* 404 Route */}
       <Route component={() => (
         <MainLayout>
           <NotFound />

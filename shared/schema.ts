@@ -14,6 +14,8 @@ export const users = pgTable("users", {
   preferredEmail: text("preferred_email"),
   preferredLanguage: text("preferred_language").default("en"),
   createdAt: timestamp("created_at").defaultNow(),
+  role: text("role").default("user"), // Possible values: "user", "admin"
+  isActive: boolean("is_active").default(true),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -25,6 +27,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   phone: true,
   preferredEmail: true,
   preferredLanguage: true,
+  role: true,
+  isActive: true,
 });
 
 // Flight Schema
@@ -43,6 +47,11 @@ export const flights = pgTable("flights", {
   arrivalTime: text("arrival_time").notNull(),
   duration: text("duration").notNull(),
   basePrice: doublePrecision("base_price").notNull(),
+  aircraft: text("aircraft"),
+  price: doublePrecision("price"),
+  currency: text("currency").default("USD"),
+  seatsAvailable: integer("seats_available").default(100),
+  status: text("status").default("scheduled"), // scheduled, active, completed, cancelled
 });
 
 export const insertFlightSchema = createInsertSchema(flights).omit({
