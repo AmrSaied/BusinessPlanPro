@@ -123,7 +123,7 @@ const UsersPage = () => {
           (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()));
 
         const matchesRole =
-          roleFilter === "" || user.role === roleFilter;
+          roleFilter === "" || roleFilter === "all" || user.role === roleFilter;
 
         return matchesSearch && matchesRole;
       })
@@ -206,12 +206,12 @@ const UsersPage = () => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <Select value={roleFilter || "all"} onValueChange={setRoleFilter}>
                   <SelectTrigger className="w-full md:w-40">
                     <SelectValue placeholder="Filter by role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All roles</SelectItem>
+                    <SelectItem value="all">All roles</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="user">User</SelectItem>
                   </SelectContent>
