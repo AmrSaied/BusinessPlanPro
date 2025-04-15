@@ -17,16 +17,14 @@ import PassengerInfoPage from "@/pages/passenger-info-page";
 import PaymentPage from "@/pages/payment-page";
 import ConfirmationPage from "@/pages/confirmation-page";
 import FaqPage from "@/pages/faq-page";
-import UserDashboard from "@/pages/user-dashboard";
 import AuthPage from "@/pages/auth-page";
 import SupportPage from "@/pages/support-page";
 import HowToWorkPage from "@/pages/how-to-work-page";
 import MainLayout from "./layout/main-layout";
+import UnifiedDashboard from "@/pages/unified-dashboard";
 
-// Admin Panel Imports
-import { AdminProtectedRoute } from "@/admin/components/AdminProtectedRoute";
+// Admin Page imports (to be used inside the unified dashboard)
 import AdminLoginPage from "@/admin/pages/AdminLoginPage";
-import DashboardPage from "@/admin/pages/DashboardPage";
 import UsersPage from "@/admin/pages/UsersPage";
 import FlightsPage from "@/admin/pages/FlightsPage";
 import TicketsPage from "@/admin/pages/TicketsPage";
@@ -89,23 +87,20 @@ function Router() {
           <HowToWorkPage />
         </MainLayout>
       )} />
-      <ProtectedRoute 
-        path="/dashboard" 
-        component={() => (
-          <MainLayout>
-            <UserDashboard />
-          </MainLayout>
-        )} 
-      />
       
-      {/* Admin Panel Routes */}
+      {/* Unified Dashboard and Control Panel Routes */}
       <Route path="/admin/login" component={AdminLoginPage} />
-      <AdminProtectedRoute path="/admin/dashboard" component={() => <DashboardPage />} />
-      <AdminProtectedRoute path="/admin/users" component={() => <UsersPage />} />
-      <AdminProtectedRoute path="/admin/flights" component={() => <FlightsPage />} />
-      <AdminProtectedRoute path="/admin/tickets" component={() => <TicketsPage />} />
-      <AdminProtectedRoute path="/admin/pricing" component={() => <PricingPage />} />
-      <AdminProtectedRoute path="/admin/settings" component={() => <SettingsPage />} />
+      
+      {/* All dashboard routes use the unified dashboard component */}
+      <ProtectedRoute path="/dashboard" component={UnifiedDashboard} />
+      <ProtectedRoute path="/dashboard/bookings" component={UnifiedDashboard} />
+      <ProtectedRoute path="/dashboard/profile" component={UnifiedDashboard} />
+      <ProtectedRoute path="/admin/dashboard" component={UnifiedDashboard} />
+      <ProtectedRoute path="/admin/users" component={UnifiedDashboard} />
+      <ProtectedRoute path="/admin/flights" component={UnifiedDashboard} />
+      <ProtectedRoute path="/admin/tickets" component={UnifiedDashboard} />
+      <ProtectedRoute path="/admin/pricing" component={UnifiedDashboard} />
+      <ProtectedRoute path="/admin/settings" component={UnifiedDashboard} />
       
       {/* 404 Route */}
       <Route component={() => (
