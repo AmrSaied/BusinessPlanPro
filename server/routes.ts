@@ -273,7 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Avoid selecting columns that might not exist yet
         // price: flights.price,
         // currency: flights.currency,
-        seatsAvailable: flights.seatsAvailable,
+        // seatsAvailable: flights.seatsAvailable,
         // aircraft: flights.aircraft,
         // status: flights.status,
       }).from(flights);
@@ -397,16 +397,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Transform the results to the expected format
       const transformedBookings = allBookings.map(({ booking, flight, user }) => ({
         ...booking,
-        flight: {
+        flight: flight ? {
           ...flight,
           // Add default values for any missing fields
           aircraft: "Boeing 737", // Default aircraft
           status: "scheduled",    // Default status
           currency: "USD",        // Default currency
-          price: flight.basePrice, // Default price equals basePrice
-          departureCountry: flight.departureCity ? `Country of ${flight.departureCity}` : "Unknown",
-          arrivalCountry: flight.arrivalCity ? `Country of ${flight.arrivalCity}` : "Unknown",
-        },
+          price: flight?.basePrice || 0, // Default price equals basePrice
+          departureCountry: flight?.departureCity ? `Country of ${flight.departureCity}` : "Unknown",
+          arrivalCountry: flight?.arrivalCity ? `Country of ${flight.arrivalCity}` : "Unknown",
+        } : null,
         user,
         // Add ticket details 
         ticketNumber: `TKT${booking.bookingReference}`,
