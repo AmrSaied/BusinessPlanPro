@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
+import { createHash, randomBytes } from "crypto";
 import { 
   flightSearchSchema, 
   insertUserSchema, 
@@ -15,7 +16,6 @@ import {
   bookings,
   airports
 } from "@shared/schema";
-import { randomBytes } from "crypto";
 import { FlightService } from "./services/flight-service";
 import { TicketService } from "./services/ticket-service";
 import { ViewTripTicketService } from "./services/viewtrip-ticket-service";
@@ -50,25 +50,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
   
-  // Admin login endpoint
-  app.post("/api/admin/login", (req, res, next) => {
-    passport.authenticate("local", (err: Error, user: User) => {
-      if (err) {
-        return next(err);
-      }
+  // Direct admin login endpoint with SHA-256 verification
+  app.post("/api/admin/login", async (req, res, next) => {
+    try {
+      const { username, password } = req.body;
+      console.log("Admin login attempt for:", username);
+      
+      // Find user in database
+      const user = await storage.getUserByUsername(username);
       if (!user) {
+        console.log("Admin login failed: User not found");
         return res.status(401).json({ message: "Invalid username or password" });
       }
+      
+      // Check if user is admin
       if (user.role !== "admin") {
+        console.log("Admin login failed: Not an admin user");
         return res.status(403).json({ message: "Not authorized. Admin access required." });
       }
+      
+      // Verify password using SHA-256 hash
+      const hashedPassword = createHash('sha256').update(password).digest('hex');
+      console.log("Comparing passwords:");
+      console.log("- Stored hash:", user.password.substring(0, 10) + "...");
+      console.log("- Computed hash:", hashedPassword.substring(0, 10) + "...");
+      
+      if (hashedPassword !== user.password) {
+        console.log("Admin login failed: Password mismatch");
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+      
+      // Log user in
       req.login(user, (err) => {
         if (err) {
+          console.log("Admin login failed: Login error", err);
           return next(err);
         }
+        console.log("Admin login successful");
         return res.status(200).json(user);
       });
-    })(req, res, next);
+    } catch (error) {
+      console.error("Admin login error:", error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
   });
   
   // Admin authentication check endpoint
