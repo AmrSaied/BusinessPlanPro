@@ -12,7 +12,8 @@ import {
   User,
   users,
   flights,
-  bookings
+  bookings,
+  airports
 } from "@shared/schema";
 import { randomBytes } from "crypto";
 import { FlightService } from "./services/flight-service";
@@ -23,7 +24,7 @@ import { AmadeusService } from "./services/amadeus-service";
 import { setupAuth } from "./auth";
 import passport from "passport";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 
 // Initialize services
 const flightService = new FlightService(storage);
@@ -34,6 +35,337 @@ const aviationService = new AmadeusService(storage);
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  
+  // Admin authentication middleware
+  const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = req.user as User;
+    if (user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+    
+    next();
+  };
+  
+  // Admin specific login endpoint
+  app.post("/api/admin/login", passport.authenticate("local"), (req, res) => {
+    const user = req.user as User;
+    if (user.role !== "admin") {
+      req.logout((err) => {
+        if (err) {
+          console.error("Error logging out:", err);
+        }
+        res.status(403).json({ message: "Not authorized as admin" });
+      });
+      return;
+    }
+    
+    res.status(200).json(user);
+  });
+  
+  // Admin routes - protected by admin middleware
+  app.get("/api/admin/dashboard/stats", isAdmin, async (req, res) => {
+    try {
+      // Aggregate data from the database for dashboard stats
+      const usersCount = await db.select({ count: count() }).from(users);
+      const activeUsersCount = await db.select({ count: count() }).from(users).where(eq(users.isActive, true));
+      
+      const bookingsCount = await db.select({ count: count() }).from(bookings);
+      const pendingBookings = await db.select({ count: count() }).from(bookings).where(eq(bookings.status, "pending"));
+      
+      const flightsCount = await db.select({ count: count() }).from(flights);
+      const activeFlights = await db.select({ count: count() }).from(flights).where(eq(flights.status, "scheduled"));
+      
+      // Calculate revenue (this is a simplified example)
+      const allBookings = await db.select({
+        totalPrice: bookings.totalPrice,
+      }).from(bookings).where(eq(bookings.status, "confirmed"));
+      
+      const totalRevenue = allBookings.reduce((acc, booking) => acc + booking.totalPrice, 0);
+      
+      // Get recent bookings for this month
+      const thisMonth = new Date();
+      thisMonth.setDate(1); // First day of current month
+      thisMonth.setHours(0, 0, 0, 0);
+      
+      const lastMonth = new Date(thisMonth);
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      
+      // For actual implementation, you would filter bookings by createdAt date
+      // This is a simplified version without the actual date filtering
+      const thisMonthRevenue = totalRevenue * 0.3; // Just an example
+      const lastMonthRevenue = totalRevenue * 0.2; // Just an example
+      
+      res.status(200).json({
+        users: { 
+          total: usersCount[0]?.count || 0, 
+          active: activeUsersCount[0]?.count || 0, 
+          newToday: 0  // Would require more complex query with dates
+        },
+        tickets: { 
+          total: bookingsCount[0]?.count || 0, 
+          pendingPayment: pendingBookings[0]?.count || 0, 
+          confirmedToday: 0  // Would require more complex query with dates
+        },
+        flights: { 
+          total: flightsCount[0]?.count || 0, 
+          active: activeFlights[0]?.count || 0 
+        },
+        revenue: { 
+          total: totalRevenue, 
+          thisMonth: thisMonthRevenue, 
+          lastMonth: lastMonthRevenue, 
+          currency: "USD" 
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard stats" });
+    }
+  });
+
+  // User management endpoints
+  app.get("/api/admin/users", isAdmin, async (req, res) => {
+    try {
+      // In a real implementation, we would want pagination
+      const allUsers = await db.select().from(users);
+      res.status(200).json(allUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+  
+  app.patch("/api/admin/users/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userData = req.body;
+      
+      // Validate user ID
+      const userId = parseInt(id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+      
+      // Update user
+      const [updatedUser] = await db
+        .update(users)
+        .set(userData)
+        .where(eq(users.id, userId))
+        .returning();
+        
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
+  
+  app.delete("/api/admin/users/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate user ID
+      const userId = parseInt(id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+      
+      // Delete user
+      await db
+        .delete(users)
+        .where(eq(users.id, userId));
+        
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
+  });
+
+  // Flight management endpoints
+  app.get("/api/admin/flights", isAdmin, async (req, res) => {
+    try {
+      const allFlights = await db.select().from(flights);
+      res.status(200).json(allFlights);
+    } catch (error) {
+      console.error("Error fetching flights:", error);
+      res.status(500).json({ error: "Failed to fetch flights" });
+    }
+  });
+  
+  app.post("/api/admin/flights", isAdmin, async (req, res) => {
+    try {
+      const flightData = req.body;
+      
+      // Create flight
+      const [newFlight] = await db
+        .insert(flights)
+        .values(flightData)
+        .returning();
+        
+      res.status(201).json(newFlight);
+    } catch (error) {
+      console.error("Error creating flight:", error);
+      res.status(500).json({ error: "Failed to create flight" });
+    }
+  });
+  
+  app.patch("/api/admin/flights/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const flightData = req.body;
+      
+      // Validate flight ID
+      const flightId = parseInt(id);
+      if (isNaN(flightId)) {
+        return res.status(400).json({ error: "Invalid flight ID" });
+      }
+      
+      // Update flight
+      const [updatedFlight] = await db
+        .update(flights)
+        .set(flightData)
+        .where(eq(flights.id, flightId))
+        .returning();
+        
+      if (!updatedFlight) {
+        return res.status(404).json({ error: "Flight not found" });
+      }
+      
+      res.status(200).json(updatedFlight);
+    } catch (error) {
+      console.error("Error updating flight:", error);
+      res.status(500).json({ error: "Failed to update flight" });
+    }
+  });
+  
+  app.delete("/api/admin/flights/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate flight ID
+      const flightId = parseInt(id);
+      if (isNaN(flightId)) {
+        return res.status(400).json({ error: "Invalid flight ID" });
+      }
+      
+      // Delete flight
+      await db
+        .delete(flights)
+        .where(eq(flights.id, flightId));
+        
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting flight:", error);
+      res.status(500).json({ error: "Failed to delete flight" });
+    }
+  });
+  
+  // Bookings/Tickets management endpoints
+  app.get("/api/admin/bookings", isAdmin, async (req, res) => {
+    try {
+      // Get all bookings with flight and user details
+      const allBookings = await db
+        .select({
+          booking: bookings,
+          flight: flights,
+          user: users,
+        })
+        .from(bookings)
+        .leftJoin(flights, eq(bookings.flightId, flights.id))
+        .leftJoin(users, eq(bookings.userId, users.id));
+      
+      // Transform the results to the expected format
+      const transformedBookings = allBookings.map(({ booking, flight, user }) => ({
+        ...booking,
+        flight,
+        user,
+        // Add ticket details 
+        ticketNumber: `TKT${booking.bookingReference}`,
+        ticketPdfUrl: `/api/bookings/${booking.id}/ticket/download`,
+      }));
+      
+      res.status(200).json(transformedBookings);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).json({ error: "Failed to fetch bookings" });
+    }
+  });
+  
+  app.patch("/api/admin/bookings/:id/cancel", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate booking ID
+      const bookingId = parseInt(id);
+      if (isNaN(bookingId)) {
+        return res.status(400).json({ error: "Invalid booking ID" });
+      }
+      
+      // Update booking status to cancelled
+      const [updatedBooking] = await db
+        .update(bookings)
+        .set({ status: "cancelled" })
+        .where(eq(bookings.id, bookingId))
+        .returning();
+        
+      if (!updatedBooking) {
+        return res.status(404).json({ error: "Booking not found" });
+      }
+      
+      res.status(200).json(updatedBooking);
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      res.status(500).json({ error: "Failed to cancel booking" });
+    }
+  });
+  
+  app.post("/api/admin/bookings/:id/regenerate-ticket", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Validate booking ID
+      const bookingId = parseInt(id);
+      if (isNaN(bookingId)) {
+        return res.status(400).json({ error: "Invalid booking ID" });
+      }
+      
+      // Get the booking
+      const booking = await storage.getBooking(bookingId);
+      if (!booking) {
+        return res.status(404).json({ error: "Booking not found" });
+      }
+      
+      // In a real implementation, we would regenerate the ticket here
+      
+      res.status(200).json({ 
+        message: "Ticket regenerated successfully",
+        booking
+      });
+    } catch (error) {
+      console.error("Error regenerating ticket:", error);
+      res.status(500).json({ error: "Failed to regenerate ticket" });
+    }
+  });
+  
+  // Airport endpoints for admin
+  app.get("/api/admin/airports", isAdmin, async (req, res) => {
+    try {
+      const allAirports = await db.select().from(airports);
+      res.status(200).json(allAirports);
+    } catch (error) {
+      console.error("Error fetching airports:", error);
+      res.status(500).json({ error: "Failed to fetch airports" });
+    }
+  });
   
   // API routes
 

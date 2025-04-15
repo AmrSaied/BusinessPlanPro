@@ -65,7 +65,7 @@ const UsersPage = () => {
     error,
   } = useQuery<User[]>({
     queryKey: ["/api/admin/users"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Update user mutation

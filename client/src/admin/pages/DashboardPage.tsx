@@ -37,7 +37,7 @@ const DashboardPage = () => {
   // Fetch dashboard stats from API
   const { data: stats, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/dashboard/stats"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
     refetchInterval: 60000, // Refresh every minute
   });
 
