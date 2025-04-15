@@ -24,6 +24,14 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
+  // Check if it's a simple SHA-256 hash (no salt)
+  if (!stored.includes('.')) {
+    // Simple SHA-256 hash
+    const hash = createHash('sha256').update(supplied).digest('hex');
+    return hash === stored;
+  }
+  
+  // Scrypt with salt
   const [hashed, salt] = stored.split(".");
   const hashedBuf = Buffer.from(hashed, "hex");
   const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
