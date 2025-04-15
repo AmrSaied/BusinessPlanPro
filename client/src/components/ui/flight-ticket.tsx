@@ -281,39 +281,43 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           
           {/* Flight Times Layout - Exact match to reference image with arrow */}
           <div className="flex items-start pt-2 pb-1">
-            {/* DEPART Section */}
-            <div className="flex-1 text-left">
-              <div className="uppercase text-xs font-bold text-gray-700 mb-2">DEPART</div>
+            {/* DEPART Section with ascending plane */}
+            <div className="text-left" style={{ width: '30%' }}>
+              <div className="uppercase text-xs font-bold text-gray-700 mb-1">DEPART</div>
               <div className="flex items-center">
-                <span className="text-black text-xl mr-1 -mt-0.5">✈</span>
+                <span className="text-black text-lg mr-1 rotate-45 inline-block">✈</span>
                 <div className="flex items-baseline">
                   <div className="text-lg font-bold">{segment.departTime}</div>
-                  <div className="text-xs ml-0.5 uppercase">{segment.departAmPm}</div>
+                  <div className="text-xs uppercase ml-0.5">{segment.departAmPm}</div>
                   <div className="text-xs ml-0.5">{segment.departCode}</div>
                 </div>
               </div>
             </div>
             
             {/* NON STOP Section with arrow */}
-            <div className="flex-1 text-center">
-              <div className="uppercase text-xs font-bold text-gray-700 mb-2">NON STOP</div>
-              <div className="flex justify-center mt-1.5">
-                <div className="relative w-20">
-                  <div className="h-[1px] bg-gray-400 w-full"></div>
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 h-0 w-0 
-                       border-y-[3px] border-y-transparent border-l-[6px] border-l-gray-400"></div>
-                  <div className="text-xs text-gray-600 text-center mt-1">{segment.duration}</div>
+            <div className="text-center mx-0 px-0" style={{ width: '40%' }}>
+              <div className="uppercase text-xs font-bold text-gray-700 mb-1">NON STOP</div>
+              <div className="flex justify-center items-center">
+                <div className="relative flex items-center justify-center" style={{ width: '80px', height: '24px' }}>
+                  <div className="h-[1px] bg-gray-400 w-full absolute"></div>
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 -mr-1">
+                    <span className="text-gray-400 text-sm">▶</span>
+                  </div>
+                  <div className="text-xs text-gray-600 text-center absolute w-full top-4">{segment.duration}</div>
                 </div>
               </div>
             </div>
             
-            {/* ARRIVE Section */}
-            <div className="flex-1 text-right">
-              <div className="uppercase text-xs font-bold text-gray-700 mb-2">ARRIVE</div>
-              <div className="flex items-baseline justify-end">
-                <div className="text-lg font-bold">{segment.arriveTime}</div>
-                <div className="text-xs ml-0.5 uppercase">{segment.arriveAmPm}</div>
-                <div className="text-xs ml-0.5">{segment.arriveCode}</div>
+            {/* ARRIVE Section with descending plane */}
+            <div className="text-right" style={{ width: '30%' }}>
+              <div className="uppercase text-xs font-bold text-gray-700 mb-1">ARRIVE</div>
+              <div className="flex items-center justify-end">
+                <div className="flex items-baseline mr-1">
+                  <div className="text-lg font-bold">{segment.arriveTime}</div>
+                  <div className="text-xs uppercase ml-0.5">{segment.arriveAmPm}</div>
+                  <div className="text-xs ml-0.5">{segment.arriveCode}</div>
+                </div>
+                <span className="text-black text-lg -mt-0.5 -rotate-45 inline-block">✈</span>
               </div>
             </div>
           </div>
