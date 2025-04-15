@@ -280,12 +280,12 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
           </div>
           
           {/* Flight Times Layout - Exact match to reference with arrow - compact version */}
-          <div className="flex items-center justify-between py-0 mx-0 px-5">
+          <div className="flex items-center justify-between py-0 mx-0 px-3 border-b border-gray-100 pb-1">
             {/* DEPART Section */}
-            <div className="mr-1">
+            <div>
               <div className="uppercase text-xs font-bold text-gray-700 mb-0.5">DEPART</div>
               <div className="flex items-center">
-                <span className="text-black text-xl mr-0.5">✈</span>
+                <span className="text-[#3585e6] text-sm mr-0.5 transform rotate-45">✈</span>
                 <div className="flex items-baseline">
                   <div className="text-lg font-bold">{segment.departTime}</div>
                   <div className="text-xs uppercase ml-0.5">{segment.departAmPm}</div>
@@ -295,20 +295,20 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             </div>
             
             {/* NON STOP Section with arrow */}
-            <div>
+            <div className="mx-3">
               <div className="uppercase text-xs font-bold text-gray-700 mb-0.5 text-center">NON STOP</div>
-              <div className="flex justify-center items-center">
-                <div className="relative w-10 flex items-center">
-                  <div className="flex absolute w-full top-1/2 -translate-y-1/2 justify-center">
-                    <span className="text-gray-400 whitespace-nowrap tracking-tighter text-xs">----------&gt;</span>
+              <div className="text-xs text-gray-600 text-center">{segment.duration}</div>
+              <div className="flex justify-center items-center overflow-hidden mt-1 relative">
+                <div className="w-full h-px border-t border-gray-300 border-dashed relative">
+                  <div className="absolute top-[-2px] right-0 flex items-center">
+                    <span className="text-gray-400 text-xs">▶</span>
                   </div>
-                  <div className="text-xs text-gray-600 text-center absolute w-full top-2">{segment.duration}</div>
                 </div>
               </div>
             </div>
             
             {/* ARRIVE Section */}
-            <div className="ml-1">
+            <div>
               <div className="uppercase text-xs font-bold text-gray-700 mb-0.5 text-right">ARRIVE</div>
               <div className="flex items-center justify-end">
                 <div className="flex items-baseline">
@@ -316,7 +316,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
                   <div className="text-xs uppercase ml-0.5">{segment.arriveAmPm}</div>
                   <div className="text-xs ml-0.5">{segment.arriveCode}</div>
                 </div>
-                <span className="text-black text-xl ml-0.5 translate-y-[2px]">✈</span>
+                <span className="text-[#3585e6] text-sm ml-0.5 transform -rotate-45">✈</span>
               </div>
             </div>
           </div>
