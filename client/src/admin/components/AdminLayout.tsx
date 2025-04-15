@@ -106,20 +106,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+      <div className="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-card border-r shadow-sm">
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-4 mb-5">
-            <img
-              className="h-8 w-auto"
-              src="/logo.svg"
-              alt="Logo"
-              onError={(e) => {
-                e.currentTarget.src = "https://via.placeholder.com/32x32";
-              }}
-            />
-            <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+            </svg>
+            <h1 className="ml-2 text-xl font-bold text-primary">
               Admin Panel
             </h1>
           </div>
@@ -131,15 +126,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive
                         ? "bg-primary text-primary-foreground"
-                        : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                        : "text-foreground hover:bg-muted"
                     }`}
                   >
                     <div
                       className={`mr-3 ${
-                        isActive ? "text-primary-foreground" : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                        isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
                       }`}
                     >
                       {item.icon}
@@ -150,19 +145,19 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               })}
             </nav>
           </div>
-          <div className="flex-shrink-0 flex border-t border-gray-200 dark:border-gray-700 p-4">
-            <div className="flex items-center">
+          <div className="flex-shrink-0 flex border-t p-4">
+            <div className="flex items-center w-full">
               <div>
                 <Avatar className="h-9 w-9">
                   <AvatarImage src="" alt="Profile" />
                   <AvatarFallback>{user?.username?.charAt(0).toUpperCase() || "A"}</AvatarFallback>
                 </Avatar>
               </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+              <div className="ml-3 flex-grow">
+                <p className="text-sm font-medium text-foreground">
                   {user?.username || "Admin"}
                 </p>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-xs font-medium text-muted-foreground">
                   {user?.role === "admin" ? "Administrator" : "User"}
                 </p>
               </div>
@@ -172,7 +167,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 w-full">
+      <div className="md:hidden flex items-center justify-between p-4 border-b shadow-sm bg-card w-full">
         <div className="flex items-center">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -181,17 +176,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-64 p-0">
-              <SheetHeader className="p-4 border-b border-gray-200 dark:border-gray-700">
+              <SheetHeader className="p-4 border-b">
                 <SheetTitle className="flex items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="/logo.svg"
-                    alt="Logo"
-                    onError={(e) => {
-                      e.currentTarget.src = "https://via.placeholder.com/32x32";
-                    }}
-                  />
-                  <span className="ml-2">Admin Panel</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                  </svg>
+                  <span className="ml-2 text-primary font-bold">Admin Panel</span>
                 </SheetTitle>
               </SheetHeader>
               <div className="py-4">
@@ -202,16 +192,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
+                        className={`group flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors ${
                           isActive
                             ? "bg-primary text-primary-foreground"
-                            : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                            : "text-foreground hover:bg-muted"
                         }`}
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         <div
-                          className={`mr-4 ${
-                            isActive ? "text-primary-foreground" : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                          className={`mr-3 ${
+                            isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
                           }`}
                         >
                           {item.icon}
@@ -222,17 +212,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   })}
                 </nav>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 p-4">
-                <div className="flex items-center">
+              <div className="absolute bottom-0 left-0 right-0 border-t p-4">
+                <div className="flex items-center w-full">
                   <Avatar className="h-9 w-9">
                     <AvatarImage src="" alt="Profile" />
                     <AvatarFallback>{user?.username?.charAt(0).toUpperCase() || "A"}</AvatarFallback>
                   </Avatar>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                  <div className="ml-3 flex-grow">
+                    <p className="text-sm font-medium text-foreground">
                       {user?.username || "Admin"}
                     </p>
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    <p className="text-xs font-medium text-muted-foreground">
                       {user?.role === "admin" ? "Administrator" : "User"}
                     </p>
                   </div>
@@ -247,15 +237,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </SheetContent>
           </Sheet>
           <div className="ml-4 flex items-center">
-            <img
-              className="h-8 w-auto"
-              src="/logo.svg"
-              alt="Logo"
-              onError={(e) => {
-                e.currentTarget.src = "https://via.placeholder.com/32x32";
-              }}
-            />
-            <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+            </svg>
+            <h1 className="ml-2 text-xl font-bold text-primary">
               Admin
             </h1>
           </div>
@@ -319,7 +304,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="md:ml-64 flex flex-col flex-1">
         {/* Desktop Header */}
-        <div className="sticky top-0 z-10 md:flex items-center justify-end h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 hidden">
+        <div className="sticky top-0 z-10 md:flex items-center justify-end h-16 bg-card border-b shadow-sm px-4 hidden">
           <div className="flex items-center space-x-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -390,7 +375,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </div>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
+        <main className="flex-1 overflow-y-auto bg-background p-6">
           {children}
         </main>
       </div>
