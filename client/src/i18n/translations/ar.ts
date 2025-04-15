@@ -188,6 +188,7 @@ export default {
   download_ticket: 'تنزيل التذكرة',
   email_sent: 'لقد أرسلنا نسخة من تذكرتك إلى',
   print_ticket: 'طباعة التذكرة',
+  direct_download: 'تنزيل مباشر',
   book_another: 'حجز تذكرة أخرى',
   view_bookings: 'عرض حجوزاتي',
   booking_details: 'تفاصيل الحجز',

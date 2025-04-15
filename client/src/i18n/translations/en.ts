@@ -199,6 +199,7 @@ export default {
   download_ticket: 'Download Ticket',
   email_sent: 'We have sent a copy of your ticket to',
   print_ticket: 'Print Ticket',
+  direct_download: 'Direct Download',
   book_another: 'Book Another Ticket',
   view_bookings: 'View My Bookings',
   booking_details: 'Booking Details',

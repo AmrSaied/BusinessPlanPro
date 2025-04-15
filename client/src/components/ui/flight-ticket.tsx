@@ -504,7 +504,7 @@ const FlightTicket: React.FC<FlightTicketProps> = ({
             className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700"
           >
             <Download className="w-4 h-4 mr-1.5" />
-            Direct Download
+            {TICKET_TEXT.direct_download}
           </a>
         </div>
       </div>
