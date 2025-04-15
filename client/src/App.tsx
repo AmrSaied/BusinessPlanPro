@@ -21,10 +21,12 @@ import AuthPage from "@/pages/auth-page";
 import SupportPage from "@/pages/support-page";
 import HowToWorkPage from "@/pages/how-to-work-page";
 import MainLayout from "./layout/main-layout";
-import UnifiedDashboard from "@/pages/unified-dashboard";
+import UserDashboard from "@/pages/user-dashboard";
 
-// Admin Page imports (to be used inside the unified dashboard)
+// Admin Page imports
+import { AdminProtectedRoute } from "@/admin/components/AdminProtectedRoute";
 import AdminLoginPage from "@/admin/pages/AdminLoginPage";
+import DashboardPage from "@/admin/pages/DashboardPage";
 import UsersPage from "@/admin/pages/UsersPage";
 import FlightsPage from "@/admin/pages/FlightsPage";
 import TicketsPage from "@/admin/pages/TicketsPage";
@@ -88,19 +90,24 @@ function Router() {
         </MainLayout>
       )} />
       
-      {/* Unified Dashboard and Control Panel Routes */}
-      <Route path="/admin/login" component={AdminLoginPage} />
+      {/* User Dashboard Routes */}
+      <ProtectedRoute 
+        path="/dashboard" 
+        component={() => (
+          <MainLayout>
+            <UserDashboard />
+          </MainLayout>
+        )} 
+      />
       
-      {/* All dashboard routes use the unified dashboard component */}
-      <ProtectedRoute path="/dashboard" component={UnifiedDashboard} />
-      <ProtectedRoute path="/dashboard/bookings" component={UnifiedDashboard} />
-      <ProtectedRoute path="/dashboard/profile" component={UnifiedDashboard} />
-      <ProtectedRoute path="/admin/dashboard" component={UnifiedDashboard} />
-      <ProtectedRoute path="/admin/users" component={UnifiedDashboard} />
-      <ProtectedRoute path="/admin/flights" component={UnifiedDashboard} />
-      <ProtectedRoute path="/admin/tickets" component={UnifiedDashboard} />
-      <ProtectedRoute path="/admin/pricing" component={UnifiedDashboard} />
-      <ProtectedRoute path="/admin/settings" component={UnifiedDashboard} />
+      {/* Admin Panel Routes (completely separate from user interface) */}
+      <Route path="/admin/login" component={AdminLoginPage} />
+      <AdminProtectedRoute path="/admin/dashboard" component={() => <DashboardPage />} />
+      <AdminProtectedRoute path="/admin/users" component={() => <UsersPage />} />
+      <AdminProtectedRoute path="/admin/flights" component={() => <FlightsPage />} />
+      <AdminProtectedRoute path="/admin/tickets" component={() => <TicketsPage />} />
+      <AdminProtectedRoute path="/admin/pricing" component={() => <PricingPage />} />
+      <AdminProtectedRoute path="/admin/settings" component={() => <SettingsPage />} />
       
       {/* 404 Route */}
       <Route component={() => (

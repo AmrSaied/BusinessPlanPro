@@ -278,6 +278,15 @@ function AuthPage() {
                             {t("auth_register_link")}
                           </Button>
                         </div>
+                        <div className="text-sm text-muted-foreground text-center">
+                          <Button
+                            variant="link"
+                            className="p-0 text-blue-600"
+                            onClick={() => navigate("/admin/login")}
+                          >
+                            Admin Access
+                          </Button>
+                        </div>
                       </CardFooter>
                     </Card>
                   </TabsContent>
@@ -434,6 +443,15 @@ function AuthPage() {
                             onClick={() => setActiveTab("login")}
                           >
                             {t("auth_login_link")}
+                          </Button>
+                        </div>
+                        <div className="text-sm text-muted-foreground text-center">
+                          <Button
+                            variant="link"
+                            className="p-0 text-blue-600"
+                            onClick={() => navigate("/admin/login")}
+                          >
+                            Admin Access
                           </Button>
                         </div>
                       </CardFooter>

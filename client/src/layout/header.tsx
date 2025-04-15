@@ -162,13 +162,7 @@ const Header = () => {
                         <span className="w-full cursor-pointer">{t('nav_dashboard')}</span>
                       </Link>
                     </DropdownMenuItem>
-                    {user?.role === 'admin' && (
-                      <DropdownMenuItem>
-                        <Link href="/admin/dashboard">
-                          <span className="w-full cursor-pointer">Admin Panel</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
+
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                       <div className="flex items-center w-full">
@@ -219,11 +213,7 @@ const Header = () => {
                   <Link href="/dashboard">
                     <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_dashboard')}</span>
                   </Link>
-                  {user?.role === 'admin' && (
-                    <Link href="/admin/dashboard">
-                      <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">Admin Panel</span>
-                    </Link>
-                  )}
+
                   <button 
                     onClick={() => logoutMutation.mutate()}
                     className="flex items-center font-medium text-gray-600 hover:text-primary transition py-2"
