@@ -317,7 +317,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       </div>
 
       {/* Main Content */}
-      <div className="md:pl-64 flex flex-col flex-1">
+      <div className="md:ml-64 flex flex-col flex-1">
         {/* Desktop Header */}
         <div className="sticky top-0 z-10 md:flex items-center justify-end h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 hidden">
           <div className="flex items-center space-x-4">

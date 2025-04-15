@@ -270,11 +270,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         arrivalTime: flights.arrivalTime,
         duration: flights.duration,
         basePrice: flights.basePrice,
-        // Don't select price as it might not exist
-        // price: flights.price,
-        currency: flights.currency,
-        seatsAvailable: flights.seatsAvailable,
         // Avoid selecting columns that might not exist yet
+        // price: flights.price,
+        // currency: flights.currency,
+        seatsAvailable: flights.seatsAvailable,
         // aircraft: flights.aircraft,
         // status: flights.status,
       }).from(flights);
@@ -283,7 +282,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const flightsWithDefaults = allFlights.map(flight => ({
         ...flight,
         aircraft: "Boeing 737", // Default aircraft
-        status: "scheduled",   // Default status
+        status: "scheduled",    // Default status
+        currency: "USD",        // Default currency
+        price: flight.basePrice // Default price equals basePrice
       }));
       
       res.status(200).json(flightsWithDefaults);
@@ -400,7 +401,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...flight,
           // Add default values for any missing fields
           aircraft: "Boeing 737", // Default aircraft
-          status: "scheduled",   // Default status
+          status: "scheduled",    // Default status
+          currency: "USD",        // Default currency
+          price: flight.basePrice, // Default price equals basePrice
+          departureCountry: flight.departureCity ? `Country of ${flight.departureCity}` : "Unknown",
+          arrivalCountry: flight.arrivalCity ? `Country of ${flight.arrivalCity}` : "Unknown",
         },
         user,
         // Add ticket details 
