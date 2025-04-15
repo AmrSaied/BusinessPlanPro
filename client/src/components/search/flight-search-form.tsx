@@ -51,7 +51,8 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
       passengers: 1,
       tripType: "round-trip",
       travelPurpose: "visa"
-    }
+    },
+    mode: "onSubmit" // Only validate when form is submitted
   });
 
   const watchedDepartureDate = watch("departureDate");
@@ -60,7 +61,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   // Handle origin airport selection
   const handleOriginSelect = (airport: Airport) => {
     setOriginAirport(airport);
-    setValue("origin", airport.iataCode, { shouldValidate: true });
+    setValue("origin", airport.iataCode, { shouldValidate: false });
   };
 
   // Handle destination airport selection
