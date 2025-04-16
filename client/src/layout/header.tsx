@@ -78,7 +78,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-card shadow-sm border-b">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo Section */}
@@ -94,22 +94,22 @@ const Header = () => {
           {/* Navigation - Desktop */}
           <nav className="hidden md:flex items-center justify-between min-w-[380px] max-w-[500px] flex-grow mx-4 rtl:flex-row-reverse">
             <Link href="/">
-              <span className={`font-medium ${location === '/' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
+              <span className={`font-medium ${location === '/' ? 'text-primary' : 'text-muted-foreground hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_home')}
               </span>
             </Link>
             <Link href="/how-it-works">
-              <span className={`font-medium ${location === '/how-it-works' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
+              <span className={`font-medium ${location === '/how-it-works' ? 'text-primary' : 'text-muted-foreground hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_how_it_works')}
               </span>
             </Link>
             <Link href="/faq">
-              <span className={`font-medium ${location === '/faq' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
+              <span className={`font-medium ${location === '/faq' ? 'text-primary' : 'text-muted-foreground hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_faq')}
               </span>
             </Link>
             <Link href="/support">
-              <span className={`font-medium ${location === '/support' ? 'text-primary' : 'text-gray-600 hover:text-primary'} transition cursor-pointer`}>
+              <span className={`font-medium ${location === '/support' ? 'text-primary' : 'text-muted-foreground hover:text-primary'} transition cursor-pointer`}>
                 {t('nav_support')}
               </span>
             </Link>
@@ -120,10 +120,10 @@ const Header = () => {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center text-sm rounded-md px-3 py-1.5 text-gray-700 hover:bg-gray-100">
-                  <Globe className="h-4 w-4 text-gray-500 ltr:mr-2 rtl:ml-2 flex-shrink-0" />
+                <Button variant="ghost" className="flex items-center text-sm rounded-md px-3 py-1.5">
+                  <Globe className="h-4 w-4 text-muted-foreground ltr:mr-2 rtl:ml-2 flex-shrink-0" />
                   <span className="truncate max-w-[120px]">{languages[currentLanguage]?.nativeName || 'English'}</span>
-                  <ChevronDown className="h-4 w-4 text-gray-500 ltr:ml-2 rtl:mr-2 flex-shrink-0" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground ltr:ml-2 rtl:mr-2 flex-shrink-0" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52">

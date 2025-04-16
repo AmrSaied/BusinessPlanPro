@@ -122,7 +122,12 @@ function Router() {
 
 function App() {
   const appContent = (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider 
+      attribute="class" 
+      defaultTheme="system" 
+      enableSystem
+      disableTransitionOnChange
+    >
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
           <AuthProvider>

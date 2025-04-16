@@ -8,7 +8,7 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Header />
       <main className="flex-grow">
         {children}
@@ -17,7 +17,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       
       {/* Chat Support Button */}
       <div className="fixed bottom-6 right-6 z-10">
-        <button className="bg-primary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-primary-600 transition">
+        <button className="bg-primary text-primary-foreground w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition">
           <i className="fas fa-comments text-2xl"></i>
         </button>
       </div>
