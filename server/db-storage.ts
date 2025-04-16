@@ -9,7 +9,7 @@ import {
   BookingPassenger, InsertBookingPassenger,
   SystemLog, InsertSystemLog, LogLevel
 } from '@shared/schema';
-import { eq, ilike, or, and } from 'drizzle-orm';
+import { eq, ilike, or, and, sql } from 'drizzle-orm';
 import { users, flights, passengers, bookings, airports, bookingPassengers, systemLogs } from '@shared/schema';
 import { generatePNR } from './utils';
 import connectPgSimple from 'connect-pg-simple';
@@ -547,7 +547,6 @@ export class DatabaseStorage implements IStorage {
   
   async addSystemLog(level: LogLevel, service: string, message: string): Promise<SystemLog> {
     const logEntry: InsertSystemLog = {
-      timestamp: new Date(),
       level,
       service,
       message
