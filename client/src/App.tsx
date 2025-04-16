@@ -122,18 +122,20 @@ function Router() {
 
 function App() {
   const appContent = (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <AuthProvider>
-          <TranslationProvider>
-            <BookingProvider>
-              <Toaster />
-              <Router />
-            </BookingProvider>
-          </TranslationProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <AuthProvider>
+            <TranslationProvider>
+              <BookingProvider>
+                <Toaster />
+                <Router />
+              </BookingProvider>
+            </TranslationProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 
   // If running in Electron, wrap with ElectronAppWrapper
