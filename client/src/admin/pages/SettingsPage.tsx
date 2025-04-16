@@ -378,20 +378,20 @@ const SettingsPage = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="maintainanceMode">Maintenance Mode</Label>
+                    <Label htmlFor="maintenanceMode">Maintenance Mode</Label>
                     <div className="flex items-center space-x-2 pt-2">
                       <Switch
-                        id="maintainanceMode"
-                        checked={generalSettings.maintainanceMode}
+                        id="maintenanceMode"
+                        checked={generalSettings.maintenanceMode}
                         onCheckedChange={(checked) =>
                           setGeneralSettings({
                             ...generalSettings,
-                            maintainanceMode: checked,
+                            maintenanceMode: checked,
                           })
                         }
                       />
-                      <Label htmlFor="maintainanceMode">
-                        {generalSettings.maintainanceMode ? "Enabled" : "Disabled"}
+                      <Label htmlFor="maintenanceMode">
+                        {generalSettings.maintenanceMode ? "Enabled" : "Disabled"}
                       </Label>
                     </div>
                   </div>
