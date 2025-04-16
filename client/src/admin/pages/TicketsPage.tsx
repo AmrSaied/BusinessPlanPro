@@ -65,7 +65,7 @@ interface BookingWithTicket extends Booking {
 const TicketsPage = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<BookingWithTicket | null>(null);
@@ -134,7 +134,7 @@ const TicketsPage = () => {
           (booking.ticketNumber && booking.ticketNumber.toLowerCase().includes(searchQuery.toLowerCase()));
 
         const matchesStatus =
-          statusFilter === "" || booking.status === statusFilter;
+          statusFilter === "all" || booking.status === statusFilter;
 
         return matchesSearch && matchesStatus;
       })
@@ -536,7 +536,7 @@ const TicketsPage = () => {
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All statuses</SelectItem>
+                <SelectItem value="all">All statuses</SelectItem>
                 <SelectItem value="confirmed">Confirmed</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
