@@ -47,7 +47,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const FlightsPage = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [airlineFilter, setAirlineFilter] = useState("");
+  const [airlineFilter, setAirlineFilter] = useState("all");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -189,7 +189,7 @@ const FlightsPage = () => {
           flight.arrivalAirport.toLowerCase().includes(searchQuery.toLowerCase());
 
         const matchesAirline =
-          airlineFilter === "" || flight.airlineCode === airlineFilter;
+          airlineFilter === "all" || flight.airlineCode === airlineFilter;
 
         return matchesSearch && matchesAirline;
       })
@@ -625,7 +625,7 @@ const FlightsPage = () => {
                 <SelectValue placeholder="All airlines" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All airlines</SelectItem>
+                <SelectItem value="all">All airlines</SelectItem>
                 {uniqueAirlineCodes.map((code) => (
                   <SelectItem key={code} value={code}>
                     {code}
