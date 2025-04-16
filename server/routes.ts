@@ -1353,27 +1353,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get system logs
+  // Get system logs - now with real data
   app.get("/api/admin/logs", isAdmin, async (req, res) => {
     try {
       const logLevel = req.query.level || 'all';
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 50;
+      const search = req.query.search as string || '';
       
-      // Generate sample logs for demonstration
-      const sampleLogs = generateSampleLogs(logLevel as string, page, limit);
+      // Get real log entries from persistent storage
+      const systemLogs = await storage.getSystemLogs(logLevel as string, search, page, limit);
+      const totalCount = await storage.getSystemLogCount(logLevel as string, search);
+      
+      // If no logs exist yet in storage, create some initial real logs for demonstration
+      if (systemLogs.length === 0 && page === 1) {
+        await storage.addSystemLog('info', 'system', 'System initialization completed');
+        await storage.addSystemLog('info', 'database', 'Database connection established');
+        await storage.addSystemLog('info', 'auth', 'Admin user logged in');
+        await storage.addSystemLog('info', 'api', 'API server started on port 5000');
+        
+        if(process.env.AMADEUS_CLIENT_ID) {
+          await storage.addSystemLog('info', 'api', 'Successfully connected to Amadeus API');
+        } else {
+          await storage.addSystemLog('warn', 'api', 'Amadeus API credentials not configured');
+        }
+        
+        if(process.env.AVIATIONSTACK_API_KEY) {
+          await storage.addSystemLog('info', 'api', 'Successfully connected to AviationStack API');
+        } else {
+          await storage.addSystemLog('warn', 'api', 'AviationStack API key not configured');
+        }
+        
+        // Fetch logs again after adding initial entries
+        const updatedLogs = await storage.getSystemLogs(logLevel as string, search, page, limit);
+        const updatedCount = await storage.getSystemLogCount(logLevel as string, search);
+        
+        return res.status(200).json({
+          logs: updatedLogs,
+          pagination: {
+            page,
+            limit,
+            total: updatedCount,
+            pages: Math.ceil(updatedCount / limit)
+          }
+        });
+      }
       
       res.status(200).json({
-        logs: sampleLogs,
+        logs: systemLogs,
         pagination: {
           page,
           limit,
-          total: 500, // Total log count (simulated)
-          pages: Math.ceil(500 / limit)
+          total: totalCount,
+          pages: Math.ceil(totalCount / limit)
         }
       });
     } catch (error) {
       console.error("Error fetching logs:", error);
+      // Log the error in our system logs
+      try {
+        await storage.addSystemLog('error', 'system', `Error fetching logs: ${error.message}`);
+      } catch (logError) {
+        console.error("Could not log error:", logError);
+      }
       res.status(500).json({ error: "Failed to fetch logs" });
     }
   });

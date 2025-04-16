@@ -239,3 +239,24 @@ export type BookingPassenger = typeof bookingPassengers.$inferSelect;
 export type InsertBookingPassenger = z.infer<typeof insertBookingPassengerSchema>;
 export type FlightSearch = z.infer<typeof flightSearchSchema>;
 export type Payment = z.infer<typeof paymentSchema>;
+
+// Log level type for system logs
+export const LogLevelEnum = z.enum(["info", "warn", "error", "debug"]);
+export type LogLevel = z.infer<typeof LogLevelEnum>;
+
+// System Logs Schema
+export const systemLogs = pgTable("system_logs", {
+  id: serial("id").primaryKey(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  level: text("level").notNull().$type<LogLevel>(),
+  service: text("service").notNull(),
+  message: text("message").notNull(),
+});
+
+export const insertSystemLogSchema = createInsertSchema(systemLogs).omit({
+  id: true,
+  timestamp: true
+});
+
+export type SystemLog = typeof systemLogs.$inferSelect;
+export type InsertSystemLog = z.infer<typeof insertSystemLogSchema>;

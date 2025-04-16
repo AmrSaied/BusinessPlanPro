@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
-import { users, flights, passengers, bookings, airports, bookingPassengers } from '@shared/schema';
+import { users, flights, passengers, bookings, airports, bookingPassengers, systemLogs } from '@shared/schema';
 
 // Create a PostgreSQL connection pool
 export const pool = new pg.Pool({
@@ -9,7 +9,7 @@ export const pool = new pg.Pool({
 });
 
 // Create a Drizzle ORM instance
-export const db = drizzle(pool, { schema: { users, flights, passengers, bookings, airports, bookingPassengers } });
+export const db = drizzle(pool, { schema: { users, flights, passengers, bookings, airports, bookingPassengers, systemLogs } });
 
 // Initialize database (create tables if they don't exist)
 export async function initDb() {
@@ -109,6 +109,14 @@ export async function initDb() {
           booking_id INTEGER NOT NULL REFERENCES bookings(id),
           passenger_id INTEGER NOT NULL REFERENCES passengers(id),
           UNIQUE(booking_id, passenger_id)
+        );
+
+        CREATE TABLE IF NOT EXISTS system_logs (
+          id SERIAL PRIMARY KEY,
+          timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          level TEXT NOT NULL,
+          service TEXT NOT NULL,
+          message TEXT NOT NULL
         );
       `);
       
