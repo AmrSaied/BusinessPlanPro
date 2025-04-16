@@ -1162,6 +1162,222 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin Settings API Endpoints
+  
+  // Get all settings
+  app.get("/api/admin/settings", isAdmin, async (req, res) => {
+    try {
+      // In a real app, these would be fetched from the database
+      // For this prototype, we'll return default settings
+      const settings = {
+        general: {
+          siteName: "Global Air Travel Services",
+          siteDescription: "Providing dummy tickets for visa applications",
+          supportEmail: "support@example.com",
+          defaultCurrency: "USD",
+          maintenanceMode: false,
+          termsAndConditionsUrl: "/terms",
+          privacyPolicyUrl: "/privacy",
+        },
+        email: {
+          smtpHost: "",
+          smtpPort: 587,
+          smtpUser: "",
+          smtpPassword: "",
+          emailFrom: "",
+          emailReplyTo: "",
+          emailTemplatesPath: "/templates/email",
+          enableEmailNotifications: false,
+        },
+        api: {
+          amadeusApiEnabled: true,
+          aviationstackApiEnabled: true,
+          openaiEnabled: false,
+          stripeEnabled: false,
+          allowThirdPartyApiCalls: true,
+          rateLimit: 100,
+          timeoutSeconds: 30,
+        }
+      };
+      
+      res.status(200).json(settings);
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+  
+  // Update general settings
+  app.put("/api/admin/settings/general", isAdmin, async (req, res) => {
+    try {
+      const generalSettings = req.body;
+      // In a real app, save to database
+      console.log("Updating general settings:", generalSettings);
+      
+      res.status(200).json({
+        message: "General settings updated successfully",
+        settings: generalSettings
+      });
+    } catch (error) {
+      console.error("Error updating general settings:", error);
+      res.status(500).json({ error: "Failed to update general settings" });
+    }
+  });
+  
+  // Update email settings
+  app.put("/api/admin/settings/email", isAdmin, async (req, res) => {
+    try {
+      const emailSettings = req.body;
+      // In a real app, save to database
+      console.log("Updating email settings:", emailSettings);
+      
+      res.status(200).json({
+        message: "Email settings updated successfully",
+        settings: emailSettings
+      });
+    } catch (error) {
+      console.error("Error updating email settings:", error);
+      res.status(500).json({ error: "Failed to update email settings" });
+    }
+  });
+  
+  // Update API settings
+  app.put("/api/admin/settings/api", isAdmin, async (req, res) => {
+    try {
+      const apiSettings = req.body;
+      // In a real app, save to database
+      console.log("Updating API settings:", apiSettings);
+      
+      res.status(200).json({
+        message: "API settings updated successfully",
+        settings: apiSettings
+      });
+    } catch (error) {
+      console.error("Error updating API settings:", error);
+      res.status(500).json({ error: "Failed to update API settings" });
+    }
+  });
+  
+  // Test email connection
+  app.post("/api/admin/settings/email/test", isAdmin, async (req, res) => {
+    try {
+      const emailSettings = req.body;
+      // In a real app, attempt to send a test email
+      console.log("Testing email connection with settings:", emailSettings);
+      
+      // Simulate success
+      res.status(200).json({
+        message: "Test email sent successfully",
+      });
+    } catch (error) {
+      console.error("Error testing email:", error);
+      res.status(500).json({ error: "Failed to send test email" });
+    }
+  });
+  
+  // Test API connection
+  app.post("/api/admin/settings/api/test/:api", isAdmin, async (req, res) => {
+    try {
+      const apiType = req.params.api;
+      
+      // Simple success/fail testing based on API type
+      let success = true;
+      let message = `Connection to ${apiType} API successful`;
+      
+      switch (apiType) {
+        case "amadeus":
+          // Test Amadeus API connection
+          try {
+            // For demonstration, we'll check if the API client is initialized
+            if (!process.env.AMADEUS_CLIENT_ID || !process.env.AMADEUS_CLIENT_SECRET) {
+              throw new Error("Amadeus API credentials not configured");
+            }
+            // In a real implementation, this would test a real API call
+          } catch (error: any) {
+            success = false;
+            message = `Failed to connect to Amadeus API: ${error.message}`;
+          }
+          break;
+          
+        case "aviationstack":
+          // Placeholder for testing AviationStack API
+          break;
+          
+        case "openai":
+          // Placeholder for testing OpenAI API
+          if (!process.env.OPENAI_API_KEY) {
+            success = false;
+            message = "OpenAI API key not configured";
+          }
+          break;
+          
+        case "stripe":
+          // Placeholder for testing Stripe API
+          if (!process.env.STRIPE_SECRET_KEY) {
+            success = false;
+            message = "Stripe API key not configured";
+          }
+          break;
+          
+        default:
+          return res.status(400).json({ error: `Unknown API type: ${apiType}` });
+      }
+      
+      if (success) {
+        res.status(200).json({ message });
+      } else {
+        res.status(400).json({ error: message });
+      }
+    } catch (error) {
+      console.error(`Error testing ${req.params.api} API:`, error);
+      res.status(500).json({ error: `Failed to test ${req.params.api} API` });
+    }
+  });
+  
+  // Restart server (simulation only)
+  app.post("/api/admin/settings/restart-server", isAdmin, async (req, res) => {
+    try {
+      // In a production app, this would trigger an actual server restart
+      console.log("Simulating server restart...");
+      
+      // Send response before simulating restart
+      res.status(200).json({
+        message: "Server restart initiated",
+      });
+      
+      // Log restart simulation
+      console.log("Server would restart here in a production environment");
+    } catch (error) {
+      console.error("Error restarting server:", error);
+      res.status(500).json({ error: "Failed to restart server" });
+    }
+  });
+  
+  // Get system logs
+  app.get("/api/admin/logs", isAdmin, async (req, res) => {
+    try {
+      const logLevel = req.query.level || 'all';
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      // Generate sample logs for demonstration
+      const sampleLogs = generateSampleLogs(logLevel as string, page, limit);
+      
+      res.status(200).json({
+        logs: sampleLogs,
+        pagination: {
+          page,
+          limit,
+          total: 500, // Total log count (simulated)
+          pages: Math.ceil(500 / limit)
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+      res.status(500).json({ error: "Failed to fetch logs" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -1181,6 +1397,248 @@ function generateBookingReference(): string {
 }
 
 // Function to get a list of major international airports
+// Function to generate sample logs for the admin logs section
+function generateSampleLogs(level: string, page: number, limit: number): Array<any> {
+  const logs = [];
+  const logLevels = ['info', 'warn', 'error', 'debug'];
+  const services = ['api', 'database', 'auth', 'payment', 'email', 'flight'];
+  const startIndex = (page - 1) * limit;
+  
+  for (let i = 0; i < limit; i++) {
+    const timestamp = new Date();
+    timestamp.setMinutes(timestamp.getMinutes() - startIndex - i);
+    
+    const randomLevel = logLevels[Math.floor(Math.random() * logLevels.length)];
+    
+    // Skip if filtering by level and not matching
+    if (level !== 'all' && level !== randomLevel) {
+      i--; // Try again
+      continue;
+    }
+    
+    const service = services[Math.floor(Math.random() * services.length)];
+    let message = '';
+    
+    switch (randomLevel) {
+      case 'info':
+        message = getRandomInfoLog(service);
+        break;
+      case 'warn':
+        message = getRandomWarnLog(service);
+        break;
+      case 'error':
+        message = getRandomErrorLog(service);
+        break;
+      case 'debug':
+        message = getRandomDebugLog(service);
+        break;
+    }
+    
+    logs.push({
+      id: startIndex + i + 1,
+      timestamp: timestamp.toISOString(),
+      level: randomLevel,
+      service,
+      message
+    });
+  }
+  
+  return logs;
+}
+
+// Helper functions to generate realistic log messages
+function getRandomInfoLog(service: string): string {
+  type LogMap = {
+    [key: string]: string[];
+  };
+  
+  const infoLogs: LogMap = {
+    api: [
+      "Request received for /api/flights/search",
+      "Authentication succeeded for user",
+      "API rate limit increased for premium user",
+      "Response sent successfully in 127ms"
+    ],
+    database: [
+      "Database connection established",
+      "Query executed successfully in 43ms",
+      "New record created in flights table",
+      "Database index optimization completed"
+    ],
+    auth: [
+      "User logged in successfully",
+      "New user registered",
+      "Password reset email sent",
+      "Session refreshed for user"
+    ],
+    payment: [
+      "Payment processed successfully",
+      "New payment method added",
+      "Refund processed for booking",
+      "Payment gateway connection established"
+    ],
+    email: [
+      "Email sent successfully",
+      "Template rendered for welcome email",
+      "Email queue processed",
+      "Notification email dispatched"
+    ],
+    flight: [
+      "Flight data synchronized",
+      "New flight added to database",
+      "Flight status updated",
+      "Flight search index rebuilt"
+    ]
+  };
+  
+  const logs = infoLogs[service] || infoLogs.api;
+  return logs[Math.floor(Math.random() * logs.length)];
+}
+
+function getRandomWarnLog(service: string): string {
+  type LogMap = {
+    [key: string]: string[];
+  };
+  
+  const warnLogs: LogMap = {
+    api: [
+      "API rate limit approaching threshold",
+      "Slow API response detected (536ms)",
+      "Deprecated API endpoint accessed",
+      "Request headers missing recommended fields"
+    ],
+    database: [
+      "Slow query detected (927ms)",
+      "Database connection pool near capacity",
+      "Database disk space running low (82%)",
+      "Query timeout extended"
+    ],
+    auth: [
+      "Failed login attempt for user",
+      "Password reset requested from unknown IP",
+      "Numerous failed login attempts detected",
+      "Session timeout extended for legacy client"
+    ],
+    payment: [
+      "Payment gateway response delayed",
+      "Payment verification pending",
+      "Currency conversion fallback used",
+      "Duplicate payment attempt detected"
+    ],
+    email: [
+      "Email delivery delayed",
+      "Template rendering slow (324ms)",
+      "Email queue growing larger than expected",
+      "Email service fallback used"
+    ],
+    flight: [
+      "Flight data partially outdated",
+      "Flight search optimization skipped",
+      "Airline API response delayed",
+      "Flight cache rebuilding"
+    ]
+  };
+  
+  const logs = warnLogs[service] || warnLogs.api;
+  return logs[Math.floor(Math.random() * logs.length)];
+}
+
+function getRandomErrorLog(service: string): string {
+  type LogMap = {
+    [key: string]: string[];
+  };
+  
+  const errorLogs: LogMap = {
+    api: [
+      "API endpoint returned 500 status code",
+      "API request validation failed",
+      "API rate limit exceeded for user",
+      "Unauthorized API access attempt"
+    ],
+    database: [
+      "Database connection failed",
+      "Query execution error: foreign key constraint",
+      "Database transaction rollback",
+      "Database deadlock detected"
+    ],
+    auth: [
+      "Authentication failed for user",
+      "Token validation error",
+      "Password reset link expired",
+      "OAuth provider connection error"
+    ],
+    payment: [
+      "Payment processing failed: insufficient funds",
+      "Payment gateway connection error",
+      "Invalid payment information provided",
+      "Payment reconciliation error"
+    ],
+    email: [
+      "Failed to send email: invalid address",
+      "Email template rendering error",
+      "SMTP connection failure",
+      "Email service unavailable"
+    ],
+    flight: [
+      "Flight data synchronization failed",
+      "Invalid flight information received",
+      "Flight not found in database",
+      "External flight API connection error"
+    ]
+  };
+  
+  const logs = errorLogs[service] || errorLogs.api;
+  return logs[Math.floor(Math.random() * logs.length)];
+}
+
+function getRandomDebugLog(service: string): string {
+  type LogMap = {
+    [key: string]: string[];
+  };
+  
+  const debugLogs: LogMap = {
+    api: [
+      "API request headers: {\"Authorization\": \"Bearer ***\", \"Content-Type\": \"application/json\"}",
+      "API response time: 127ms, payload size: 24.3KB",
+      "API cache hit ratio: 78.3%",
+      "API endpoint execution path: controller > middleware > service > repository"
+    ],
+    database: [
+      "SQL query: SELECT * FROM flights WHERE departure_date > NOW() LIMIT 50",
+      "Database connection pool: 8/20 active connections",
+      "Database query plan: INDEX SCAN on flights_departure_idx",
+      "Database transaction isolation level: READ COMMITTED"
+    ],
+    auth: [
+      "JWT payload for user: {\"sub\": \"user123\", \"role\": \"customer\", \"exp\": 1618947636}",
+      "Auth flow execution: basic > credentials > validation > session",
+      "Session data size: 2.3KB",
+      "Auth middleware execution time: 38ms"
+    ],
+    payment: [
+      "Payment request params: {\"amount\": 299.99, \"currency\": \"USD\", \"method\": \"card\"}",
+      "Payment processing steps: validation > authorization > capture > confirmation",
+      "Payment gateway response time: 876ms",
+      "Payment idempotency key: pay_1Hj8t92eZvKYlo2CJOEpL9lM"
+    ],
+    email: [
+      "Email rendering context: {\"user\": \"John\", \"order\": \"#12345\", \"amount\": \"$299.99\"}",
+      "Email delivery attempt: 1 of 3",
+      "Email size: 18.7KB with 2 attachments",
+      "Email template variables: 12 replacements made"
+    ],
+    flight: [
+      "Flight data mapping: 23 fields processed, 2 transformations applied",
+      "Flight search parameters: {\"from\": \"LHR\", \"to\": \"JFK\", \"date\": \"2023-04-15\"}",
+      "Flight cache: 1243 entries, last refresh: 34min ago",
+      "Flight price calculation: base=$420, taxes=$78.50, fees=$25, total=$523.50"
+    ]
+  };
+  
+  const logs = debugLogs[service] || debugLogs.api;
+  return logs[Math.floor(Math.random() * logs.length)];
+}
+
 function getMajorAirports(): Array<InsertAirport> {
   return [
     // Middle East
