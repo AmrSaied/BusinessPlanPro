@@ -517,7 +517,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       savedPassengers.map((savedPassenger) => (
                         <SelectItem 
                           key={savedPassenger.id} 
-                          value={savedPassenger.id?.toString() || ''}
+                          value={savedPassenger.id?.toString() || 'unknown'}
                           className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
                         >
                           {savedPassenger.title}. {savedPassenger.firstName} {savedPassenger.lastName}
