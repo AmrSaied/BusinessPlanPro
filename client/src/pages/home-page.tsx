@@ -86,11 +86,6 @@ const HomePage = () => {
                   {t('hero_how_it_works')}
                 </Button>
               </Link>
-              <Link href="/admin/login">
-                <Button variant="outline" className="border-red-400 bg-red-500/70 hover:bg-red-500/90 px-6 py-3 text-white">
-                  Admin Panel
-                </Button>
-              </Link>
             </div>
           </div>
           <div className="md:w-1/2">
