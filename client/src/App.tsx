@@ -9,6 +9,7 @@ import { TranslationProvider } from "./hooks/use-translation";
 import { ProtectedRoute } from "./lib/protected-route";
 import ElectronAppWrapper from "@/components/desktop/electron-app-wrapper";
 import { isElectron } from "@/lib/environment";
+import { ThemeProvider } from "next-themes";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
 import FlightSearchPage from "@/pages/flight-search-page";
