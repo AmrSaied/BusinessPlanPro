@@ -6,10 +6,11 @@ import {
   Passenger, InsertPassenger, 
   Booking, InsertBooking, 
   Airport, InsertAirport, 
-  BookingPassenger, InsertBookingPassenger 
+  BookingPassenger, InsertBookingPassenger,
+  SystemLog, InsertSystemLog, LogLevel
 } from '@shared/schema';
 import { eq, ilike, or, and } from 'drizzle-orm';
-import { users, flights, passengers, bookings, airports, bookingPassengers } from '@shared/schema';
+import { users, flights, passengers, bookings, airports, bookingPassengers, systemLogs } from '@shared/schema';
 import { generatePNR } from './utils';
 import connectPgSimple from 'connect-pg-simple';
 import session from 'express-session';
@@ -472,5 +473,89 @@ export class DatabaseStorage implements IStorage {
     for (const flight of flightData) {
       await this.createFlight(flight);
     }
+  }
+  
+  // System logs operations
+  async getSystemLogs(level: string, search: string, page: number, limit: number): Promise<SystemLog[]> {
+    let query = db.select().from(systemLogs);
+    
+    // Add conditions for filtering
+    const conditions = [];
+    
+    // Filter by level if not 'all'
+    if (level && level !== 'all') {
+      conditions.push(eq(systemLogs.level, level));
+    }
+    
+    // Filter by search term if provided
+    if (search && search.trim() !== '') {
+      const searchLower = search.toLowerCase();
+      conditions.push(
+        or(
+          ilike(systemLogs.message, `%${searchLower}%`),
+          ilike(systemLogs.service, `%${searchLower}%`)
+        )
+      );
+    }
+    
+    // Apply conditions if any
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    // Add pagination and ordering
+    query = query
+      .orderBy(systemLogs.timestamp, 'desc')
+      .limit(limit)
+      .offset((page - 1) * limit);
+    
+    // Execute the query
+    return await query;
+  }
+  
+  async getSystemLogCount(level: string, search: string): Promise<number> {
+    let query = db.select({ count: sql<number>`count(*)` }).from(systemLogs);
+    
+    // Add conditions for filtering
+    const conditions = [];
+    
+    // Filter by level if not 'all'
+    if (level && level !== 'all') {
+      conditions.push(eq(systemLogs.level, level));
+    }
+    
+    // Filter by search term if provided
+    if (search && search.trim() !== '') {
+      const searchLower = search.toLowerCase();
+      conditions.push(
+        or(
+          ilike(systemLogs.message, `%${searchLower}%`),
+          ilike(systemLogs.service, `%${searchLower}%`)
+        )
+      );
+    }
+    
+    // Apply conditions if any
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    // Execute query
+    const result = await query;
+    return Number(result[0].count);
+  }
+  
+  async addSystemLog(level: LogLevel, service: string, message: string): Promise<SystemLog> {
+    const logEntry: InsertSystemLog = {
+      timestamp: new Date(),
+      level,
+      service,
+      message
+    };
+    
+    const results = await db.insert(systemLogs).values(logEntry).returning();
+    console.log(`[${level.toUpperCase()}] ${service}: ${message}`);
+    
+    return results[0];
   }
 }

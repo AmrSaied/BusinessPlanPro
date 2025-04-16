@@ -4,7 +4,8 @@ import {
   Passenger, InsertPassenger,
   Booking, InsertBooking, 
   Airport, InsertAirport,
-  BookingPassenger, InsertBookingPassenger
+  BookingPassenger, InsertBookingPassenger,
+  SystemLog, InsertSystemLog, LogLevel
 } from "@shared/schema";
 
 import session from "express-session";
@@ -51,6 +52,11 @@ export interface IStorage {
   // Booking-Passenger operations
   createBookingPassenger(bookingPassenger: InsertBookingPassenger): Promise<BookingPassenger>;
   getPassengersByBookingId(bookingId: number): Promise<Passenger[]>;
+  
+  // System logs operations
+  getSystemLogs(level: string, search: string, page: number, limit: number): Promise<SystemLog[]>;
+  getSystemLogCount(level: string, search: string): Promise<number>;
+  addSystemLog(level: LogLevel, service: string, message: string): Promise<SystemLog>;
 }
 
 import createMemoryStore from "memorystore";
@@ -64,6 +70,7 @@ export class MemStorage implements IStorage {
   private bookings: Map<number, Booking>;
   private airports: Map<number, Airport>;
   private bookingPassengers: Map<number, BookingPassenger>;
+  private systemLogs: Map<number, SystemLog>;
   
   private currentUserId: number;
   private currentFlightId: number;
@@ -71,6 +78,7 @@ export class MemStorage implements IStorage {
   private currentBookingId: number;
   private currentAirportId: number;
   private currentBookingPassengerId: number;
+  private currentLogId: number;
   
   sessionStore: session.Store;
 
@@ -81,6 +89,7 @@ export class MemStorage implements IStorage {
     this.bookings = new Map();
     this.airports = new Map();
     this.bookingPassengers = new Map();
+    this.systemLogs = new Map();
     
     this.currentUserId = 1;
     this.currentFlightId = 1;
@@ -88,6 +97,7 @@ export class MemStorage implements IStorage {
     this.currentBookingId = 1;
     this.currentAirportId = 1;
     this.currentBookingPassengerId = 1;
+    this.currentLogId = 1;
     
     // Initialize memory store for sessions
     this.sessionStore = new MemoryStore({
@@ -725,6 +735,72 @@ export class MemStorage implements IStorage {
     flights.forEach(flight => {
       this.createFlight(flight);
     });
+  }
+  
+  // System logs operations
+  async getSystemLogs(level: string, search: string, page: number, limit: number): Promise<SystemLog[]> {
+    let logs = Array.from(this.systemLogs.values());
+    
+    // Filter by level if not 'all'
+    if (level && level !== 'all') {
+      logs = logs.filter(log => log.level === level);
+    }
+    
+    // Filter by search term if provided
+    if (search && search.trim() !== '') {
+      const searchLower = search.toLowerCase();
+      logs = logs.filter(log => 
+        log.message.toLowerCase().includes(searchLower) || 
+        log.service.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Sort by timestamp (newest first)
+    logs.sort((a, b) => {
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
+    
+    // Apply pagination
+    const startIndex = (page - 1) * limit;
+    return logs.slice(startIndex, startIndex + limit);
+  }
+  
+  async getSystemLogCount(level: string, search: string): Promise<number> {
+    let logs = Array.from(this.systemLogs.values());
+    
+    // Filter by level if not 'all'
+    if (level && level !== 'all') {
+      logs = logs.filter(log => log.level === level);
+    }
+    
+    // Filter by search term if provided
+    if (search && search.trim() !== '') {
+      const searchLower = search.toLowerCase();
+      logs = logs.filter(log => 
+        log.message.toLowerCase().includes(searchLower) || 
+        log.service.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    return logs.length;
+  }
+  
+  async addSystemLog(level: LogLevel, service: string, message: string): Promise<SystemLog> {
+    const id = this.currentLogId++;
+    const timestamp = new Date();
+    
+    const log: SystemLog = {
+      id,
+      timestamp,
+      level,
+      service,
+      message
+    };
+    
+    this.systemLogs.set(id, log);
+    console.log(`[${level.toUpperCase()}] ${service}: ${message}`);
+    
+    return log;
   }
 }
 
