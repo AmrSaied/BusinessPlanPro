@@ -40,7 +40,7 @@ interface GeneralSettings {
   siteDescription: string;
   supportEmail: string;
   defaultCurrency: string;
-  maintainanceMode: boolean;
+  maintenanceMode: boolean;
   termsAndConditionsUrl: string;
   privacyPolicyUrl: string;
 }
@@ -77,7 +77,7 @@ const SettingsPage = () => {
     siteDescription: "Providing dummy tickets for visa applications",
     supportEmail: "support@example.com",
     defaultCurrency: "USD",
-    maintainanceMode: false,
+    maintenanceMode: false,
     termsAndConditionsUrl: "/terms",
     privacyPolicyUrl: "/privacy",
   });
