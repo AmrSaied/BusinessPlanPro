@@ -36,7 +36,7 @@ const Footer = () => {
   const { languages, changeLanguage } = languageContext;
 
   return (
-    <footer className="bg-gray-800 text-white pt-12 pb-6">
+    <footer className="bg-primary text-primary-foreground pt-12 pb-6">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
@@ -47,20 +47,20 @@ const Footer = () => {
               </svg>
               <span className="font-heading font-bold text-lg">{t('app_name')}</span>
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-primary-foreground/70 mb-4">
               {t('footer_description')}
             </p>
             <div className="flex space-x-4">
-              <span className="text-gray-400 hover:text-white transition cursor-pointer">
+              <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">
                 <i className="fab fa-facebook-f"></i>
               </span>
-              <span className="text-gray-400 hover:text-white transition cursor-pointer">
+              <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">
                 <i className="fab fa-twitter"></i>
               </span>
-              <span className="text-gray-400 hover:text-white transition cursor-pointer">
+              <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">
                 <i className="fab fa-instagram"></i>
               </span>
-              <span className="text-gray-400 hover:text-white transition cursor-pointer">
+              <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">
                 <i className="fab fa-linkedin-in"></i>
               </span>
             </div>
@@ -72,25 +72,25 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link href="/">
-                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_home')}</span>
+                  <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_home')}</span>
                 </Link>
               </li>
               <li>
                 <Link href="/#how-it-works">
-                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_how_it_works')}</span>
+                  <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_how_it_works')}</span>
                 </Link>
               </li>
               <li>
-                <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_pricing')}</span>
+                <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_pricing')}</span>
               </li>
               <li>
                 <Link href="/faq">
-                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_faq')}</span>
+                  <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_faq')}</span>
                 </Link>
               </li>
               <li>
                 <Link href="/support">
-                  <span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_contact')}</span>
+                  <span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_contact')}</span>
                 </Link>
               </li>
             </ul>
@@ -100,11 +100,11 @@ const Footer = () => {
           <div>
             <h3 className="font-heading font-semibold text-lg mb-4">{t('support')}</h3>
             <ul className="space-y-2">
-              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_help')}</span></li>
-              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_chat')}</span></li>
-              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_email')}</span></li>
-              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_terms')}</span></li>
-              <li><span className="text-gray-400 hover:text-white transition cursor-pointer">{t('footer_privacy')}</span></li>
+              <li><span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_help')}</span></li>
+              <li><span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_chat')}</span></li>
+              <li><span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_email')}</span></li>
+              <li><span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_terms')}</span></li>
+              <li><span className="text-primary-foreground/70 hover:text-primary-foreground transition cursor-pointer">{t('footer_privacy')}</span></li>
             </ul>
           </div>
           
@@ -116,7 +116,7 @@ const Footer = () => {
                 <button 
                   key={code}
                   onClick={() => changeLanguage(code)}
-                  className="text-left text-gray-400 hover:text-white transition"
+                  className="text-left text-primary-foreground/70 hover:text-primary-foreground transition"
                 >
                   {lang.nativeName}
                 </button>
@@ -125,7 +125,7 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-gray-700 pt-6 text-center text-gray-400 text-sm">
+        <div className="border-t border-primary-foreground/20 pt-6 text-center text-primary-foreground/70 text-sm">
           <p>{t('footer_copyright')}</p>
           <p className="mt-2">
             <span className="mr-2">{t('footer_we_accept')}</span>
