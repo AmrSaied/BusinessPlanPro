@@ -66,10 +66,32 @@ interface ApiSettings {
   timeoutSeconds: number;
 }
 
+// Log interfaces
+interface LogEntry {
+  id: number;
+  timestamp: string;
+  level: "info" | "warn" | "error" | "debug";
+  service: string;
+  message: string;
+}
+
+interface LogPagination {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
+
 const SettingsPage = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("general");
   const [isRestartRequired, setIsRestartRequired] = useState(false);
+  
+  // Logs state
+  const [logLevel, setLogLevel] = useState("all");
+  const [logPage, setLogPage] = useState(1);
+  const [logLimit] = useState(50);
+  const [logSearch, setLogSearch] = useState("");
 
   // Settings form states
   const [generalSettings, setGeneralSettings] = useState<GeneralSettings>({
@@ -106,11 +128,23 @@ const SettingsPage = () => {
   // Fetch settings from API
   const {
     data: settings,
-    isLoading,
-    error,
+    isLoading: settingsLoading,
+    error: settingsError,
   } = useQuery({
     queryKey: ["/api/admin/settings"],
     queryFn: getQueryFn({ on401: "throw" }),
+  });
+  
+  // Fetch logs from API
+  const {
+    data: logs,
+    isLoading: logsLoading,
+    error: logsError,
+    refetch: refetchLogs
+  } = useQuery<{ logs: LogEntry[], pagination: LogPagination }>({
+    queryKey: ["/api/admin/logs", logPage, logLimit, logLevel, logSearch],
+    queryFn: getQueryFn({ on401: "throw" }),
+    enabled: activeTab === "logs"
   });
 
   // Update settings mutations
@@ -242,7 +276,7 @@ const SettingsPage = () => {
   };
 
   // Loading state
-  if (isLoading) {
+  if (settingsLoading) {
     return (
       <AdminLayout>
         <div className="flex items-center justify-center h-full">
@@ -253,7 +287,7 @@ const SettingsPage = () => {
   }
 
   // Error state
-  if (error) {
+  if (settingsError) {
     return (
       <AdminLayout>
         <Alert variant="destructive" className="mb-6">
@@ -852,7 +886,10 @@ const SettingsPage = () => {
                   <div className="bg-gray-50 p-4 border-b">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
-                        <Select defaultValue="all">
+                        <Select 
+                          value={logLevel}
+                          onValueChange={(value) => setLogLevel(value)}
+                        >
                           <SelectTrigger className="w-32">
                             <SelectValue placeholder="Log level" />
                           </SelectTrigger>
@@ -867,51 +904,81 @@ const SettingsPage = () => {
                         <Input
                           placeholder="Search logs..."
                           className="w-64"
+                          value={logSearch}
+                          onChange={(e) => setLogSearch(e.target.value)}
                         />
                       </div>
-                      <Button variant="outline">
-                        Refresh Logs
+                      <Button 
+                        variant="outline"
+                        onClick={() => refetchLogs()}
+                        disabled={logsLoading}
+                      >
+                        {logsLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Loading...
+                          </>
+                        ) : (
+                          "Refresh Logs"
+                        )}
                       </Button>
                     </div>
                   </div>
                   <div className="p-4 bg-black text-white font-mono text-sm h-96 overflow-auto">
-                    <p className="text-gray-400">
-                      [2025-04-15 12:45:23] [INFO] Server started on port 5000
-                    </p>
-                    <p className="text-green-400">
-                      [2025-04-15 12:45:25] [INFO] Database connection established
-                    </p>
-                    <p className="text-green-400">
-                      [2025-04-15 12:46:12] [INFO] User login: admin
-                    </p>
-                    <p className="text-yellow-400">
-                      [2025-04-15 12:47:41] [WARN] API rate limit approaching: /api/flights
-                    </p>
-                    <p className="text-red-400">
-                      [2025-04-15 12:52:19] [ERROR] Failed to connect to Amadeus API: Timeout
-                    </p>
-                    <p className="text-gray-400">
-                      [2025-04-15 12:53:01] [INFO] User admin updated system settings
-                    </p>
-                    <p className="text-green-400">
-                      [2025-04-15 12:54:12] [INFO] Ticket generated: TKT12345678
-                    </p>
-                    <p className="text-green-400">
-                      [2025-04-15 12:58:27] [INFO] Email sent to customer@example.com
-                    </p>
+                    {logsLoading ? (
+                      <div className="flex items-center justify-center h-64">
+                        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                      </div>
+                    ) : logsError ? (
+                      <div className="text-red-400 p-4">
+                        Failed to load logs. Please try again.
+                      </div>
+                    ) : logs?.logs && logs.logs.length > 0 ? (
+                      logs.logs.map((log) => (
+                        <p 
+                          key={log.id}
+                          className={`mb-1 ${
+                            log.level === "info" ? "text-gray-400" :
+                            log.level === "warn" ? "text-yellow-400" :
+                            log.level === "error" ? "text-red-400" :
+                            log.level === "debug" ? "text-blue-400" : "text-gray-400"
+                          }`}
+                        >
+                          [{log.timestamp}] [{log.level.toUpperCase()}] {log.service ? `[${log.service}]` : ""} {log.message}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-gray-500">No logs matching the current filters.</p>
+                    )}
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Showing 20 of 1,245 log entries
+                  {logs?.pagination ? (
+                    <>
+                      Showing {logs.pagination.limit * (logs.pagination.page - 1) + 1} to {Math.min(logs.pagination.limit * logs.pagination.page, logs.pagination.total)} of {logs.pagination.total} log entries
+                    </>
+                  ) : (
+                    "Loading log information..."
+                  )}
                 </div>
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm">
-                    Download Logs
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => logPage > 1 && setLogPage(logPage - 1)}
+                    disabled={!logs?.pagination || logs.pagination.page <= 1}
+                  >
+                    Previous
                   </Button>
-                  <Button variant="outline" size="sm">
-                    Clear Logs
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => logs?.pagination && logs.pagination.page < logs.pagination.pages && setLogPage(logPage + 1)}
+                    disabled={!logs?.pagination || logs.pagination.page >= logs.pagination.pages}
+                  >
+                    Next
                   </Button>
                 </div>
               </CardFooter>
