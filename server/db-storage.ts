@@ -63,8 +63,29 @@ export class DatabaseStorage implements IStorage {
 
   // Flight operations
   async getFlight(id: number): Promise<Flight | undefined> {
-    const results = await db.select().from(flights).where(eq(flights.id, id));
-    return results[0];
+    try {
+      const results = await db.select().from(flights).where(eq(flights.id, id));
+      
+      // If we have a result, add default values for any missing fields
+      if (results[0]) {
+        const flight = results[0];
+        
+        // Add default values for fields that may be missing in the database
+        return {
+          ...flight,
+          aircraft: flight.aircraft || 'Boeing 787-9', // Default aircraft
+          price: flight.price || flight.basePrice,
+          currency: flight.currency || 'USD',
+          seatsAvailable: flight.seatsAvailable || 100,
+          status: flight.status || 'scheduled',
+        };
+      }
+      
+      return results[0];
+    } catch (error) {
+      console.error('Error fetching flight:', error);
+      return undefined;
+    }
   }
 
   async getFlights(

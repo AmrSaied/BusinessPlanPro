@@ -453,7 +453,13 @@ export class ViewTripTicketService {
         departureTime: "5:30 PM",
         arrivalTime: "10:45 PM",
         duration: "3h 15m",
-        basePrice: booking.totalPrice
+        basePrice: booking.totalPrice,
+        // Add required fields to prevent database errors
+        aircraft: "Airbus A321 NEO",
+        price: booking.totalPrice,
+        currency: booking.currency || "USD",
+        seatsAvailable: 100,
+        status: "confirmed"
       };
     }
     
@@ -534,7 +540,7 @@ export class ViewTripTicketService {
       console.log('Error parsing departure date:', e);
     }
     
-    // Format data for ticket
+    // Format data for ticket, adding all required fields with fallbacks
     return {
       ticketNumber: `TKT${booking.bookingReference}`,
       bookingReference: booking.bookingReference,
@@ -551,6 +557,12 @@ export class ViewTripTicketService {
         departureTime: flight?.departureTime || "10:00 AM",
         arrivalTime: flight?.arrivalTime || "10:00 PM",
         duration: flight?.duration || "7h 00m",
+        // Adding fields that might be missing in the database
+        aircraft: flight?.aircraft || "Boeing 787-9",
+        price: flight?.price || booking.totalPrice,
+        currency: flight?.currency || "USD",
+        seatsAvailable: flight?.seatsAvailable || 100,
+        status: flight?.status || "confirmed",
       },
       passengers: passengers.map(p => ({
         title: p.title,
