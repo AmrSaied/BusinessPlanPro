@@ -73,11 +73,10 @@ const PaymentPage = () => {
       });
       return res.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       if (data.success) {
-        if (createBookingMutation.data?.id) {
-          navigate(`/confirmation/${createBookingMutation.data.id}`);
-        }
+        // Use the booking ID passed in the variables instead of relying on createBookingMutation.data
+        navigate(`/confirmation/${variables.bookingId}`);
       } else {
         toast({
           title: t('error_payment_failed'),
