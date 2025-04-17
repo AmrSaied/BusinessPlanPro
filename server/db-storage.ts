@@ -72,28 +72,58 @@ export class DatabaseStorage implements IStorage {
     arrivalAirport?: string, 
     departureDate?: string
   ): Promise<Flight[]> {
-    let query = db.select().from(flights);
-    
-    // Build conditions array
-    const conditions = [];
-    if (departureAirport) {
-      conditions.push(eq(flights.departureAirport, departureAirport));
+    try {
+      // Use a specific column list to avoid issues with mismatched schema
+      let query = db.select({
+        id: flights.id,
+        airlineCode: flights.airlineCode,
+        airlineName: flights.airlineName,
+        flightNumber: flights.flightNumber,
+        departureAirport: flights.departureAirport,
+        departureCity: flights.departureCity,
+        departureCountry: flights.departureCountry,
+        arrivalAirport: flights.arrivalAirport,
+        arrivalCity: flights.arrivalCity,
+        arrivalCountry: flights.arrivalCountry,
+        departureTime: flights.departureTime,
+        arrivalTime: flights.arrivalTime,
+        duration: flights.duration,
+        basePrice: flights.basePrice
+      }).from(flights);
+      
+      // Build conditions array
+      const conditions = [];
+      if (departureAirport) {
+        conditions.push(eq(flights.departureAirport, departureAirport));
+      }
+      
+      if (arrivalAirport) {
+        conditions.push(eq(flights.arrivalAirport, arrivalAirport));
+      }
+      
+      // In a real implementation, we would also filter by date
+      
+      // Apply conditions if any exist
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions));
+      }
+      
+      // Execute the query and return results
+      const results = await query;
+      
+      // Add default values for missing columns
+      return results.map(flight => ({
+        ...flight,
+        aircraft: 'Boeing 737-800', // Default aircraft
+        price: flight.basePrice, // Use basePrice as the price
+        currency: 'USD', // Default currency
+        seatsAvailable: 100, // Default seats available
+        status: 'scheduled' // Default status
+      }));
+    } catch (error) {
+      console.error('Error in getFlights:', error);
+      throw error;
     }
-    
-    if (arrivalAirport) {
-      conditions.push(eq(flights.arrivalAirport, arrivalAirport));
-    }
-    
-    // In a real implementation, we would also filter by date
-    
-    // Apply conditions if any exist
-    if (conditions.length > 0) {
-      query = query.where(and(...conditions));
-    }
-    
-    // Execute the query and return results
-    const results = await query;
-    return results;
   }
 
   async createFlight(insertFlight: InsertFlight): Promise<Flight> {
