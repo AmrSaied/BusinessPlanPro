@@ -6,50 +6,70 @@ export class PaymentService {
     // In a real application, this would integrate with a payment gateway
     // For this example, we'll simulate a successful payment process
     
-    // Validate card information (basic validation)
-    if (!/^\d{16}$/.test(paymentData.cardNumber)) {
-      return {
-        success: false,
-        message: "Invalid card number",
-      };
-    }
-    
-    // Validate expiry date (MM/YY format)
-    if (!/^\d{2}\/\d{2}$/.test(paymentData.cardExpiry)) {
-      return {
-        success: false,
-        message: "Invalid expiry date (MM/YY format required)",
-      };
-    }
-    
-    // Validate CVC
-    if (!/^\d{3,4}$/.test(paymentData.cardCvc)) {
-      return {
-        success: false,
-        message: "Invalid CVC/CVV",
-      };
-    }
-    
-    // Simulate payment processing
-    // In a real implementation, this would make an API call to a payment gateway
-    
     // Generate a unique payment ID
     const paymentId = `PAY-${randomBytes(8).toString("hex").toUpperCase()}`;
     
-    // 95% success rate for simulation
-    const isSuccessful = Math.random() < 0.95;
-    
-    if (isSuccessful) {
-      return {
-        success: true,
-        message: "Payment processed successfully",
-        paymentId,
-      };
+    // Check payment method
+    if (paymentData.paymentMethod === 'paypal') {
+      // Handle PayPal payment (would redirect to PayPal in a real implementation)
+      // 95% success rate for simulation
+      const isSuccessful = Math.random() < 0.95;
+      
+      if (isSuccessful) {
+        return {
+          success: true,
+          message: "PayPal payment processed successfully",
+          paymentId,
+        };
+      } else {
+        return {
+          success: false,
+          message: "PayPal payment failed. Please try again.",
+        };
+      }
     } else {
-      return {
-        success: false,
-        message: "Payment declined by the bank. Please try a different card.",
-      };
+      // For card payments, validate card information (basic validation)
+      if (!paymentData.cardNumber || !/^\d{16}$/.test(paymentData.cardNumber)) {
+        return {
+          success: false,
+          message: "Invalid card number",
+        };
+      }
+      
+      // Validate expiry date (MM/YY format)
+      if (!paymentData.cardExpiry || !/^\d{2}\/\d{2}$/.test(paymentData.cardExpiry)) {
+        return {
+          success: false,
+          message: "Invalid expiry date (MM/YY format required)",
+        };
+      }
+      
+      // Validate CVC
+      if (!paymentData.cardCvc || !/^\d{3,4}$/.test(paymentData.cardCvc)) {
+        return {
+          success: false,
+          message: "Invalid CVC/CVV",
+        };
+      }
+      
+      // Simulate card payment processing
+      // In a real implementation, this would make an API call to a payment gateway
+      
+      // 95% success rate for simulation
+      const isSuccessful = Math.random() < 0.95;
+      
+      if (isSuccessful) {
+        return {
+          success: true,
+          message: "Card payment processed successfully",
+          paymentId,
+        };
+      } else {
+        return {
+          success: false,
+          message: "Payment declined by the bank. Please try a different card.",
+        };
+      }
     }
   }
   
