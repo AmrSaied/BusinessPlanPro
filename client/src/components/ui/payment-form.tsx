@@ -283,7 +283,20 @@ const PaymentForm = ({
   };
 
   const handleSubmit = () => {
-    if (validateForm() && !isProcessing) {
+    // For PayPal, skip card validation
+    if (paymentMethod === 'paypal' && !isProcessing) {
+      // Set default values for card fields to keep the server happy
+      const paypalPaymentData = {
+        ...paymentData,
+        paymentMethod: 'paypal',
+        // Remove any card data
+        cardNumber: undefined,
+        cardExpiry: undefined,
+        cardCvc: undefined,
+        cardHolderName: undefined
+      };
+      onPaymentComplete(paypalPaymentData as Payment);
+    } else if (validateForm() && !isProcessing) {
       onPaymentComplete(paymentData as Payment);
     }
   };

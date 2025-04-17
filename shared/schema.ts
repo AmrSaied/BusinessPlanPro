@@ -214,15 +214,28 @@ export const flightSearchSchema = z.object({
 );
 
 // Payment Schema
-export const paymentSchema = z.object({
-  amount: z.number().positive(),
-  currency: z.string().default("USD"),
-  paymentMethod: z.enum(["card", "paypal"]),
-  cardNumber: z.string().min(16).max(16).optional(),
-  cardExpiry: z.string().min(5).max(5).optional(),
-  cardCvc: z.string().min(3).max(4).optional(),
-  cardHolderName: z.string().min(1).optional(),
-});
+export const paymentSchema = z.discriminatedUnion('paymentMethod', [
+  // Card payment schema
+  z.object({
+    amount: z.number().positive(),
+    currency: z.string().default("USD"),
+    paymentMethod: z.literal("card"),
+    cardNumber: z.string().min(16).max(16),
+    cardExpiry: z.string().min(5).max(5),
+    cardCvc: z.string().min(3).max(4),
+    cardHolderName: z.string().min(1)
+  }),
+  // PayPal payment schema
+  z.object({
+    amount: z.number().positive(),
+    currency: z.string().default("USD"),
+    paymentMethod: z.literal("paypal"),
+    cardNumber: z.string().optional(),
+    cardExpiry: z.string().optional(),
+    cardCvc: z.string().optional(),
+    cardHolderName: z.string().optional()
+  })
+]);
 
 // Export all types
 export type User = typeof users.$inferSelect;
