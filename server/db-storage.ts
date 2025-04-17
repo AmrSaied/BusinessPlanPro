@@ -104,8 +104,9 @@ export class DatabaseStorage implements IStorage {
       // In a real implementation, we would also filter by date
       
       // Apply conditions if any exist
+      let result = query;
       if (conditions.length > 0) {
-        query = query.where(and(...conditions));
+        result = query.where(and(...conditions));
       }
       
       // Execute the query and return results

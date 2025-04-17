@@ -820,13 +820,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/bookings", async (req: Request, res: Response) => {
     try {
       console.log("Creating booking with data:", JSON.stringify(req.body));
-      const bookingData = insertBookingSchema.parse(req.body);
+      // Make a copy of the request body without userId if the user is not authenticated
+      const requestData = { ...req.body };
+      
+      // Remove userId if user is not authenticated
+      if (!req.isAuthenticated() && requestData.userId) {
+        delete requestData.userId;
+      }
+      
+      const bookingData = insertBookingSchema.parse(requestData);
       console.log("After validation:", JSON.stringify(bookingData));
       
       // Generate a unique booking reference
       const bookingReference = generateBookingReference();
       
-      // Force status to "confirmed" for the demo
       // Create the booking with confirmed status
       const booking = await storage.createBooking({
         ...bookingData,
