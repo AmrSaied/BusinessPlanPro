@@ -184,6 +184,11 @@ const PaymentForm = ({
   ];
   
   const handleInputChange = (field: string, value: string) => {
+    // For card number field, strip out any non-digit characters (spaces, dashes)
+    if (field === 'cardNumber') {
+      value = value.replace(/\D/g, '');
+    }
+    
     setPaymentData({
       ...paymentData,
       [field]: value
@@ -221,7 +226,7 @@ const PaymentForm = ({
       if (!paymentData.cardNumber) {
         newErrors.cardNumber = t('error_required');
         isValid = false;
-      } else if (!/^\d{16}$/.test(paymentData.cardNumber)) {
+      } else if (!/^\d{15,19}$/.test(paymentData.cardNumber)) {
         newErrors.cardNumber = t('error_invalid_card');
         isValid = false;
       }
@@ -384,7 +389,7 @@ const PaymentForm = ({
                       value={paymentData.cardNumber}
                       onChange={(e) => handleInputChange('cardNumber', e.target.value)}
                       placeholder="1234 5678 9012 3456"
-                      maxLength={16}
+                      maxLength={19}
                     />
                     {errors.cardNumber && (
                       <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>
