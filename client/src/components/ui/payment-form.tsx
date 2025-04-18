@@ -198,14 +198,17 @@ const PaymentForm = ({
       // First, strip out any non-digit characters (spaces, dashes)
       const digitsOnly = value.replace(/\D/g, '');
       
+      // Limit to 16 digits
+      const limitedDigits = digitsOnly.substring(0, 16);
+      
       // Store the raw digits for validation
       setPaymentData({
         ...paymentData,
-        [field]: digitsOnly
+        [field]: limitedDigits
       });
       
       // Format the display value with spaces after every 4 digits
-      const formattedValue = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
+      const formattedValue = limitedDigits.replace(/(\d{4})(?=\d)/g, '$1 ');
       setFormattedCardNumber(formattedValue);
     } else {
       // For other fields, just set the value normally
@@ -247,7 +250,7 @@ const PaymentForm = ({
       if (!paymentData.cardNumber) {
         newErrors.cardNumber = t('error_required');
         isValid = false;
-      } else if (!/^\d{15,19}$/.test(paymentData.cardNumber)) {
+      } else if (!/^\d{16}$/.test(paymentData.cardNumber)) {
         newErrors.cardNumber = t('error_invalid_card');
         isValid = false;
       }
