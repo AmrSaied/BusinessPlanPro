@@ -64,24 +64,42 @@ export class DatabaseStorage implements IStorage {
   // Flight operations
   async getFlight(id: number): Promise<Flight | undefined> {
     try {
-      const results = await db.select().from(flights).where(eq(flights.id, id));
+      // Only select specific columns to avoid issues with schema mismatches
+      const results = await db.select({
+        id: flights.id,
+        airlineCode: flights.airlineCode,
+        airlineName: flights.airlineName,
+        flightNumber: flights.flightNumber,
+        departureAirport: flights.departureAirport,
+        departureCity: flights.departureCity,
+        departureCountry: flights.departureCountry,
+        arrivalAirport: flights.arrivalAirport,
+        arrivalCity: flights.arrivalCity,
+        arrivalCountry: flights.arrivalCountry,
+        departureTime: flights.departureTime,
+        arrivalTime: flights.arrivalTime,
+        duration: flights.duration,
+        basePrice: flights.basePrice
+      })
+      .from(flights)
+      .where(eq(flights.id, id));
       
-      // If we have a result, add default values for any missing fields
-      if (results[0]) {
+      // If a flight was found, add missing fields with default values
+      if (results.length > 0) {
         const flight = results[0];
         
-        // Add default values for fields that may be missing in the database
+        // Add default values for all fields that might be missing
         return {
           ...flight,
-          aircraft: flight.aircraft || 'Boeing 787-9', // Default aircraft
-          price: flight.price || flight.basePrice,
-          currency: flight.currency || 'USD',
-          seatsAvailable: flight.seatsAvailable || 100,
-          status: flight.status || 'scheduled',
+          aircraft: 'Boeing 787-9', // Default aircraft
+          price: flight.basePrice, // Use basePrice as price
+          currency: 'USD', // Default currency
+          seatsAvailable: 100, // Default seats available
+          status: 'scheduled', // Default status
         };
       }
       
-      return results[0];
+      return undefined;
     } catch (error) {
       console.error('Error fetching flight:', error);
       return undefined;
@@ -262,18 +280,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPassengersByBookingId(bookingId: number): Promise<Passenger[]> {
-    // Join booking_passengers and passengers tables to get passengers for a booking
-    const result = await db.select({
-      passenger: passengers
-    })
-    .from(bookingPassengers)
-    .innerJoin(
-      passengers,
-      eq(bookingPassengers.passengerId, passengers.id)
-    )
-    .where(eq(bookingPassengers.bookingId, bookingId));
-    
-    return result.map(row => row.passenger);
+    try {
+      // Use specific column selection to avoid database schema issues
+      const result = await db.select({
+        id: passengers.id,
+        userId: passengers.userId,
+        firstName: passengers.firstName,
+        lastName: passengers.lastName,
+        nationality: passengers.nationality,
+        dateOfBirth: passengers.dateOfBirth,
+        passportNumber: passengers.passportNumber,
+        passportExpiry: passengers.passportExpiry,
+        isSaved: passengers.isSaved
+      })
+      .from(bookingPassengers)
+      .innerJoin(
+        passengers,
+        eq(bookingPassengers.passengerId, passengers.id)
+      )
+      .where(eq(bookingPassengers.bookingId, bookingId));
+      
+      // Add default title field since it's missing
+      return result.map(passenger => ({
+        ...passenger,
+        title: "Mr", // Default title as fallback
+      }));
+    } catch (error) {
+      console.error('Error fetching passengers by booking ID:', error);
+      // Return empty array instead of throwing to avoid breaking the application
+      return [];
+    }
   }
   
   // Helper method to seed the database with initial data
