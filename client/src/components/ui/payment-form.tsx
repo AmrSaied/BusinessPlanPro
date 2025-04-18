@@ -53,6 +53,15 @@ const PaymentForm = ({
     cardHolderName: ''
   });
   
+  // Store formatted card number for display
+  const [formattedCardNumber, setFormattedCardNumber] = useState(() => {
+    // Initialize with formatted version of current card number if it exists
+    if (paymentData.cardNumber) {
+      return paymentData.cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
+    }
+    return '';
+  });
+  
   const [billingAddress, setBillingAddress] = useState({
     country: '',
     address: '',
@@ -184,15 +193,27 @@ const PaymentForm = ({
   ];
   
   const handleInputChange = (field: string, value: string) => {
-    // For card number field, strip out any non-digit characters (spaces, dashes)
+    // Special handling for card number field
     if (field === 'cardNumber') {
-      value = value.replace(/\D/g, '');
+      // First, strip out any non-digit characters (spaces, dashes)
+      const digitsOnly = value.replace(/\D/g, '');
+      
+      // Store the raw digits for validation
+      setPaymentData({
+        ...paymentData,
+        [field]: digitsOnly
+      });
+      
+      // Format the display value with spaces after every 4 digits
+      const formattedValue = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
+      setFormattedCardNumber(formattedValue);
+    } else {
+      // For other fields, just set the value normally
+      setPaymentData({
+        ...paymentData,
+        [field]: value
+      });
     }
-    
-    setPaymentData({
-      ...paymentData,
-      [field]: value
-    });
     
     // Clear error for this field if it exists
     if (errors[field]) {
@@ -386,10 +407,10 @@ const PaymentForm = ({
                     <Label htmlFor="card-number">{t('card_number')}</Label>
                     <Input
                       id="card-number"
-                      value={paymentData.cardNumber}
+                      value={formattedCardNumber}
                       onChange={(e) => handleInputChange('cardNumber', e.target.value)}
                       placeholder="1234 5678 9012 3456"
-                      maxLength={19}
+                      maxLength={23} // 19 digits + 4 spaces
                     />
                     {errors.cardNumber && (
                       <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>
