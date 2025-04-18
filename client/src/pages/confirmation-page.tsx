@@ -85,7 +85,6 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     
     try {
       // Directly use the bookingId from props - this is the actual numeric booking ID
-      // The issue was trying to extract it from the reference which didn't work
       const numericBookingId = parseInt(bookingId);
       
       if (isNaN(numericBookingId)) {
@@ -101,6 +100,58 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
       
       // Fallback to client-side PDF generation (in a production app)
       alert('Download link unavailable. Please try again or contact support.');
+    }
+  };
+  
+  // Handle ticket printing
+  const handlePrintTicket = () => {
+    if (!ticketData) return;
+    
+    try {
+      // Directly use the bookingId from props - this is the actual numeric booking ID
+      const numericBookingId = parseInt(bookingId);
+      
+      if (isNaN(numericBookingId)) {
+        throw new Error('Invalid booking ID');
+      }
+      
+      // Create an iframe to load the PDF for printing
+      const printFrame = document.createElement('iframe');
+      printFrame.style.display = 'none';
+      printFrame.src = `/api/bookings/${numericBookingId}/ticket/download`;
+      
+      // Add the iframe to the document
+      document.body.appendChild(printFrame);
+      
+      // Once the iframe has loaded, print its contents
+      printFrame.onload = () => {
+        try {
+          // Wait a moment to ensure PDF is fully loaded
+          setTimeout(() => {
+            printFrame.contentWindow?.focus();
+            printFrame.contentWindow?.print();
+            
+            // Remove the iframe after printing 
+            setTimeout(() => {
+              document.body.removeChild(printFrame);
+            }, 1000);
+          }, 1000);
+        } catch (error) {
+          console.error('Error during print:', error);
+          alert('Print functionality not available. Try downloading the ticket instead.');
+          document.body.removeChild(printFrame);
+        }
+      };
+      
+      // Fallback in case of load error
+      printFrame.onerror = () => {
+        console.error('Error loading print frame');
+        alert('Unable to load ticket for printing. Try downloading the ticket instead.');
+        document.body.removeChild(printFrame);
+      };
+    } catch (error) {
+      console.error('Error preparing ticket for print:', error);
+      alert('Print preparation failed. Try downloading the ticket instead.');
     }
   };
   
@@ -170,7 +221,7 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
                       
                       <Button
                         variant="outline"
-                        onClick={handleDownloadTicket}
+                        onClick={handlePrintTicket}
                         className="flex items-center"
                       >
                         <Printer className="mr-2 h-4 w-4" />

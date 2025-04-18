@@ -606,7 +606,8 @@ export class ViewTripTicketService {
       travelPurpose: booking.travelPurpose,
       departureDate: departureDate.toISOString(),
     };
-    } catch (error) {
+    } catch (err) {
+      const error = err as Error;
       console.error(`Error generating ticket data for booking ${bookingId}:`, error);
       throw new Error(`Failed to generate ticket data: ${error.message}`);
     }
