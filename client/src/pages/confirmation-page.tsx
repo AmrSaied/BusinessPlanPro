@@ -83,14 +83,18 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   const handleDownloadTicket = () => {
     if (!ticketData) return;
     
-    // Use the client-side method from FlightTicket component
     try {
-      // Get booking ID from reference or use the current bookingId prop
-      const matches = ticketData.bookingReference.match(/\d+/);
-      const extractedId = matches ? parseInt(matches[0]) : parseInt(bookingId as string);
+      // Directly use the bookingId from props - this is the actual numeric booking ID
+      // The issue was trying to extract it from the reference which didn't work
+      const numericBookingId = parseInt(bookingId);
+      
+      if (isNaN(numericBookingId)) {
+        throw new Error('Invalid booking ID');
+      }
       
       // Open the PDF download endpoint in a new tab/window
-      const downloadUrl = `/api/bookings/${extractedId}/ticket/download`;
+      const downloadUrl = `/api/bookings/${numericBookingId}/ticket/download`;
+      console.log('Opening download URL:', downloadUrl);
       window.open(downloadUrl, '_blank');
     } catch (error) {
       console.error('Error downloading ticket:', error);
