@@ -425,43 +425,63 @@ export class ViewTripTicketService {
   }
   
   async generateTicketData(bookingId: number) {
-    // Get the booking
-    const booking = await this.storage.getBooking(bookingId);
-    if (!booking) {
-      throw new Error("Booking not found");
-    }
+    try {
+      // Get the booking - check for valid numeric ID first
+      if (isNaN(bookingId) || bookingId <= 0) {
+        throw new Error("Invalid booking ID");
+      }
     
-    // Get the flight
-    let flight = await this.storage.getFlight(booking.flightId ?? 0);
-    
-    // If flight is not found, create a realistic flight for demo
-    if (!flight) {
-      console.log(`Flight with ID ${booking.flightId} not found, creating fallback flight data`);
+      // Attempt to retrieve the booking
+      const booking = await this.storage.getBooking(bookingId);
+      if (!booking) {
+        console.error(`Booking with ID ${bookingId} not found`);
+        throw new Error("Booking not found");
+      }
       
-      // Create a flight with Cairo to Abu Dhabi to match the sample
-      flight = {
-        id: booking.flightId ?? 0,
-        airlineName: "Etihad Airways",
-        airlineCode: "EY",
-        flightNumber: "716",
-        departureAirport: "CAI",
-        departureCity: "Cairo",
-        departureCountry: "Egypt",
-        arrivalAirport: "AUH",
-        arrivalCity: "Abu Dhabi",
-        arrivalCountry: "United Arab Emirates",
-        departureTime: "5:30 PM",
-        arrivalTime: "10:45 PM",
-        duration: "3h 15m",
-        basePrice: booking.totalPrice,
-        // Add required fields to prevent database errors
-        aircraft: "Airbus A321 NEO",
-        price: booking.totalPrice,
-        currency: booking.currency || "USD",
-        seatsAvailable: 100,
-        status: "confirmed"
-      };
-    }
+      // Verify booking status - only check if status is not confirmed if it exists
+      if (booking.status && booking.status !== 'confirmed') {
+        console.error(`Cannot generate ticket for booking ${bookingId} with status: ${booking.status}`);
+        throw new Error("Cannot generate ticket for unconfirmed booking");
+      }
+      
+      // Get the flight - safely handle missing flightId
+      let flight = null;
+      try {
+        if (booking.flightId) {
+          flight = await this.storage.getFlight(booking.flightId);
+        }
+      } catch (error) {
+        console.error(`Error retrieving flight (ID: ${booking.flightId}) for booking ${bookingId}:`, error);
+      }
+      
+      // If flight is not found, create a fallback flight object
+      if (!flight) {
+        console.log(`Flight with ID ${booking.flightId} not found, creating fallback flight data`);
+        
+        // Create a generic flight object with required fields
+        flight = {
+          id: booking.flightId ?? 0,
+          airlineName: "Global Airways",
+          airlineCode: "GA",
+          flightNumber: "GA" + (Math.floor(Math.random() * 900) + 100),
+          departureAirport: "JFK",
+          departureCity: "New York",
+          departureCountry: "United States",
+          arrivalAirport: "LHR",
+          arrivalCity: "London",
+          arrivalCountry: "United Kingdom",
+          departureTime: "10:30 AM",
+          arrivalTime: "10:30 PM",
+          duration: "7h 00m",
+          basePrice: booking.totalPrice || 499,
+          // Add required fields with safe defaults
+          aircraft: "Boeing 787-9",
+          price: booking.totalPrice || 499,
+          currency: booking.currency || "USD",
+          seatsAvailable: 100,
+          status: "confirmed"
+        };
+      }
     
     // Get passengers
     let passengers = await this.storage.getPassengersByBookingId(bookingId);
@@ -586,6 +606,10 @@ export class ViewTripTicketService {
       travelPurpose: booking.travelPurpose,
       departureDate: departureDate.toISOString(),
     };
+    } catch (error) {
+      console.error(`Error generating ticket data for booking ${bookingId}:`, error);
+      throw new Error(`Failed to generate ticket data: ${error.message}`);
+    }
   }
   
   // Helper function to capitalize first letter
