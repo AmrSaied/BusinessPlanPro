@@ -58,6 +58,7 @@ interface TicketData {
   contactPhone: string;
   totalPrice: number;
   currency: string;
+  departureDate: string;
   status: string;
   issueDate: string;
   travelPurpose: string;
@@ -108,47 +109,149 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     if (!ticketData) return;
     
     try {
-      // Directly use the bookingId from props - this is the actual numeric booking ID
-      const numericBookingId = parseInt(bookingId);
+      // Create a hidden iframe for printing
+      const printIframe = document.createElement('iframe');
+      printIframe.style.position = 'absolute';
+      printIframe.style.top = '-9999px';
+      printIframe.style.left = '-9999px';
+      printIframe.style.width = '0';
+      printIframe.style.height = '0';
+      document.body.appendChild(printIframe);
       
-      if (isNaN(numericBookingId)) {
-        throw new Error('Invalid booking ID');
+      // Generate the printable content
+      const printableContent = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Flight Ticket - ${ticketData.bookingReference}</title>
+            <style>
+              @media print {
+                @page {
+                  size: A4;
+                  margin: 10mm;
+                }
+                body {
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+              }
+              body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+              .ticket { border: 1px solid #ccc; padding: 20px; max-width: 800px; margin: 0 auto; }
+              .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+              .flight-info { margin-bottom: 20px; }
+              .passenger-info { margin-bottom: 20px; }
+              .footer { margin-top: 20px; font-size: 0.8em; color: #666; }
+              h1, h2 { color: #333; }
+              .logo { font-weight: bold; font-size: 1.5em; }
+              table { width: 100%; border-collapse: collapse; }
+              table, th, td { border: 1px solid #ddd; }
+              th, td { padding: 8px; text-align: left; }
+              th { background-color: #f8f8f8; }
+            </style>
+          </head>
+          <body>
+            <div class="ticket">
+              <div class="header">
+                <div class="logo">${ticketData.flight.airlineName} (${ticketData.flight.airlineCode})</div>
+                <div>
+                  <strong>Booking Reference:</strong> ${ticketData.bookingReference}<br>
+                  <strong>Ticket Number:</strong> ${ticketData.ticketNumber}
+                </div>
+              </div>
+              
+              <div class="flight-info">
+                <h2>Flight Details</h2>
+                <table>
+                  <tr>
+                    <th>Flight</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Date</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                  </tr>
+                  <tr>
+                    <td>${ticketData.flight.airlineCode}${ticketData.flight.flightNumber}</td>
+                    <td>${ticketData.flight.departureAirport}<br>${ticketData.flight.departureCity}</td>
+                    <td>${ticketData.flight.arrivalAirport}<br>${ticketData.flight.arrivalCity}</td>
+                    <td>${new Date(ticketData.departureDate).toLocaleDateString()}</td>
+                    <td>${ticketData.flight.departureTime}</td>
+                    <td>${ticketData.flight.arrivalTime}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <div class="passenger-info">
+                <h2>Passenger Information</h2>
+                <table>
+                  <tr>
+                    <th>Name</th>
+                    <th>Nationality</th>
+                    <th>Passport</th>
+                  </tr>
+                  ${ticketData.passengers.map(p => `
+                    <tr>
+                      <td>${p.title || ''} ${p.firstName} ${p.lastName}</td>
+                      <td>${p.nationality}</td>
+                      <td>${p.passportNumber}</td>
+                    </tr>
+                  `).join('')}
+                </table>
+              </div>
+              
+              <div class="ticket-options">
+                <h2>Additional Services</h2>
+                <ul>
+                  ${ticketData.ticketOptions.expressProcessing ? '<li>Express Processing</li>' : ''}
+                  ${ticketData.ticketOptions.editableTicket ? '<li>Editable Ticket</li>' : ''}
+                  ${ticketData.ticketOptions.hotelReservation ? '<li>Hotel Reservation</li>' : ''}
+                  ${ticketData.ticketOptions.insuranceLetter ? '<li>Insurance Letter</li>' : ''}
+                </ul>
+              </div>
+              
+              <div class="footer">
+                <p>
+                  <strong>Contact:</strong> Email: ${ticketData.contactEmail} | Phone: ${ticketData.contactPhone}<br>
+                  <strong>Status:</strong> ${ticketData.status.toUpperCase()} | <strong>Issue Date:</strong> ${new Date(ticketData.issueDate).toLocaleDateString()}<br>
+                  <strong>Purpose of Travel:</strong> ${ticketData.travelPurpose}
+                </p>
+                <p>
+                  <strong>Total Price:</strong> ${ticketData.totalPrice} ${ticketData.currency}
+                </p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `;
+
+      // Write content to the iframe
+      const iframeDocument = printIframe.contentDocument || printIframe.contentWindow?.document;
+      if (!iframeDocument) {
+        throw new Error('Could not access iframe document');
       }
       
-      // Create an iframe to load the PDF for printing
-      const printFrame = document.createElement('iframe');
-      printFrame.style.display = 'none';
-      printFrame.src = `/api/bookings/${numericBookingId}/ticket/download`;
+      iframeDocument.open();
+      iframeDocument.write(printableContent);
+      iframeDocument.close();
       
-      // Add the iframe to the document
-      document.body.appendChild(printFrame);
-      
-      // Once the iframe has loaded, print its contents
-      printFrame.onload = () => {
+      // Wait for content to load before printing
+      setTimeout(() => {
         try {
-          // Wait a moment to ensure PDF is fully loaded
+          // Focus and print the iframe
+          printIframe.contentWindow?.focus();
+          printIframe.contentWindow?.print();
+          
+          // Remove the iframe after printing (or after a delay)
           setTimeout(() => {
-            printFrame.contentWindow?.focus();
-            printFrame.contentWindow?.print();
-            
-            // Remove the iframe after printing 
-            setTimeout(() => {
-              document.body.removeChild(printFrame);
-            }, 1000);
+            document.body.removeChild(printIframe);
           }, 1000);
-        } catch (error) {
-          console.error('Error during print:', error);
-          alert('Print functionality not available. Try downloading the ticket instead.');
-          document.body.removeChild(printFrame);
+        } catch (e) {
+          console.error('Print operation failed:', e);
+          document.body.removeChild(printIframe);
+          alert('Could not open print dialog. Please try downloading the ticket instead.');
         }
-      };
-      
-      // Fallback in case of load error
-      printFrame.onerror = () => {
-        console.error('Error loading print frame');
-        alert('Unable to load ticket for printing. Try downloading the ticket instead.');
-        document.body.removeChild(printFrame);
-      };
+      }, 500);
+            
     } catch (error) {
       console.error('Error preparing ticket for print:', error);
       alert('Print preparation failed. Try downloading the ticket instead.');
