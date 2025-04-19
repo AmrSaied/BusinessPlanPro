@@ -62,7 +62,6 @@ export const insertFlightSchema = createInsertSchema(flights).omit({
 export const passengers = pgTable("passengers", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
-  title: text("title").notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   nationality: text("nationality").notNull(),

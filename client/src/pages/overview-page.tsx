@@ -126,20 +126,22 @@ export default function OverviewPage() {
       // Add passengers to the booking
       if (passengers && passengers.length > 0) {
         for (const passenger of passengers) {
+          // Remove title from passenger data (not supported in DB)
+          const { title, ...passengerData } = passenger;
           await apiRequest('POST', `/api/bookings/${bookingId}/passengers`, {
-            ...passenger,
+            ...passengerData,
             bookingId
           });
         }
       } else {
         // Create a default passenger if none exists
         await apiRequest('POST', `/api/bookings/${bookingId}/passengers`, {
-          title: 'Mr',
+          // No title field - it doesn't exist in the database
           firstName: 'Guest',
           lastName: 'User',
           passportNumber: 'DEFAULT123',
           nationality: 'Unknown',
-          birthDate: '1990-01-01',
+          dateOfBirth: '1990-01-01', // Correct field name to match DB
           passportExpiry: '2030-01-01',
           bookingId
         });
@@ -278,7 +280,7 @@ export default function OverviewPage() {
                       <TableRow key={index}>
                         <TableCell>
                           <div className="font-medium">
-                            {passenger.title}. {passenger.firstName} {passenger.lastName}
+                            {passenger.firstName} {passenger.lastName}
                           </div>
                         </TableCell>
                         <TableCell>{passenger.passportNumber}</TableCell>
