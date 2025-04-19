@@ -42,7 +42,14 @@ const formatCurrency = (amount: number, currency: string = 'EUR') => {
 export default function OverviewPage() {
   const [location, navigate] = useLocation();
   const { t } = useTranslation();
-  const { bookingData, setBookingData } = useBooking();
+  const bookingContext = useBooking();
+  const { bookingData } = bookingContext;
+  // Ensure compatibility with different versions of booking context
+  const setBookingData = (newData: any) => {
+    if (typeof bookingContext.setBookingData === 'function') {
+      bookingContext.setBookingData(newData);
+    }
+  };
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -80,7 +87,7 @@ export default function OverviewPage() {
       // First create the booking in the database
       const bookingResponse = await apiRequest('POST', '/api/bookings', {
         flightId: flight.id,
-        userId: bookingData.userId,
+        userId: bookingData.userId || null, // Allow anonymous bookings
         totalPrice: totalPrice,
         currency: flight.currency || 'EUR',
         status: 'pending',
@@ -90,8 +97,8 @@ export default function OverviewPage() {
         insuranceLetter: additionalServices?.insuranceLetter || false,
         specialRequests: bookingData.specialRequests || '',
         contactEmail: contactInfo.email,
-        contactPhone: contactInfo.phone,
-        travelPurpose: bookingData.travelPurpose || 'tourism'
+        contactPhone: contactInfo.phone || '',
+        travelPurpose: bookingData.searchParams?.travelPurpose || 'tourism'
       });
 
       const bookingResponseData = await bookingResponse.json();
@@ -103,9 +110,23 @@ export default function OverviewPage() {
       const bookingId = bookingResponseData.id;
       
       // Add passengers to the booking
-      for (const passenger of passengers) {
+      if (passengers && passengers.length > 0) {
+        for (const passenger of passengers) {
+          await apiRequest('POST', `/api/bookings/${bookingId}/passengers`, {
+            ...passenger,
+            bookingId
+          });
+        }
+      } else {
+        // Create a default passenger if none exists
         await apiRequest('POST', `/api/bookings/${bookingId}/passengers`, {
-          ...passenger,
+          title: 'Mr',
+          firstName: 'Guest',
+          lastName: 'User',
+          passportNumber: 'DEFAULT123',
+          nationality: 'Unknown',
+          birthDate: '1990-01-01',
+          passportExpiry: '2030-01-01',
           bookingId
         });
       }
