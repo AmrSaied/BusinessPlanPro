@@ -124,8 +124,9 @@ function App() {
   const appContent = (
     <ThemeProvider 
       attribute="class" 
-      defaultTheme="system" 
-      enableSystem
+      defaultTheme="light" 
+      enableSystem={false}
+      forcedTheme="light"
       disableTransitionOnChange
     >
       <QueryClientProvider client={queryClient}>

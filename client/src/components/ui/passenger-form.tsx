@@ -659,7 +659,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
-                    <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
+                    <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
                       <Calendar
                         mode="single"
                         captionLayout="dropdown-buttons"
@@ -674,7 +674,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                           }
                         }}
                         disabled={(date) => date > new Date()}
-                        className="rounded-md border-0 bg-black [&_.rdp-day]:text-white [&_.rdp-caption]:text-white [&_.rdp-head_th]:text-white [&_.rdp-day_button:hover]:bg-gray-700 [&_.rdp-day_button.rdp-day_selected]:bg-primary [&_.rdp-nav_button]:text-white [&_.rdp-dropdown_year]:bg-gray-900 [&_.rdp-dropdown_year]:text-white [&_.rdp-dropdown_month]:bg-gray-900 [&_.rdp-dropdown_month]:text-white"
+                        className="rounded-md border-0 bg-white [&_.rdp-day_button.rdp-day_selected]:bg-primary"
                       />
                     </div>
                   </PopoverContent>
@@ -721,7 +721,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
-                    <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
+                    <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
                       <Calendar
                         mode="single"
                         captionLayout="dropdown-buttons"
@@ -736,9 +736,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                           }
                         }}
                         disabled={(date) => date < new Date()}
-                        className="rounded-md border-0 bg-black [&_.rdp-day]:text-white [&_.rdp-caption]:text-white [&_.rdp-head_th]:text-white [&_.rdp-day_button:hover]:bg-gray-700 [&_.rdp-day_button.rdp-day_selected]:bg-primary [&_.rdp-nav_button]:text-white [&_.rdp-dropdown_year]:bg-gray-900 [&_.rdp-dropdown_year]:text-white [&_.rdp-dropdown_month]:bg-gray-900 [&_.rdp-dropdown_month]:text-white"
+                        className="rounded-md border-0 bg-white [&_.rdp-day_button.rdp-day_selected]:bg-primary"
                         footer={
-                          <p className="p-2 text-center text-sm text-white font-medium">
+                          <p className="p-2 text-center text-sm text-gray-700 font-medium">
                             {t("passport_must_be_valid", "Passport must be valid")}
                           </p>
                         }
