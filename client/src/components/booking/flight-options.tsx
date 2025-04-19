@@ -120,7 +120,7 @@ const FlightOptions = ({
           {/* Options Selection */}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6">
             <div className="p-5 border-b border-gray-200">
-              <h3 className="font-heading font-semibold text-lg">
+              <h3 className="font-heading font-semibold text-xl text-primary">
                 {t("options.additionalServices")}
               </h3>
             </div>

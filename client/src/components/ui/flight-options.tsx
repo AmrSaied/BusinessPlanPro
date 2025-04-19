@@ -89,7 +89,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
       {/* Options Selection */}
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6">
         <div className="p-5 border-b border-gray-200">
-          <h3 className="font-heading font-semibold text-lg">{t('options_services_title')}</h3>
+          <h3 className="font-heading font-semibold text-xl text-primary">{t('options_services_title')}</h3>
         </div>
         
         <div className="divide-y divide-gray-200">
