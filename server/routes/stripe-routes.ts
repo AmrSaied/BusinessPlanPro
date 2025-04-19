@@ -5,7 +5,7 @@ import {
   createPaymentIntent, 
   createCheckoutSession, 
   verifyPaymentIntent,
-  verifyCheckoutSession
+  verifyCheckoutSession,
 } from '../services/stripe-service';
 
 // Create a router for Stripe payment routes
@@ -214,6 +214,82 @@ router.get('/verify-checkout-session/:sessionId', async (req: Request, res: Resp
     res.status(500).json({ 
       success: false, 
       message: error instanceof Error ? error.message : 'An error occurred verifying the checkout session',
+    });
+  }
+});
+
+// Get booking information from a session ID
+router.get('/session/:sessionId', async (req: Request, res: Response) => {
+  try {
+    const { sessionId } = req.params;
+    
+    if (!sessionId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Session ID is required'
+      });
+    }
+    
+    // Verify the checkout session
+    const verification = await verifyCheckoutSession(sessionId);
+    
+    // Update the booking payment status if needed
+    if (verification.success && verification.status === 'paid') {
+      const bookingId = verification.metadata?.bookingId;
+      
+      if (bookingId) {
+        // Update booking status to confirmed
+        await storage.updateBooking(parseInt(bookingId), {
+          status: 'confirmed',
+          paymentId: sessionId,
+        });
+        
+        // Log the successful payment
+        await storage.addSystemLog(
+          'info' as any,
+          'payment-service',
+          `Payment completed successfully for booking ID ${bookingId}`
+        );
+        
+        // Return the booking ID
+        return res.status(200).json({
+          success: true,
+          bookingId: parseInt(bookingId),
+          status: 'paid'
+        });
+      }
+    }
+    
+    // If the session doesn't contain a booking ID or isn't paid
+    if (!verification.metadata?.bookingId) {
+      return res.status(404).json({
+        success: false,
+        message: 'No booking associated with this session'
+      });
+    }
+    
+    if (verification.status !== 'paid') {
+      return res.status(200).json({
+        success: false,
+        bookingId: parseInt(verification.metadata.bookingId),
+        status: verification.status
+      });
+    }
+    
+    res.status(200).json(verification);
+  } catch (error) {
+    console.error('Error retrieving session information:', error);
+    
+    // Log the error
+    await storage.addSystemLog(
+      'error' as any,
+      'payment-service',
+      `Error retrieving session information: ${error instanceof Error ? error.message : String(error)}`
+    );
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error instanceof Error ? error.message : 'An error occurred retrieving session information',
     });
   }
 });
