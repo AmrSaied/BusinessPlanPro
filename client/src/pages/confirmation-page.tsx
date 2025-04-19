@@ -80,21 +80,36 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     const searchParams = new URLSearchParams(location.search);
     const sessionId = searchParams.get('session_id');
     
-    // If we have a session_id but no bookingId, retrieve the booking details from the session
+    console.log('Confirmation page loaded with:', { 
+      sessionId, 
+      bookingId, 
+      retrievedBookingId,
+      locationSearch: location.search 
+    });
+    
+    // If we have a session_id but no retrievedBookingId, retrieve the booking details from the session
     if (sessionId && !retrievedBookingId) {
       setIsCheckingSession(true);
       
       const getBookingFromSession = async () => {
         try {
+          console.log('Fetching booking from session ID:', sessionId);
           const response = await apiRequest('GET', `/api/stripe/session/${sessionId}`);
+          
+          console.log('Session endpoint response:', { 
+            status: response.status, 
+            ok: response.ok 
+          });
           
           if (!response.ok) {
             throw new Error('Failed to retrieve booking from session');
           }
           
           const data = await response.json();
+          console.log('Session data received:', data);
           
           if (data.bookingId) {
+            console.log('Setting retrievedBookingId to:', data.bookingId.toString());
             setRetrievedBookingId(data.bookingId.toString());
             toast({
               title: t('payment.success'),
@@ -117,7 +132,7 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
       
       getBookingFromSession();
     }
-  }, [location, retrievedBookingId, toast, t]);
+  }, [location, retrievedBookingId, bookingId, toast, t]);
   
   // Get ticket data once we have a booking ID
   const {

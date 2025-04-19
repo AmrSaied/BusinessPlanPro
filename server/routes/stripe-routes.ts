@@ -223,7 +223,10 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
     
+    console.log('Received request for session info with ID:', sessionId);
+    
     if (!sessionId) {
+      console.log('Session ID is empty or missing');
       return res.status(400).json({ 
         success: false, 
         message: 'Session ID is required'
@@ -231,51 +234,82 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
     }
     
     // Verify the checkout session
+    console.log('Verifying checkout session with ID:', sessionId);
     const verification = await verifyCheckoutSession(sessionId);
+    console.log('Session verification result:', verification);
+    
+    // First check if verification was successful
+    if (!verification.success) {
+      console.log('Session verification failed:', verification.error);
+      return res.status(500).json({
+        success: false,
+        message: verification.error || 'Failed to verify session',
+      });
+    }
     
     // Update the booking payment status if needed
-    if (verification.success && verification.status === 'paid') {
+    if (verification.status === 'paid') {
       const bookingId = verification.metadata?.bookingId;
+      console.log('Found booking ID in metadata:', bookingId);
       
       if (bookingId) {
-        // Update booking status to confirmed
-        await storage.updateBooking(parseInt(bookingId), {
-          status: 'confirmed',
-          paymentId: sessionId,
-        });
+        console.log('Updating booking status to confirmed for ID:', bookingId);
         
-        // Log the successful payment
-        await storage.addSystemLog(
-          'info' as any,
-          'payment-service',
-          `Payment completed successfully for booking ID ${bookingId}`
-        );
-        
-        // Return the booking ID
-        return res.status(200).json({
-          success: true,
-          bookingId: parseInt(bookingId),
-          status: 'paid'
-        });
+        try {
+          // Update booking status to confirmed
+          await storage.updateBooking(parseInt(bookingId), {
+            status: 'confirmed',
+            paymentId: sessionId,
+          });
+          
+          // Log the successful payment
+          await storage.addSystemLog(
+            'info' as any,
+            'payment-service',
+            `Payment completed successfully for booking ID ${bookingId}`
+          );
+          
+          // Return the booking ID
+          console.log('Returning success response with booking ID:', bookingId);
+          return res.status(200).json({
+            success: true,
+            bookingId: parseInt(bookingId),
+            status: 'paid'
+          });
+        } catch (error) {
+          console.error('Error updating booking:', error);
+          // Even if the update fails, return the bookingId so the frontend can display something
+          return res.status(200).json({
+            success: true,
+            bookingId: parseInt(bookingId),
+            status: 'paid',
+            warning: 'Booking was found but could not be updated'
+          });
+        }
       }
     }
     
-    // If the session doesn't contain a booking ID or isn't paid
+    // If the session doesn't contain a booking ID
     if (!verification.metadata?.bookingId) {
+      console.log('No booking ID found in session metadata');
       return res.status(404).json({
         success: false,
         message: 'No booking associated with this session'
       });
     }
     
+    // If the session contains a booking ID but isn't paid
     if (verification.status !== 'paid') {
+      console.log('Session not paid, status:', verification.status);
+      const bookingId = verification.metadata.bookingId;
       return res.status(200).json({
         success: false,
-        bookingId: parseInt(verification.metadata.bookingId),
+        bookingId: parseInt(bookingId),
         status: verification.status
       });
     }
     
+    console.log('Returning verification data:', verification);
     res.status(200).json(verification);
   } catch (error) {
     console.error('Error retrieving session information:', error);

@@ -85,11 +85,14 @@ export async function createCheckoutSession(
 ) {
   try {
     if (testMode) {
-      // In test mode, simulate a checkout session
+      // In test mode, simulate a checkout session with bookingId embedded in the session ID
+      const testSessionId = `test_session_${Date.now()}_${bookingId}`;
+      console.log('Created test session ID with embedded bookingId:', testSessionId);
+      
       return {
         success: true,
-        url: `${successUrl}?session_id=test_session_${Date.now()}`,
-        sessionId: `test_session_${Date.now()}`,
+        url: `${successUrl}?session_id=${testSessionId}`,
+        sessionId: testSessionId,
         testMode: true,
       };
     }
@@ -168,7 +171,36 @@ export async function verifyPaymentIntent(paymentIntentId: string) {
  */
 export async function verifyCheckoutSession(sessionId: string) {
   try {
+    // Handle test session IDs
+    if (sessionId.startsWith('test_session_')) {
+      console.log('Processing test session:', sessionId);
+      
+      // Extract bookingId from test session ID if it follows a pattern like test_session_[timestamp]_[bookingId]
+      let bookingId = null;
+      const parts = sessionId.split('_');
+      if (parts.length > 3) {
+        bookingId = parts[3];
+      }
+      
+      // For test sessions, we'll simulate a successful payment
+      return {
+        success: true,
+        status: 'paid',
+        amount: 0,
+        metadata: {
+          bookingId: bookingId || '0' // Use extracted bookingId or default to 0
+        },
+      };
+    }
+    
+    // Handle real session IDs
+    console.log('Retrieving Stripe session:', sessionId);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log('Retrieved session data:', {
+      paymentStatus: session.payment_status,
+      metadata: session.metadata,
+      amountTotal: session.amount_total
+    });
     
     return {
       success: true,
@@ -184,6 +216,13 @@ export async function verifyCheckoutSession(sessionId: string) {
       `Failed to verify checkout session: ${error instanceof Error ? error.message : String(error)}`
     );
     
-    throw error;
+    // Return an error result rather than throwing
+    return {
+      success: false,
+      status: 'error',
+      amount: 0,
+      metadata: null,
+      error: error instanceof Error ? error.message : String(error)
+    };
   }
 }
