@@ -174,7 +174,7 @@ export default function OverviewPage() {
       <div className="container mx-auto py-8">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold tracking-tight">{t('overview.title')}</h1>
-          <p className="text-muted-foreground mt-2">{t('overview.subtitle')}</p>
+          <p className="text-muted-foreground mt-2">{t('step_3_text')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -184,7 +184,7 @@ export default function OverviewPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plane className="h-5 w-5" />
-                  {t('overview.flightDetails')}
+                  {t('flights_title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -247,7 +247,7 @@ export default function OverviewPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  {t('overview.passengerDetails')}
+                  {t('passenger_title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -273,7 +273,7 @@ export default function OverviewPage() {
                     )) || (
                       <TableRow>
                         <TableCell colSpan={3} className="text-center text-muted-foreground">
-                          {t('overview.noPassengersData')}
+                          {t('passenger.noData')}
                         </TableCell>
                       </TableRow>
                     )}
@@ -302,7 +302,7 @@ export default function OverviewPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle className="h-5 w-5" />
-                    {t('overview.additionalServices')}
+                    {t('options_services_title')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -351,7 +351,7 @@ export default function OverviewPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Euro className="h-5 w-5" />
-                  {t('overview.paymentSummary')}
+                  {t('options_total_price')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -369,7 +369,7 @@ export default function OverviewPage() {
                 {additionalServicesSelected && (
                   <>
                     <Separator />
-                    <div className="text-sm font-medium">{t('overview.additionalServices')}</div>
+                    <div className="text-sm font-medium">{t('options_services_title')}</div>
                     
                     {additionalServices?.expressProcessing && (
                       <div className="flex justify-between text-sm">
