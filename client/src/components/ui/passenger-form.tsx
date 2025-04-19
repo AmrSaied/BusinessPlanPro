@@ -39,7 +39,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
   // Initialize passenger array with the given count
   const [passengers, setPassengers] = useState<Array<Partial<InsertPassenger>>>(
     Array(passengerCount).fill({}).map((_, i) => ({
-      title: '',
+      // Remove title field as it doesn't exist in database
       firstName: '',
       lastName: '',
       nationality: '', // Always initialize as empty string, not undefined
