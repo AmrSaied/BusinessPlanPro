@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 import { useBooking } from '@/context/booking-context';
 import { Button } from '@/components/ui/button';
 import FlightTicket from '@/components/ui/flight-ticket';
@@ -13,9 +14,10 @@ import {
   CheckCircle,
   Loader2 
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface ConfirmationPageProps {
-  bookingId: string;
+  bookingId?: string;
 }
 
 interface FlightDetails {
@@ -66,27 +68,75 @@ interface TicketData {
 
 const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   const { t } = useTranslation();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
+  const { toast } = useToast();
   const { bookingData, resetBookingData } = useBooking();
+  const [retrievedBookingId, setRetrievedBookingId] = useState<string | null>(bookingId || null);
+  const [isCheckingSession, setIsCheckingSession] = useState(false);
   
-  // Get ticket data
+  // Extract session_id from URL if present
+  useEffect(() => {
+    // Parse query parameters from location.search
+    const searchParams = new URLSearchParams(location.search);
+    const sessionId = searchParams.get('session_id');
+    
+    // If we have a session_id but no bookingId, retrieve the booking details from the session
+    if (sessionId && !retrievedBookingId) {
+      setIsCheckingSession(true);
+      
+      const getBookingFromSession = async () => {
+        try {
+          const response = await apiRequest('GET', `/api/stripe/session/${sessionId}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to retrieve booking from session');
+          }
+          
+          const data = await response.json();
+          
+          if (data.bookingId) {
+            setRetrievedBookingId(data.bookingId.toString());
+            toast({
+              title: t('payment.success'),
+              description: t('payment.completedSuccessfully'),
+            });
+          } else {
+            throw new Error('No booking ID associated with this session');
+          }
+        } catch (error) {
+          console.error('Error retrieving booking from session:', error);
+          toast({
+            title: t('payment.error.title'),
+            description: error instanceof Error ? error.message : t('payment.error.general'),
+            variant: "destructive"
+          });
+        } finally {
+          setIsCheckingSession(false);
+        }
+      };
+      
+      getBookingFromSession();
+    }
+  }, [location, retrievedBookingId, toast, t]);
+  
+  // Get ticket data once we have a booking ID
   const {
     data: ticketData,
     isLoading,
     isError,
     error
   } = useQuery<TicketData>({
-    queryKey: [`/api/bookings/${bookingId}/ticket`],
-    enabled: !!bookingId,
+    queryKey: [`/api/bookings/${retrievedBookingId}/ticket`],
+    enabled: !!retrievedBookingId,
   });
   
   // Handle ticket download
   const handleDownloadTicket = () => {
-    if (!ticketData) return;
+    if (!ticketData || !retrievedBookingId) return;
     
     try {
       // Directly use the bookingId from props - this is the actual numeric booking ID
-      const numericBookingId = parseInt(bookingId);
+      const numericBookingId = parseInt(retrievedBookingId);
       
       if (isNaN(numericBookingId)) {
         throw new Error('Invalid booking ID');
@@ -100,7 +150,11 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
       console.error('Error downloading ticket:', error);
       
       // Fallback to client-side PDF generation (in a production app)
-      alert('Download link unavailable. Please try again or contact support.');
+      toast({
+        title: t('ticket.downloadError'),
+        description: t('ticket.tryAgainOrContactSupport'),
+        variant: "destructive"
+      });
     }
   };
   
@@ -264,20 +318,35 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     navigate('/search');
   };
   
-  // If no bookingId or error
-  if (!bookingId || isError) {
+  // Show loading when checking Stripe session
+  if (isCheckingSession) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="bg-white rounded-lg shadow p-8">
+            <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+            <h2 className="text-xl font-medium text-gray-800">{t('payment.processingPayment')}</h2>
+            <p className="text-gray-600 mt-2">{t('payment.pleaseWait')}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  // If no retrievedBookingId or error
+  if (!retrievedBookingId || isError) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-white rounded-lg shadow p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {!bookingId ? 'No booking information found' : 'Error loading booking'}
+              {!retrievedBookingId ? t('booking.notFound') : t('booking.errorLoading')}
             </h2>
             <p className="text-gray-600 mb-6">
-              {isError && error instanceof Error ? error.message : 'Please try again or contact support.'}
+              {isError && error instanceof Error ? error.message : t('booking.tryAgainOrContactSupport')}
             </p>
             <Button onClick={() => navigate('/search')}>
-              Go to Flight Search
+              {t('booking.goToFlightSearch')}
             </Button>
           </div>
         </div>

@@ -69,12 +69,20 @@ function Router() {
           <PaymentPage />
         </MainLayout>
       )} />
+      {/* Route for direct bookingId parameter */}
       <Route path="/confirmation/:bookingId">
         {(params) => (
           <MainLayout>
             <ConfirmationPage bookingId={params.bookingId} />
           </MainLayout>
         )}
+      </Route>
+      
+      {/* Route for Stripe callback with session_id query parameter */}
+      <Route path="/confirmation">
+        <MainLayout>
+          <ConfirmationPage />
+        </MainLayout>
       </Route>
       <Route path="/auth" component={() => (
         <MainLayout>
