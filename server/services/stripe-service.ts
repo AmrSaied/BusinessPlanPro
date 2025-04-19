@@ -89,9 +89,33 @@ export async function createCheckoutSession(
       const testSessionId = `test_session_${Date.now()}_${bookingId}`;
       console.log('Created test session ID with embedded bookingId:', testSessionId);
       
+      // For test mode, make sure we directly include booking_id parameter in the success URL
+      // The presence of this parameter will allow direct booking retrieval without session verification
+      const modifiedSuccessUrl = successUrl;
+      
+      // Make sure we aren't duplicating the booking_id parameter
+      if (!modifiedSuccessUrl.includes('booking_id=')) {
+        // Add the booking_id parameter
+        const paramConnector = modifiedSuccessUrl.includes('?') ? '&' : '?';
+        const enhancedSuccessUrl = `${modifiedSuccessUrl}${paramConnector}booking_id=${bookingId}&session_id=${testSessionId}`;
+        console.log('Enhanced test success URL:', enhancedSuccessUrl);
+        
+        return {
+          success: true,
+          url: enhancedSuccessUrl,
+          sessionId: testSessionId,
+          testMode: true,
+        };
+      }
+      
+      // If booking_id already exists, just add the session_id
+      const paramConnector = modifiedSuccessUrl.includes('?') ? '&' : '?';
+      const enhancedSuccessUrl = `${modifiedSuccessUrl}${paramConnector}session_id=${testSessionId}`;
+      console.log('Enhanced test success URL (booking_id already present):', enhancedSuccessUrl);
+      
       return {
         success: true,
-        url: `${successUrl}?session_id=${testSessionId}`,
+        url: enhancedSuccessUrl,
         sessionId: testSessionId,
         testMode: true,
       };
@@ -114,7 +138,10 @@ export async function createCheckoutSession(
         },
       ],
       mode: 'payment',
-      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      // Include the booking ID directly in the success URL for real Stripe sessions too
+      success_url: successUrl.includes('?') 
+        ? `${successUrl}&session_id={CHECKOUT_SESSION_ID}`
+        : `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
       customer_email: customerEmail,
       metadata: {

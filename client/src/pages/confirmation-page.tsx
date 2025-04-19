@@ -74,40 +74,60 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   const [retrievedBookingId, setRetrievedBookingId] = useState<string | null>(bookingId || null);
   const [isCheckingSession, setIsCheckingSession] = useState(false);
   
-  // Extract session_id from URL if present
+  // Extract session_id or booking_id from URL if present
   useEffect(() => {
     // Parse query parameters from location.search
     const searchParams = new URLSearchParams(location.search);
     const sessionId = searchParams.get('session_id');
-    
-    // ALERT for debugging
-    alert(`DEBUG: Confirmation page loaded with sessionId=${sessionId}, bookingId=${bookingId}, retrievedBookingId=${retrievedBookingId}`);
+    const urlBookingId = searchParams.get('booking_id'); // Try to get booking_id directly
     
     console.log('Confirmation page loaded with:', { 
       sessionId, 
-      bookingId, 
+      bookingId,
+      urlBookingId,
       retrievedBookingId,
       locationSearch: location.search,
       fullUrl: window.location.href
     });
     
-    // If we have a session_id but no retrievedBookingId, retrieve the booking details from the session
+    // DIRECT BOOKING ID: If we have a booking_id in the URL, use it directly
+    if (urlBookingId && !retrievedBookingId) {
+      console.log('Using booking ID directly from URL:', urlBookingId);
+      setRetrievedBookingId(urlBookingId);
+      toast({
+        title: t('payment.success'),
+        description: t('payment.completedSuccessfully'),
+      });
+      return;
+    }
+    
+    // EXTRACT FROM TEST SESSION: If the session ID is a test one, we can parse the booking ID from it
+    if (sessionId && sessionId.startsWith('test_session_') && !retrievedBookingId) {
+      const parts = sessionId.split('_');
+      if (parts.length > 3) {
+        const parsedBookingId = parts[3];
+        console.log('Extracted booking ID from test session:', parsedBookingId);
+        setRetrievedBookingId(parsedBookingId);
+        toast({
+          title: t('payment.success'),
+          description: t('payment.completedSuccessfully'),
+        });
+        return;
+      }
+    }
+    
+    // SESSION ID APPROACH: If we have a session_id but no retrievedBookingId, retrieve the booking details from the session
     if (sessionId && !retrievedBookingId) {
       setIsCheckingSession(true);
       
       const getBookingFromSession = async () => {
         try {
           console.log('Fetching booking from session ID:', sessionId);
-          // ALERT for debugging
-          alert('DEBUG: Fetching booking from Stripe session ID: ' + sessionId);
           
           const sessionEndpoint = `/api/stripe/session/${sessionId}`;
           console.log('Calling endpoint:', sessionEndpoint);
           
           const response = await apiRequest('GET', sessionEndpoint);
-          
-          // ALERT for debugging
-          alert(`DEBUG: Session endpoint response status: ${response.status}, ok: ${response.ok}`);
           
           console.log('Session endpoint response:', { 
             status: response.status, 
@@ -121,13 +141,8 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
           const data = await response.json();
           console.log('Session data received:', data);
           
-          // ALERT for debugging
-          alert('DEBUG: Session data received: ' + JSON.stringify(data));
-          
           if (data.bookingId) {
             console.log('Setting retrievedBookingId to:', data.bookingId.toString());
-            // ALERT for debugging
-            alert('DEBUG: Setting retrievedBookingId to: ' + data.bookingId.toString());
             
             setRetrievedBookingId(data.bookingId.toString());
             toast({
@@ -139,8 +154,6 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
           }
         } catch (error) {
           console.error('Error retrieving booking from session:', error);
-          // ALERT for debugging
-          alert('DEBUG ERROR: ' + (error instanceof Error ? error.message : String(error)));
           
           toast({
             title: t('payment.error.title'),

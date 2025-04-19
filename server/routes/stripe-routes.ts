@@ -105,12 +105,19 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
       });
     }
     
+    // Ensure the success URL includes the booking_id parameter
+    const enhancedSuccessUrl = successUrl.includes('booking_id=') 
+      ? successUrl 
+      : successUrl + (successUrl.includes('?') ? '&' : '?') + `booking_id=${booking.id}`;
+    
+    console.log('Enhanced success URL with booking ID:', enhancedSuccessUrl);
+    
     // Create a checkout session
     const checkoutSession = await createCheckoutSession(
       booking.totalPrice,
       booking.id,
       customerEmail,
-      successUrl,
+      enhancedSuccessUrl, // Use the enhanced URL
       cancelUrl,
       {
         bookingReference: booking.bookingReference,
