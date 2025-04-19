@@ -31,10 +31,10 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
   useEffect(() => {
     let price = selectedFlight.basePrice;
     
-    if (options.expressProcessing) price += 5;
-    if (options.editableTicket) price += 8;
-    if (options.hotelReservation) price += 15;
-    if (options.insuranceLetter) price += 10;
+    if (options.expressProcessing) price += 2;
+    if (options.editableTicket) price += 2;
+    if (options.hotelReservation) price += 2;
+    if (options.insuranceLetter) price += 2;
     
     setTotalPrice(price);
   }, [options, selectedFlight.basePrice]);
@@ -99,7 +99,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
               <div className="font-medium">{t('option_basic_title')}</div>
               <div className="text-sm text-gray-600">{t('option_basic_text')}</div>
             </div>
-            <div className="font-semibold text-primary">${selectedFlight.basePrice}</div>
+            <div className="font-semibold text-primary">€{selectedFlight.basePrice}</div>
           </div>
           
           {/* Express Processing */}
@@ -112,7 +112,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
               <div className="text-sm text-gray-600">{t('option_express_text')}</div>
             </div>
             <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+$5</div>
+              <div className="font-semibold text-gray-800 mr-4">+€2</div>
               <Checkbox 
                 id="expressProcessing"
                 checked={options.expressProcessing}
@@ -128,7 +128,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
               <div className="text-sm text-gray-600">{t('option_editable_text')}</div>
             </div>
             <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+$8</div>
+              <div className="font-semibold text-gray-800 mr-4">+€2</div>
               <Checkbox 
                 id="editableTicket"
                 checked={options.editableTicket}
@@ -144,7 +144,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
               <div className="text-sm text-gray-600">{t('option_hotel_text')}</div>
             </div>
             <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+$15</div>
+              <div className="font-semibold text-gray-800 mr-4">+€2</div>
               <Checkbox 
                 id="hotelReservation"
                 checked={options.hotelReservation}
@@ -160,7 +160,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
               <div className="text-sm text-gray-600">{t('option_insurance_text')}</div>
             </div>
             <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+$10</div>
+              <div className="font-semibold text-gray-800 mr-4">+€2</div>
               <Checkbox 
                 id="insuranceLetter"
                 checked={options.insuranceLetter}
