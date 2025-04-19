@@ -1,167 +1,251 @@
-import { Request, Response } from "express";
-import { z } from "zod";
-import { stripeService } from "../services/stripe-service";
-import { storage } from "../storage";
+import { Request, Response, Router } from 'express';
+import { storage } from '../storage';
+import { LogLevel } from '@shared/schema';
+import { 
+  createPaymentIntent, 
+  createCheckoutSession, 
+  verifyPaymentIntent,
+  verifyCheckoutSession
+} from '../services/stripe-service';
+
+// Create a router for Stripe payment routes
+const router = Router();
 
 // Create a payment intent
-export async function createPaymentIntent(req: Request, res: Response) {
+router.post('/create-payment-intent', async (req: Request, res: Response) => {
   try {
-    const { bookingId, testMode } = req.body;
+    const { bookingId, testMode = false } = req.body;
     
-    // Check if booking exists
-    const booking = await storage.getBooking(parseInt(bookingId));
-    if (!booking) {
-      return res.status(404).json({ error: "Booking not found" });
-    }
-    
-    // Get flight for payment description
-    const flight = await storage.getFlight(booking.flightId);
-    if (!flight) {
-      return res.status(404).json({ error: "Flight not found" });
-    }
-
-    // Get passenger count for this booking
-    const passengers = await storage.getPassengersByBookingId(booking.id);
-    const passengerCount = passengers.length || 1; // Default to 1 if no passengers found
-    
-    // If test mode is enabled, return a simulated payment intent
-    if (testMode === true) {
-      return res.json({
-        success: true,
-        mode: "test",
-        clientSecret: null,
-        bookingId: booking.id,
-        amount: booking.totalPrice,
-        currency: booking.currency || "EUR",
-        id: `test_pi_${Math.random().toString(36).substring(2, 10)}`,
-        status: "succeeded"
-      });
-    }
-    
-    // Create a real Stripe payment intent
-    const paymentIntent = await stripeService.createPaymentIntent({
-      bookingId: booking.id,
-      amount: booking.totalPrice,
-      currency: booking.currency || "EUR",
-      description: stripeService.generatePaymentDescription(flight, booking, passengerCount),
-      receiptEmail: booking.contactEmail
-    });
-    
-    return res.json({
-      success: true,
-      mode: "real",
-      clientSecret: paymentIntent.clientSecret,
-      bookingId: booking.id,
-      amount: paymentIntent.amount,
-      currency: paymentIntent.currency,
-      id: paymentIntent.id,
-      status: paymentIntent.status
-    });
-  } catch (error: any) {
-    console.error("Error creating payment intent:", error);
-    return res.status(500).json({ 
-      error: "Failed to create payment intent", 
-      message: error.message 
-    });
-  }
-}
-
-// Confirm a payment (test mode or real)
-export async function confirmPayment(req: Request, res: Response) {
-  try {
-    const { bookingId, paymentIntentId, paymentMethodId, testMode } = req.body;
-    
-    // Check if booking exists
-    const booking = await storage.getBooking(parseInt(bookingId));
-    if (!booking) {
-      return res.status(404).json({ error: "Booking not found" });
-    }
-    
-    // If test mode, simulate a payment confirmation
-    if (testMode === true) {
-      // Update booking status
-      await storage.updateBooking(booking.id, {
-        status: "confirmed",
-        paymentId: paymentIntentId || `test_payment_${Date.now()}`
-      });
-      
-      return res.json({
-        success: true,
-        mode: "test",
-        paymentId: paymentIntentId || `test_payment_${Date.now()}`,
-        status: "succeeded"
-      });
-    }
-    
-    // For real payments, confirm the payment intent
-    if (!paymentIntentId || !paymentMethodId) {
+    if (!bookingId) {
       return res.status(400).json({ 
-        error: "Missing required fields", 
-        message: "paymentIntentId and paymentMethodId are required for real payments" 
+        success: false, 
+        message: 'Booking ID is required' 
       });
     }
     
-    const paymentResult = await stripeService.confirmPaymentIntent(
-      paymentIntentId,
-      paymentMethodId
+    // Get the booking from the database
+    const booking = await storage.getBooking(bookingId);
+    
+    if (!booking) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Booking not found' 
+      });
+    }
+    
+    // Create a payment intent with the booking's total price
+    const paymentIntent = await createPaymentIntent(
+      booking.totalPrice, 
+      booking.id,
+      {
+        bookingReference: booking.bookingReference,
+        currency: booking.currency,
+      },
+      testMode
     );
     
-    // Update booking with payment info
-    await storage.updateBooking(booking.id, {
-      status: "confirmed",
-      paymentId: paymentResult.id
-    });
+    // Log the payment intent creation
+    await storage.addSystemLog(
+      'info' as any,
+      'payment-service',
+      `Payment intent created for booking ${booking.id} with reference ${booking.bookingReference}`
+    );
     
-    return res.json({
-      success: true,
-      mode: "real",
-      paymentId: paymentResult.id,
-      status: paymentResult.status
-    });
-  } catch (error: any) {
-    console.error("Error confirming payment:", error);
-    return res.status(500).json({ 
-      error: "Payment confirmation failed", 
-      message: error.message 
+    res.status(200).json(paymentIntent);
+  } catch (error) {
+    console.error('Error creating payment intent:', error);
+    
+    // Log the error
+    await storage.addSystemLog(
+      'error' as any,
+      'payment-service',
+      `Error creating payment intent: ${error instanceof Error ? error.message : String(error)}`
+    );
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error instanceof Error ? error.message : 'An error occurred creating the payment intent',
     });
   }
-}
+});
 
-// Retrieve payment intent status
-export async function getPaymentStatus(req: Request, res: Response) {
+// Create a checkout session (external payment link)
+router.post('/create-checkout-session', async (req: Request, res: Response) => {
   try {
-    const { paymentIntentId, testMode } = req.query;
+    const { 
+      bookingId, 
+      successUrl,
+      cancelUrl,
+      testMode = false 
+    } = req.body;
     
-    // For test mode, return simulated status
-    if (testMode === "true") {
-      return res.json({
-        success: true,
-        mode: "test",
-        status: "succeeded",
-        id: paymentIntentId
+    if (!bookingId || !successUrl || !cancelUrl) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Booking ID, success URL, and cancel URL are required' 
       });
     }
     
-    if (typeof paymentIntentId !== "string") {
-      return res.status(400).json({ error: "Invalid payment intent ID" });
+    // Get the booking from the database
+    const booking = await storage.getBooking(bookingId);
+    
+    if (!booking) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Booking not found' 
+      });
+    }
+
+    // Get customer email from booking
+    const customerEmail = booking.contactEmail;
+    if (!customerEmail) {
+      return res.status(400).json({
+        success: false,
+        message: 'Booking must have a contact email for checkout'
+      });
     }
     
-    // Get real payment status from Stripe
-    const paymentIntent = await stripeService.getPaymentIntent(paymentIntentId);
+    // Create a checkout session
+    const checkoutSession = await createCheckoutSession(
+      booking.totalPrice,
+      booking.id,
+      customerEmail,
+      successUrl,
+      cancelUrl,
+      {
+        bookingReference: booking.bookingReference,
+        currency: booking.currency,
+      },
+      testMode
+    );
     
-    return res.json({
-      success: true,
-      mode: "real",
-      status: paymentIntent.status,
-      id: paymentIntent.id,
-      amount: paymentIntent.amount,
-      currency: paymentIntent.currency
-    });
-  } catch (error: any) {
-    console.error("Error getting payment status:", error);
-    return res.status(500).json({ 
-      error: "Failed to get payment status", 
-      message: error.message 
+    // Log the checkout session creation
+    await storage.addSystemLog(
+      'info' as any,
+      'payment-service',
+      `Checkout session created for booking ${booking.id} with reference ${booking.bookingReference}`
+    );
+    
+    res.status(200).json(checkoutSession);
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    
+    // Log the error
+    await storage.addSystemLog(
+      'error' as any,
+      'payment-service',
+      `Error creating checkout session: ${error instanceof Error ? error.message : String(error)}`
+    );
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error instanceof Error ? error.message : 'An error occurred creating the checkout session',
     });
   }
-}
+});
+
+// Verify a payment intent
+router.get('/verify-payment-intent/:paymentIntentId', async (req: Request, res: Response) => {
+  try {
+    const { paymentIntentId } = req.params;
+    
+    if (!paymentIntentId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Payment intent ID is required'
+      });
+    }
+    
+    const verification = await verifyPaymentIntent(paymentIntentId);
+    
+    // Update the booking payment status if needed
+    if (verification.success && verification.status === 'succeeded') {
+      const bookingId = verification.metadata?.bookingId;
+      
+      if (bookingId) {
+        await storage.updateBooking(parseInt(bookingId), {
+          status: 'confirmed',
+          paymentId: paymentIntentId,
+        });
+      }
+    }
+    
+    res.status(200).json(verification);
+  } catch (error) {
+    console.error('Error verifying payment intent:', error);
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error instanceof Error ? error.message : 'An error occurred verifying the payment intent',
+    });
+  }
+});
+
+// Verify a checkout session
+router.get('/verify-checkout-session/:sessionId', async (req: Request, res: Response) => {
+  try {
+    const { sessionId } = req.params;
+    
+    if (!sessionId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Session ID is required'
+      });
+    }
+    
+    const verification = await verifyCheckoutSession(sessionId);
+    
+    // Update the booking payment status if needed
+    if (verification.success && verification.status === 'paid') {
+      const bookingId = verification.metadata?.bookingId;
+      
+      if (bookingId) {
+        await storage.updateBooking(parseInt(bookingId), {
+          status: 'confirmed',
+          paymentId: sessionId,
+        });
+      }
+    }
+    
+    res.status(200).json(verification);
+  } catch (error) {
+    console.error('Error verifying checkout session:', error);
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error instanceof Error ? error.message : 'An error occurred verifying the checkout session',
+    });
+  }
+});
+
+// Webhook endpoint for Stripe events
+router.post('/webhook', async (req: Request, res: Response) => {
+  const sig = req.headers['stripe-signature'];
+  
+  try {
+    // For simplicity, just acknowledge the webhook for now
+    // In a production environment, you would verify the signature and handle events properly
+    
+    // Log the webhook event
+    await storage.addSystemLog(
+      'info' as any,
+      'payment-service',
+      `Stripe webhook event received`
+    );
+    
+    res.status(200).json({ received: true });
+  } catch (error) {
+    console.error('Error handling Stripe webhook:', error);
+    
+    // Log the error
+    await storage.addSystemLog(
+      'error' as any,
+      'payment-service',
+      `Error handling Stripe webhook: ${error instanceof Error ? error.message : String(error)}`
+    );
+    
+    res.status(400).json({ success: false });
+  }
+});
+
+export default router;

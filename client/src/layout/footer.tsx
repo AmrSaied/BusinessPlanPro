@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/hooks/use-translation';
 import { useLanguage } from '@/context/language-context';
 
 const Footer = () => {

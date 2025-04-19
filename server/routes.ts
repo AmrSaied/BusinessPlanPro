@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
+import stripeRoutes from "./routes/stripe-routes";
 import { createHash, randomBytes } from "crypto";
 import { 
   flightSearchSchema, 
@@ -21,8 +22,6 @@ import { TicketService } from "./services/ticket-service";
 import { ViewTripTicketService } from "./services/viewtrip-ticket-service";
 import { PaymentService } from "./services/payment-service";
 import { AmadeusService } from "./services/amadeus-service";
-import { stripeService } from "./services/stripe-service";
-import { createPaymentIntent, confirmPayment, getPaymentStatus } from "./routes/stripe-routes";
 import { setupAuth } from "./auth";
 import passport from "passport";
 import { db } from "./db";
@@ -996,16 +995,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Stripe API routes
-  
-  // Create a Stripe payment intent
-  app.post("/api/stripe/create-payment-intent", createPaymentIntent);
-  
-  // Confirm a Stripe payment
-  app.post("/api/stripe/confirm-payment", confirmPayment);
-  
-  // Get Stripe payment status
-  app.get("/api/stripe/payment-status", getPaymentStatus);
+  // Register Stripe API routes
+  app.use('/api/stripe', stripeRoutes);
 
   // Get ticket data (for preview)
   app.get("/api/bookings/:bookingId/ticket", async (req: Request, res: Response) => {
