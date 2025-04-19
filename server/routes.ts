@@ -21,6 +21,7 @@ import { TicketService } from "./services/ticket-service";
 import { ViewTripTicketService } from "./services/viewtrip-ticket-service";
 import { PaymentService } from "./services/payment-service";
 import { AmadeusService } from "./services/amadeus-service";
+import { stripeService } from "./services/stripe-service";
 import { setupAuth } from "./auth";
 import passport from "passport";
 import { db } from "./db";
