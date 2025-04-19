@@ -48,7 +48,7 @@ export default function OverviewPage() {
 
   // Redirect to home if no booking data is available
   useEffect(() => {
-    if (!bookingData || !bookingData.flight || !bookingData.contactInfo) {
+    if (!bookingData || !bookingData.selectedFlight || !bookingData.contactInfo) {
       toast({
         title: t('error'),
         description: t('booking.error.missingData'),
@@ -58,17 +58,16 @@ export default function OverviewPage() {
     }
   }, [bookingData, navigate, toast, t]);
 
-  if (!bookingData || !bookingData.flight || !bookingData.contactInfo) {
+  if (!bookingData || !bookingData.selectedFlight || !bookingData.contactInfo) {
     return null;
   }
 
   const { 
-    flight, 
+    selectedFlight: flight, 
     passengers, 
     contactInfo,
-    additionalServices,
-    paymentMethod,
-    totalPrice
+    options: additionalServices,
+    totalPrice = flight ? flight.price || 0 : 0
   } = bookingData;
 
   const additionalServicesSelected = additionalServices && Object.values(additionalServices).some(value => value);
@@ -240,7 +239,7 @@ export default function OverviewPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {passengers.map((passenger, index) => (
+                    {passengers?.map((passenger, index) => (
                       <TableRow key={index}>
                         <TableCell>
                           <div className="font-medium">
@@ -250,7 +249,13 @@ export default function OverviewPage() {
                         <TableCell>{passenger.passportNumber}</TableCell>
                         <TableCell>{passenger.nationality}</TableCell>
                       </TableRow>
-                    ))}
+                    )) || (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center text-muted-foreground">
+                          {t('overview.noPassengersData')}
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
 
@@ -331,12 +336,12 @@ export default function OverviewPage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span>{t('flight.basePrice')}</span>
-                  <span>{formatCurrency(flight.basePrice, flight.currency || 'EUR')}</span>
+                  <span>{formatCurrency(flight.price || 0, flight.currency || 'EUR')}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span>{t('payment.passengers', { count: passengers.length })}</span>
-                  <span>x {passengers.length}</span>
+                  <span>{t('payment.passengers', { count: passengers?.length || 1 })}</span>
+                  <span>x {passengers?.length || 1}</span>
                 </div>
 
                 {/* Show additional services in summary if selected */}
