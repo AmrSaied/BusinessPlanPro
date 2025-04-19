@@ -579,14 +579,14 @@ const PaymentForm = ({
                 {/* Base Flight */}
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('summary_flight')}</span>
-                  <span className="font-medium">${flight.basePrice.toFixed(2)}</span>
+                  <span className="font-medium">€{flight.basePrice.toFixed(2)}</span>
                 </div>
                 
                 {/* Express Processing */}
                 {options.expressProcessing && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('summary_express')}</span>
-                    <span className="font-medium">$5.00</span>
+                    <span className="font-medium">€2.00</span>
                   </div>
                 )}
                 
@@ -594,7 +594,7 @@ const PaymentForm = ({
                 {options.editableTicket && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('summary_editable')}</span>
-                    <span className="font-medium">$8.00</span>
+                    <span className="font-medium">€2.00</span>
                   </div>
                 )}
                 
@@ -602,7 +602,7 @@ const PaymentForm = ({
                 {options.hotelReservation && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('summary_hotel')}</span>
-                    <span className="font-medium">$15.00</span>
+                    <span className="font-medium">€2.00</span>
                   </div>
                 )}
                 
@@ -610,7 +610,7 @@ const PaymentForm = ({
                 {options.insuranceLetter && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">{t('summary_insurance')}</span>
-                    <span className="font-medium">$10.00</span>
+                    <span className="font-medium">€2.00</span>
                   </div>
                 )}
               </div>
@@ -618,7 +618,7 @@ const PaymentForm = ({
               {/* Total */}
               <div className="flex justify-between border-t border-gray-200 pt-4">
                 <span className="font-semibold">{t('summary_total')}</span>
-                <span className="font-bold text-xl text-primary">${totalPrice.toFixed(2)}</span>
+                <span className="font-bold text-xl text-primary">€{totalPrice.toFixed(2)}</span>
               </div>
               
               {/* Accepted Payment Methods */}

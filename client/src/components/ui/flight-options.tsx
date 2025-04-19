@@ -175,7 +175,7 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
       <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-gray-50 p-5 rounded-lg">
         <div className="mb-4 md:mb-0">
           <div className="text-sm text-gray-600 mb-1">{t('options_total_price')}</div>
-          <div className="text-2xl font-semibold text-primary">${totalPrice.toFixed(2)}</div>
+          <div className="text-2xl font-semibold text-primary">€{totalPrice.toFixed(2)}</div>
         </div>
         <Button 
           className="bg-primary text-white hover:bg-primary/90 px-6 py-3"
