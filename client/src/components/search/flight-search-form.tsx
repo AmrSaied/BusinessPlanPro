@@ -237,7 +237,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         </div>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
+                        <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
                           <Calendar
                             mode="single"
                             captionLayout="dropdown-buttons"
@@ -281,9 +281,9 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                               today.setHours(0, 0, 0, 0);
                               return date < today;
                             }}
-                            className="rounded-md border-0 bg-black [&_.rdp-day]:text-white [&_.rdp-caption]:text-white [&_.rdp-head_th]:text-white [&_.rdp-day_button:hover]:bg-gray-700 [&_.rdp-day_button.rdp-day_selected]:bg-primary [&_.rdp-nav_button]:text-white [&_.rdp-dropdown_year]:bg-gray-900 [&_.rdp-dropdown_year]:text-white [&_.rdp-dropdown_month]:bg-gray-900 [&_.rdp-dropdown_month]:text-white"
+                            className="rounded-md border-0 bg-white [&_.rdp-day_button.rdp-day_selected]:bg-primary"
                             footer={
-                              <p className="p-2 text-center text-sm text-white font-medium">
+                              <p className="p-2 text-center text-sm text-gray-700 font-medium">
                                 {t("select_departure_date")}
                               </p>
                             }
@@ -357,7 +357,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           </div>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
-                          <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
+                          <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
                             <Calendar
                               mode="single"
                               captionLayout="dropdown-buttons"
@@ -393,10 +393,10 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                 // If no departure date is set, disable dates in the past
                                 return date < new Date();
                               }}
-                              className="rounded-md border-0 bg-black [&_.rdp-day]:text-white [&_.rdp-caption]:text-white [&_.rdp-head_th]:text-white [&_.rdp-day_button:hover]:bg-gray-700 [&_.rdp-day_button.rdp-day_selected]:bg-primary [&_.rdp-nav_button]:text-white [&_.rdp-dropdown_year]:bg-gray-900 [&_.rdp-dropdown_year]:text-white [&_.rdp-dropdown_month]:bg-gray-900 [&_.rdp-dropdown_month]:text-white"
+                              className="rounded-md border-0 bg-white [&_.rdp-day_button.rdp-day_selected]:bg-primary"
                               footer={
                                 watchedDepartureDate ? (
-                                  <p className="p-2 text-center text-sm text-white font-medium">
+                                  <p className="p-2 text-center text-sm text-gray-700 font-medium">
                                     {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
                                   </p>
                                 ) : null
