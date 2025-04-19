@@ -80,11 +80,15 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
     const searchParams = new URLSearchParams(location.search);
     const sessionId = searchParams.get('session_id');
     
+    // ALERT for debugging
+    alert(`DEBUG: Confirmation page loaded with sessionId=${sessionId}, bookingId=${bookingId}, retrievedBookingId=${retrievedBookingId}`);
+    
     console.log('Confirmation page loaded with:', { 
       sessionId, 
       bookingId, 
       retrievedBookingId,
-      locationSearch: location.search 
+      locationSearch: location.search,
+      fullUrl: window.location.href
     });
     
     // If we have a session_id but no retrievedBookingId, retrieve the booking details from the session
@@ -94,7 +98,16 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
       const getBookingFromSession = async () => {
         try {
           console.log('Fetching booking from session ID:', sessionId);
-          const response = await apiRequest('GET', `/api/stripe/session/${sessionId}`);
+          // ALERT for debugging
+          alert('DEBUG: Fetching booking from Stripe session ID: ' + sessionId);
+          
+          const sessionEndpoint = `/api/stripe/session/${sessionId}`;
+          console.log('Calling endpoint:', sessionEndpoint);
+          
+          const response = await apiRequest('GET', sessionEndpoint);
+          
+          // ALERT for debugging
+          alert(`DEBUG: Session endpoint response status: ${response.status}, ok: ${response.ok}`);
           
           console.log('Session endpoint response:', { 
             status: response.status, 
@@ -108,8 +121,14 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
           const data = await response.json();
           console.log('Session data received:', data);
           
+          // ALERT for debugging
+          alert('DEBUG: Session data received: ' + JSON.stringify(data));
+          
           if (data.bookingId) {
             console.log('Setting retrievedBookingId to:', data.bookingId.toString());
+            // ALERT for debugging
+            alert('DEBUG: Setting retrievedBookingId to: ' + data.bookingId.toString());
+            
             setRetrievedBookingId(data.bookingId.toString());
             toast({
               title: t('payment.success'),
@@ -120,6 +139,9 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
           }
         } catch (error) {
           console.error('Error retrieving booking from session:', error);
+          // ALERT for debugging
+          alert('DEBUG ERROR: ' + (error instanceof Error ? error.message : String(error)));
+          
           toast({
             title: t('payment.error.title'),
             description: error instanceof Error ? error.message : t('payment.error.general'),
