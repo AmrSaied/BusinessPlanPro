@@ -79,15 +79,29 @@ export default function OverviewPage() {
 
   const additionalServicesSelected = additionalServices && Object.values(additionalServices).some(value => value);
   
+  // Helper function to generate a booking reference (airline-style PNR code)
+  const generateBookingReference = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
   // Process the checkout with Stripe
   const handlePaymentStripe = async () => {
     try {
       setIsLoading(true);
       
+      // Generate a booking reference (PNR code)
+      const bookingReference = generateBookingReference();
+      
       // First create the booking in the database
       const bookingResponse = await apiRequest('POST', '/api/bookings', {
         flightId: flight.id,
         userId: bookingData.userId || null, // Allow anonymous bookings
+        bookingReference, // Add the booking reference
         totalPrice: totalPrice,
         currency: flight.currency || 'EUR',
         status: 'pending',
@@ -361,7 +375,7 @@ export default function OverviewPage() {
                 </div>
                 
                 <div className="flex justify-between">
-                  <span>{t('passengers')}</span>
+                  <span>{t('passenger_count')}</span>
                   <span>x {passengers?.length || 1}</span>
                 </div>
 

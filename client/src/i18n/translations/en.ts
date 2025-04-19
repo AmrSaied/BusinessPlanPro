@@ -2,6 +2,30 @@ export default {
   // Common
   language_name: 'English',
   app_name: 'FastDummyTicket',
+  
+  // Common translations for the booking flow
+  payment_disclaimer: 'This payment is for a verifiable flight reservation only, not an actual ticket. You cannot board a flight with this reservation.',
+  base_price: 'Base Price',
+  passenger_count: 'Passengers',
+  total_amount: 'Total Amount',
+  proceed_to_payment: 'Proceed to Payment',
+  processing: 'Processing...',
+  back: 'Back',
+  
+  // Flight details
+  flight: {
+    from: 'From',
+    to: 'To',
+    departure: 'Departure',
+    arrival: 'Arrival',
+    duration: 'Flight Duration'
+  },
+  
+  // Services
+  service_express_processing: 'Express Processing (5 min)',
+  service_editable_ticket: 'Editable Ticket',
+  service_hotel_reservation: 'Hotel Reservation Document',
+  service_insurance_letter: 'Travel Insurance Letter',
 
   // Navigation
   nav_home: 'Home',
