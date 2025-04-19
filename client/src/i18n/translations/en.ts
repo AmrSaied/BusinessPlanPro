@@ -222,6 +222,28 @@ export default {
     genericError: 'An error occurred during payment processing',
     createIntentFailed: 'Failed to create payment intent',
     footer: 'Secured by industry-standard encryption',
+    redirecting: 'Redirecting to payment provider',
+    redirectingToStripe: 'You will be redirected to our secure payment processor',
+  },
+  
+  // Overview page
+  overview: {
+    title: 'Booking Overview',
+    flightDetails: 'Flight Details',
+    passengerInformation: 'Passenger Information',
+    contactInformation: 'Contact Information',
+    orderSummary: 'Order Summary',
+    priceBreakdown: 'Price Breakdown',
+    baseFare: 'Base Fare',
+    flight: 'Flight',
+    date: 'Date',
+    passengerName: 'Passenger Name',
+    passportNumber: 'Passport Number',
+    email: 'Email',
+    phone: 'Phone',
+    notProvided: 'Not provided',
+    proceedToCheckout: 'Proceed to Checkout',
+    redirecting: 'Redirecting to Checkout...',
   },
   
   // Confirmation page

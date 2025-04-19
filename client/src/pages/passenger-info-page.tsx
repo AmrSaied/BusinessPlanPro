@@ -135,7 +135,7 @@ const PassengerInfoPage = () => {
       }
     }
     
-    navigate('/payment');
+    navigate('/overview');
   };
   
   // If no flight is selected, show error

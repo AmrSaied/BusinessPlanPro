@@ -15,6 +15,7 @@ import HomePage from "@/pages/home-page";
 import FlightSearchPage from "@/pages/flight-search-page";
 import FlightSelectionPage from "@/pages/flight-selection-page";
 import PassengerInfoPage from "@/pages/passenger-info-page";
+import OverviewPage from "@/pages/overview-page";
 import PaymentPage from "@/pages/payment-page";
 import ConfirmationPage from "@/pages/confirmation-page";
 import FaqPage from "@/pages/faq-page";
@@ -56,6 +57,11 @@ function Router() {
       <Route path="/passenger" component={() => (
         <MainLayout>
           <PassengerInfoPage />
+        </MainLayout>
+      )} />
+      <Route path="/overview" component={() => (
+        <MainLayout>
+          <OverviewPage />
         </MainLayout>
       )} />
       <Route path="/payment" component={() => (
