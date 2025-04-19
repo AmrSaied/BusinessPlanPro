@@ -36,10 +36,10 @@ const FlightOptions = ({
   // Calculate total price when options change
   useEffect(() => {
     let price = selectedFlight?.price || 12;
-    if (options.expressProcessing) price += 5;
-    if (options.editableTicket) price += 8;
-    if (options.hotelReservation) price += 15;
-    if (options.insuranceLetter) price += 10;
+    if (options.expressProcessing) price += 2;
+    if (options.editableTicket) price += 2;
+    if (options.hotelReservation) price += 2;
+    if (options.insuranceLetter) price += 2;
     setTotalPrice(price);
   }, [options, selectedFlight]);
 
@@ -135,7 +135,7 @@ const FlightOptions = ({
                   </div>
                 </div>
                 <div className="font-semibold text-primary">
-                  ${selectedFlight.price.toFixed(2)}
+                  €{selectedFlight.price?.toFixed(2) || "12.00"}
                 </div>
               </div>
 
@@ -156,7 +156,7 @@ const FlightOptions = ({
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+$5</div>
+                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
                   <Checkbox
                     id="express"
                     checked={options.expressProcessing}
@@ -174,7 +174,7 @@ const FlightOptions = ({
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+$8</div>
+                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
                   <Checkbox
                     id="editable"
                     checked={options.editableTicket}
@@ -192,7 +192,7 @@ const FlightOptions = ({
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+$15</div>
+                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
                   <Checkbox
                     id="hotel"
                     checked={options.hotelReservation}
@@ -210,7 +210,7 @@ const FlightOptions = ({
                   </div>
                 </div>
                 <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+$10</div>
+                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
                   <Checkbox
                     id="insurance"
                     checked={options.insuranceLetter}
@@ -228,7 +228,7 @@ const FlightOptions = ({
                 {t("options.totalPrice")}
               </div>
               <div className="text-2xl font-semibold text-primary">
-                ${totalPrice.toFixed(2)}
+                €{totalPrice.toFixed(2)}
               </div>
             </div>
             <Button
