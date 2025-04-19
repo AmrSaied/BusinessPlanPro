@@ -22,6 +22,7 @@ import { ViewTripTicketService } from "./services/viewtrip-ticket-service";
 import { PaymentService } from "./services/payment-service";
 import { AmadeusService } from "./services/amadeus-service";
 import { stripeService } from "./services/stripe-service";
+import { createPaymentIntent, confirmPayment, getPaymentStatus } from "./routes/stripe-routes";
 import { setupAuth } from "./auth";
 import passport from "passport";
 import { db } from "./db";
@@ -925,11 +926,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Process payment
+  // Process payment - Legacy route maintained for backward compatibility
   app.post("/api/payments", async (req: Request, res: Response) => {
     try {
       const paymentData = paymentSchema.parse(req.body);
-      const { bookingId } = req.body;
+      const { bookingId, testMode } = req.body;
       
       if (!bookingId) {
         return res.status(400).json({ error: "Booking ID is required" });
@@ -941,7 +942,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Booking not found" });
       }
       
-      // Process payment
+      // If testMode is explicitly set, use our new Stripe flow
+      if (testMode !== undefined) {
+        if (testMode === true) {
+          // Simulate payment in test mode
+          await storage.updateBooking(booking.id, {
+            status: "confirmed",
+            paymentId: `test_payment_${Date.now()}`
+          });
+          
+          return res.json({ 
+            success: true, 
+            message: "Test payment processed successfully",
+            paymentId: `test_payment_${Date.now()}`,
+            mode: "test"
+          });
+        } else {
+          // For real payments, we should use the other endpoints
+          return res.status(400).json({ 
+            success: false, 
+            message: "For real payments, use /api/stripe/create-payment-intent endpoint" 
+          });
+        }
+      }
+      
+      // Legacy payment processing
       const paymentResult = await paymentService.processPayment(paymentData);
       
       if (paymentResult.success) {
@@ -970,6 +995,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Payment processing failed" });
     }
   });
+  
+  // Stripe API routes
+  
+  // Create a Stripe payment intent
+  app.post("/api/stripe/create-payment-intent", createPaymentIntent);
+  
+  // Confirm a Stripe payment
+  app.post("/api/stripe/confirm-payment", confirmPayment);
+  
+  // Get Stripe payment status
+  app.get("/api/stripe/payment-status", getPaymentStatus);
 
   // Get ticket data (for preview)
   app.get("/api/bookings/:bookingId/ticket", async (req: Request, res: Response) => {

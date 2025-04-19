@@ -6,9 +6,11 @@ import { apiRequest } from '@/lib/queryClient';
 import { useBooking } from '@/context/booking-context';
 import { Payment, InsertBooking, InsertPassenger } from '@shared/schema';
 import PaymentForm from '@/components/ui/payment-form';
+import { StripePaymentForm } from '@/components/ui/stripe-payment-form';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Check, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const PaymentPage = () => {
   const { t } = useTranslation();

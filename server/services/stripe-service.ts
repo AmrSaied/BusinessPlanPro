@@ -1,17 +1,17 @@
-import Stripe from 'stripe';
-import { z } from 'zod';
-import { Flight, Booking } from '@shared/schema';
+import Stripe from "stripe";
+import { z } from "zod";
+import { Flight, Booking } from "@shared/schema";
 
-// Initialize Stripe with your API key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16'
+// Initialize Stripe with API key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2023-10-16",
 });
 
+// Schema for payment intent data
 export const paymentIntentSchema = z.object({
   bookingId: z.number(),
   amount: z.number().positive(),
-  currency: z.string().default('EUR'),
-  paymentMethodId: z.string().optional(),
+  currency: z.string().default("EUR"),
   description: z.string().optional(),
   receiptEmail: z.string().email().optional(),
 });
@@ -24,29 +24,31 @@ export class StripeService {
    */
   async createPaymentIntent(data: PaymentIntentData) {
     try {
+      // Convert amount to cents (Stripe requires amounts in smallest currency unit)
+      const amountInCents = Math.round(data.amount * 100);
+      
+      // Create payment intent using Stripe API
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(data.amount * 100), // Convert to cents
+        amount: amountInCents,
         currency: data.currency.toLowerCase(),
-        ...(data.paymentMethodId && { payment_method: data.paymentMethodId }),
-        ...(data.description && { description: data.description }),
-        ...(data.receiptEmail && { receipt_email: data.receiptEmail }),
+        description: data.description,
+        receipt_email: data.receiptEmail,
         metadata: {
           bookingId: data.bookingId.toString(),
-        },
-        confirmation_method: 'manual',
-        capture_method: 'automatic'
+          application: "Global Air Travel Services"
+        }
       });
       
       return {
         id: paymentIntent.id,
         clientSecret: paymentIntent.client_secret,
-        status: paymentIntent.status,
-        currency: paymentIntent.currency,
-        amount: paymentIntent.amount / 100, // Convert from cents
+        amount: data.amount,
+        currency: data.currency,
+        status: paymentIntent.status
       };
     } catch (error: any) {
-      console.error('Error creating payment intent:', error.message);
-      throw new Error(`Error creating payment intent: ${error.message}`);
+      console.error("Stripe payment intent creation failed:", error.message);
+      throw new Error(`Payment processing failed: ${error.message}`);
     }
   }
 
@@ -55,18 +57,22 @@ export class StripeService {
    */
   async confirmPaymentIntent(paymentIntentId: string, paymentMethodId: string) {
     try {
-      const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
-        payment_method: paymentMethodId,
-      });
+      const paymentIntent = await stripe.paymentIntents.confirm(
+        paymentIntentId,
+        {
+          payment_method: paymentMethodId,
+        }
+      );
       
       return {
         id: paymentIntent.id,
         status: paymentIntent.status,
-        clientSecret: paymentIntent.client_secret,
+        amount: paymentIntent.amount / 100, // Convert from cents back to currency units
+        currency: paymentIntent.currency
       };
     } catch (error: any) {
-      console.error('Error confirming payment intent:', error.message);
-      throw new Error(`Error confirming payment intent: ${error.message}`);
+      console.error("Stripe payment confirmation failed:", error.message);
+      throw new Error(`Payment confirmation failed: ${error.message}`);
     }
   }
 
@@ -76,17 +82,16 @@ export class StripeService {
   async getPaymentIntent(paymentIntentId: string) {
     try {
       const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
       return {
         id: paymentIntent.id,
         status: paymentIntent.status,
-        amount: paymentIntent.amount / 100,
-        currency: paymentIntent.currency,
-        clientSecret: paymentIntent.client_secret,
-        bookingId: paymentIntent.metadata?.bookingId,
+        amount: paymentIntent.amount / 100, // Convert from cents to currency units
+        currency: paymentIntent.currency
       };
     } catch (error: any) {
-      console.error('Error retrieving payment intent:', error.message);
-      throw new Error(`Error retrieving payment intent: ${error.message}`);
+      console.error("Failed to retrieve payment intent:", error.message);
+      throw new Error(`Payment retrieval failed: ${error.message}`);
     }
   }
 
@@ -94,22 +99,18 @@ export class StripeService {
    * Create pricing description for Stripe invoice
    */
   generatePaymentDescription(flight: Flight, booking: Booking, passengers: number): string {
-    const additionalServices = [];
-    if (booking.expressProcessing) additionalServices.push('Express Processing');
-    if (booking.editableTicket) additionalServices.push('Editable Ticket');
-    if (booking.hotelReservation) additionalServices.push('Hotel Reservation');
-    if (booking.insuranceLetter) additionalServices.push('Insurance Letter');
+    const airlineName = flight.airlineName || flight.airlineCode;
+    const flightNumber = flight.flightNumber;
+    const origin = flight.departureAirport;
+    const destination = flight.arrivalAirport;
+    const formattedDate = new Date(flight.departureTime).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
     
-    const baseDescription = `Flight ${flight.airlineCode}${flight.flightNumber}: ${flight.departureAirport} to ${flight.arrivalAirport}`;
-    const passengersStr = `${passengers} passenger${passengers > 1 ? 's' : ''}`;
-    
-    if (additionalServices.length > 0) {
-      return `${baseDescription} - ${passengersStr} with ${additionalServices.join(', ')}`;
-    }
-    
-    return `${baseDescription} - ${passengersStr}`;
+    return `Booking ${booking.bookingReference} - ${airlineName} ${flightNumber} from ${origin} to ${destination} on ${formattedDate} for ${passengers} passenger(s)`;
   }
 }
 
-// Create a singleton instance
 export const stripeService = new StripeService();
