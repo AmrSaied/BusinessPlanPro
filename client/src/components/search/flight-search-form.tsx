@@ -237,52 +237,55 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         </div>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => {
-                            if (date) {
-                              const today = new Date();
-                              today.setHours(0, 0, 0, 0);
-                              
-                              // Validate the date is today or in the future
-                              if (date < today) {
-                                // This should never happen due to disabled dates, but just in case
-                                setValue("departureDate", format(today, "yyyy-MM-dd"), {
-                                  shouldValidate: false
-                                });
-                              } else {
-                                field.onChange(format(date, "yyyy-MM-dd"));
+                        <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              if (date) {
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
                                 
-                                // If we have a return date, validate that it's after the new departure date
-                                const returnDate = watch("returnDate");
-                                if (returnDate && watchedTripType === "round-trip") {
-                                  const returnDateObj = new Date(returnDate);
-                                  returnDateObj.setHours(0, 0, 0, 0);
+                                // Validate the date is today or in the future
+                                if (date < today) {
+                                  // This should never happen due to disabled dates, but just in case
+                                  setValue("departureDate", format(today, "yyyy-MM-dd"), {
+                                    shouldValidate: false
+                                  });
+                                } else {
+                                  field.onChange(format(date, "yyyy-MM-dd"));
                                   
-                                  if (returnDateObj < date) {
-                                    // Auto-adjust return date to be the same as departure date
-                                    setValue("returnDate", format(date, "yyyy-MM-dd"), {
-                                      shouldValidate: false
-                                    });
+                                  // If we have a return date, validate that it's after the new departure date
+                                  const returnDate = watch("returnDate");
+                                  if (returnDate && watchedTripType === "round-trip") {
+                                    const returnDateObj = new Date(returnDate);
+                                    returnDateObj.setHours(0, 0, 0, 0);
+                                    
+                                    if (returnDateObj < date) {
+                                      // Auto-adjust return date to be the same as departure date
+                                      setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                        shouldValidate: false
+                                      });
+                                    }
                                   }
                                 }
                               }
+                            }}
+                            initialFocus
+                            disabled={(date) => {
+                              // Disable dates in the past
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              return date < today;
+                            }}
+                            className="rounded-md border-0 bg-black [&_.rdp-day]:text-white [&_.rdp-caption]:text-white [&_.rdp-head_th]:text-white [&_.rdp-day_button:hover]:bg-gray-700 [&_.rdp-day_button.rdp-day_selected]:bg-primary [&_.rdp-nav_button]:text-white [&_.rdp-dropdown_year]:bg-gray-900 [&_.rdp-dropdown_year]:text-white [&_.rdp-dropdown_month]:bg-gray-900 [&_.rdp-dropdown_month]:text-white"
+                            footer={
+                              <p className="p-2 text-center text-sm text-white font-medium">
+                                {t("select_departure_date")}
+                              </p>
                             }
-                          }}
-                          initialFocus
-                          disabled={(date) => {
-                            // Disable dates in the past
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            return date < today;
-                          }}
-                          footer={
-                            <p className="p-2 text-center text-sm text-muted-foreground">
-                              {t("select_departure_date")}
-                            </p>
-                          }
-                        />
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                   )}
@@ -351,46 +354,49 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                           </div>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => {
-                              if (date) {
-                                field.onChange(format(date, "yyyy-MM-dd"));
-                                
-                                // Validate that return date is after departure date
+                          <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
+                            <Calendar
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                  field.onChange(format(date, "yyyy-MM-dd"));
+                                  
+                                  // Validate that return date is after departure date
+                                  if (watchedDepartureDate) {
+                                    const departureDate = new Date(watchedDepartureDate);
+                                    departureDate.setHours(0, 0, 0, 0);
+                                    
+                                    if (date < departureDate) {
+                                      // Set date value but don't validate yet
+                                      setValue("returnDate", format(date, "yyyy-MM-dd"), {
+                                        shouldValidate: false
+                                      });
+                                    }
+                                  }
+                                }
+                              }}
+                              initialFocus
+                              disabled={(date) => {
+                                // For round trips, disable dates before departure date
                                 if (watchedDepartureDate) {
                                   const departureDate = new Date(watchedDepartureDate);
                                   departureDate.setHours(0, 0, 0, 0);
-                                  
-                                  if (date < departureDate) {
-                                    // Set date value but don't validate yet
-                                    setValue("returnDate", format(date, "yyyy-MM-dd"), {
-                                      shouldValidate: false
-                                    });
-                                  }
+                                  return date < departureDate;
                                 }
+                                // If no departure date is set, disable dates in the past
+                                return date < new Date();
+                              }}
+                              className="rounded-md border-0 bg-black [&_.rdp-day]:text-white [&_.rdp-caption]:text-white [&_.rdp-head_th]:text-white [&_.rdp-day_button:hover]:bg-gray-700 [&_.rdp-day_button.rdp-day_selected]:bg-primary [&_.rdp-nav_button]:text-white [&_.rdp-dropdown_year]:bg-gray-900 [&_.rdp-dropdown_year]:text-white [&_.rdp-dropdown_month]:bg-gray-900 [&_.rdp-dropdown_month]:text-white"
+                              footer={
+                                watchedDepartureDate ? (
+                                  <p className="p-2 text-center text-sm text-white font-medium">
+                                    {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
+                                  </p>
+                                ) : null
                               }
-                            }}
-                            initialFocus
-                            disabled={(date) => {
-                              // For round trips, disable dates before departure date
-                              if (watchedDepartureDate) {
-                                const departureDate = new Date(watchedDepartureDate);
-                                departureDate.setHours(0, 0, 0, 0);
-                                return date < departureDate;
-                              }
-                              // If no departure date is set, disable dates in the past
-                              return date < new Date();
-                            }}
-                            footer={
-                              watchedDepartureDate ? (
-                                <p className="p-2 text-center text-sm text-muted-foreground">
-                                  {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
-                                </p>
-                              ) : null
-                            }
-                          />
+                            />
+                          </div>
                         </PopoverContent>
                       </Popover>
                     )}
