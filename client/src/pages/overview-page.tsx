@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { useTranslation } from "@/hooks/use-translation";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useBooking } from "@/context/booking-context";
 import { Button } from "@/components/ui/button";
@@ -361,7 +361,7 @@ export default function OverviewPage() {
                 </div>
                 
                 <div className="flex justify-between">
-                  <span>{t('payment.passengers', { count: passengers?.length || 1 })}</span>
+                  <span>{t('payment.passengers')}</span>
                   <span>x {passengers?.length || 1}</span>
                 </div>
 
