@@ -62,12 +62,35 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
   const handleOriginSelect = (airport: Airport) => {
     setOriginAirport(airport);
     setValue("origin", airport.iataCode, { shouldValidate: false });
+    
+    // If destination is the same as the new origin, clear the destination
+    if (destinationAirport && destinationAirport.iataCode === airport.iataCode) {
+      setDestinationAirport(null);
+      setValue("destination", "", { shouldValidate: false });
+    }
   };
 
   // Handle destination airport selection
   const handleDestinationSelect = (airport: Airport) => {
+    // Prevent selecting the same airport as origin
+    if (originAirport && originAirport.iataCode === airport.iataCode) {
+      // Don't set the value but set an error for the destination field
+      setValue("destination", "", { shouldValidate: false });
+      
+      // Set custom error message for the same airport
+      setTimeout(() => {
+        control.setError("destination", { 
+          type: "validate", 
+          message: t("error_same_airport", "Origin and destination cannot be the same airport") 
+        });
+      }, 0);
+      return;
+    }
+    
     setDestinationAirport(airport);
     setValue("destination", airport.iataCode, { shouldValidate: false });
+    // Clear any previous custom error
+    control.clearErrors("destination");
   };
 
   // Handle trip type change

@@ -659,21 +659,24 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
-                    <Calendar
-                      mode="single"
-                      captionLayout="dropdown-buttons"
-                      fromYear={1920}
-                      toYear={new Date().getFullYear()}
-                      defaultMonth={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
-                      selected={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          const formattedDate = format(date, "dd/MM/yyyy");
-                          updatePassenger(index, 'dateOfBirth', formattedDate);
-                        }
-                      }}
-                      disabled={(date) => date > new Date()}
-                    />
+                    <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
+                      <Calendar
+                        mode="single"
+                        captionLayout="dropdown-buttons"
+                        fromYear={1920}
+                        toYear={new Date().getFullYear()}
+                        defaultMonth={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
+                        selected={passenger.dateOfBirth ? new Date(passenger.dateOfBirth.split('/').reverse().join('-')) : undefined}
+                        onSelect={(date) => {
+                          if (date) {
+                            const formattedDate = format(date, "dd/MM/yyyy");
+                            updatePassenger(index, 'dateOfBirth', formattedDate);
+                          }
+                        }}
+                        disabled={(date) => date > new Date()}
+                        className="rounded-md border-0"
+                      />
+                    </div>
                   </PopoverContent>
                 </Popover>
                 {errors[`passenger${index}`]?.dateOfBirth && (
@@ -718,21 +721,24 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
-                    <Calendar
-                      mode="single"
-                      captionLayout="dropdown-buttons"
-                      fromYear={new Date().getFullYear()}
-                      toYear={new Date().getFullYear() + 20}
-                      defaultMonth={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : new Date()}
-                      selected={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : undefined}
-                      onSelect={(date) => {
-                        if (date) {
-                          const formattedDate = format(date, "dd/MM/yyyy");
-                          updatePassenger(index, 'passportExpiry', formattedDate);
-                        }
-                      }}
-                      disabled={(date) => date < new Date()}
-                    />
+                    <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
+                      <Calendar
+                        mode="single"
+                        captionLayout="dropdown-buttons"
+                        fromYear={new Date().getFullYear()}
+                        toYear={new Date().getFullYear() + 20}
+                        defaultMonth={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : new Date()}
+                        selected={passenger.passportExpiry ? new Date(passenger.passportExpiry.split('/').reverse().join('-')) : undefined}
+                        onSelect={(date) => {
+                          if (date) {
+                            const formattedDate = format(date, "dd/MM/yyyy");
+                            updatePassenger(index, 'passportExpiry', formattedDate);
+                          }
+                        }}
+                        disabled={(date) => date < new Date()}
+                        className="rounded-md border-0"
+                      />
+                    </div>
                   </PopoverContent>
                 </Popover>
                 {errors[`passenger${index}`]?.passportExpiry && (
