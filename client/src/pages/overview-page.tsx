@@ -254,9 +254,9 @@ export default function OverviewPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('passenger.name')}</TableHead>
-                      <TableHead>{t('passenger.passport')}</TableHead>
-                      <TableHead>{t('passenger.nationality')}</TableHead>
+                      <TableHead>{t('passenger_number')}</TableHead>
+                      <TableHead>{t('passport_number')}</TableHead>
+                      <TableHead>{t('nationality')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -273,7 +273,7 @@ export default function OverviewPage() {
                     )) || (
                       <TableRow>
                         <TableCell colSpan={3} className="text-center text-muted-foreground">
-                          {t('passenger.noData')}
+                          {t('no_saved_passengers')}
                         </TableCell>
                       </TableRow>
                     )}
@@ -281,14 +281,14 @@ export default function OverviewPage() {
                 </Table>
 
                 <div className="mt-6">
-                  <h3 className="font-medium mb-2">{t('overview.contactInfo')}</h3>
+                  <h3 className="font-medium mb-2">{t('contact_info_title')}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
-                      <div className="text-muted-foreground">{t('passenger.email')}:</div>
+                      <div className="text-muted-foreground">{t('email')}:</div>
                       <div>{contactInfo.email}</div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="text-muted-foreground">{t('passenger.phone')}:</div>
+                      <div className="text-muted-foreground">{t('phone')}:</div>
                       <div>{contactInfo.phone}</div>
                     </div>
                   </div>
@@ -309,20 +309,20 @@ export default function OverviewPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>{t('service.name')}</TableHead>
-                        <TableHead className="text-right">{t('service.price')}</TableHead>
+                        <TableHead>{t('service_name')}</TableHead>
+                        <TableHead className="text-right">{t('price')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {additionalServices?.expressProcessing && (
                         <TableRow>
-                          <TableCell>{t('service.expressProcessing')}</TableCell>
+                          <TableCell>{t('service_express_processing')}</TableCell>
                           <TableCell className="text-right">{formatCurrency(2, flight.currency || 'EUR')}</TableCell>
                         </TableRow>
                       )}
                       {additionalServices?.editableTicket && (
                         <TableRow>
-                          <TableCell>{t('service.editableTicket')}</TableCell>
+                          <TableCell>{t('service_editable_ticket')}</TableCell>
                           <TableCell className="text-right">{formatCurrency(2, flight.currency || 'EUR')}</TableCell>
                         </TableRow>
                       )}
@@ -373,14 +373,14 @@ export default function OverviewPage() {
                     
                     {additionalServices?.expressProcessing && (
                       <div className="flex justify-between text-sm">
-                        <span>{t('service.expressProcessing')}</span>
+                        <span>{t('service_express_processing')}</span>
                         <span>{formatCurrency(2, flight.currency || 'EUR')}</span>
                       </div>
                     )}
                     
                     {additionalServices?.editableTicket && (
                       <div className="flex justify-between text-sm">
-                        <span>{t('service.editableTicket')}</span>
+                        <span>{t('service_editable_ticket')}</span>
                         <span>{formatCurrency(2, flight.currency || 'EUR')}</span>
                       </div>
                     )}
