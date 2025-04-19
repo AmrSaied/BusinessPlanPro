@@ -240,6 +240,9 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                         <div className="p-0 bg-black rounded-md shadow-md border border-gray-700">
                           <Calendar
                             mode="single"
+                            captionLayout="dropdown-buttons"
+                            fromYear={new Date().getFullYear()}
+                            toYear={new Date().getFullYear() + 20}
                             selected={field.value ? new Date(field.value) : undefined}
                             onSelect={(date) => {
                               if (date) {

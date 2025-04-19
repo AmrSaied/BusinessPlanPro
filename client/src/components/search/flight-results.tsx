@@ -103,7 +103,7 @@ const FlightResults = ({ flights, isLoading, onSelectFlight }: FlightResultsProp
                     {/* Price and Select Button */}
                     <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
                       <div>
-                        <span className="text-2xl font-semibold text-primary">${flight.price.toFixed(2)}</span>
+                        <span className="text-2xl font-semibold text-primary">€{flight.price.toFixed(2)}</span>
                         <span className="text-gray-500 text-sm ml-1">{t("results.basePrice")}</span>
                       </div>
                       <Button
