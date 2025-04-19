@@ -308,10 +308,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
     passengers.forEach((passenger, index) => {
       const passengerErrors: Record<string, string> = {};
       
-      if (!passenger.title) {
-        passengerErrors.title = t('error_required');
-        isValid = false;
-      }
+      // Title field removed as it's not in database schema
       
       if (!passenger.firstName) {
         passengerErrors.firstName = t('error_required');
@@ -520,7 +517,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                           value={savedPassenger.id?.toString() || 'unknown'}
                           className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
                         >
-                          {savedPassenger.title}. {savedPassenger.firstName} {savedPassenger.lastName}
+                          {savedPassenger.firstName} {savedPassenger.lastName}
                         </SelectItem>
                       ))
                     ) : (
@@ -540,36 +537,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           
           <div className="p-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              {/* Title */}
-              <div>
-                <Label htmlFor={`title-${index}`}>{t('passenger_title_label')}</Label>
-                <Select 
-                  value={passenger.title} 
-                  onValueChange={(value) => updatePassenger(index, 'title', value)}
-                >
-                  <SelectTrigger 
-                    id={`title-${index}`} 
-                    className={cn(currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "")} 
-                    dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
-                  >
-                    <SelectValue placeholder={t('passenger_select_title')} />
-                  </SelectTrigger>
-                  <SelectContent align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
-                    {titles.map((title) => (
-                      <SelectItem 
-                        key={title.value} 
-                        value={title.value}
-                        className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : ""}
-                      >
-                        {title.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors[`passenger${index}`]?.title && (
-                  <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].title}</p>
-                )}
-              </div>
+              {/* Title field removed as it's not in the database schema */}
               
               {/* Nationality */}
               <div>

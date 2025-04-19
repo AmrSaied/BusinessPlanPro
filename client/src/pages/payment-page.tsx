@@ -37,8 +37,8 @@ const PaymentPage = () => {
         specialRequestsWithPassenger += ', ';
       }
       
-      // Add passenger details
-      specialRequestsWithPassenger += `firstName:${passenger.firstName}, lastName:${passenger.lastName}, title:${passenger.title}`;
+      // Add passenger details (removed title as it doesn't exist in database schema)
+      specialRequestsWithPassenger += `firstName:${passenger.firstName}, lastName:${passenger.lastName}`;
       
       // Add additional passenger details if present
       if (passenger.nationality) {
