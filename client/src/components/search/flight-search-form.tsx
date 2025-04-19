@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { flightSearchSchema, type FlightSearch } from "@shared/schema";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/language-context";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -28,6 +29,7 @@ interface FlightSearchFormProps {
 const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { toast } = useToast();
   const [tripType, setTripType] = useState<"one-way" | "round-trip">("round-trip"); // Set round-trip as default
   const [originAirport, setOriginAirport] = useState<Airport | null>(null);
   const [destinationAirport, setDestinationAirport] = useState<Airport | null>(null);
@@ -67,6 +69,13 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
     if (destinationAirport && destinationAirport.iataCode === airport.iataCode) {
       setDestinationAirport(null);
       setValue("destination", "", { shouldValidate: false });
+      
+      // Show toast notification about clearing destination
+      toast({
+        title: t("destination_cleared_title", "Destination Cleared"),
+        description: t("destination_cleared_message", "Destination has been cleared because it cannot be the same as origin"),
+        variant: "default",
+      });
     }
   };
 
