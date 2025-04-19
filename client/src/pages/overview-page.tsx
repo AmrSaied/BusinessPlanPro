@@ -328,13 +328,13 @@ export default function OverviewPage() {
                       )}
                       {additionalServices?.hotelReservation && (
                         <TableRow>
-                          <TableCell>{t('service.hotelReservation')}</TableCell>
+                          <TableCell>{t('service_hotel_reservation')}</TableCell>
                           <TableCell className="text-right">{formatCurrency(2, flight.currency || 'EUR')}</TableCell>
                         </TableRow>
                       )}
                       {additionalServices?.insuranceLetter && (
                         <TableRow>
-                          <TableCell>{t('service.insuranceLetter')}</TableCell>
+                          <TableCell>{t('service_insurance_letter')}</TableCell>
                           <TableCell className="text-right">{formatCurrency(2, flight.currency || 'EUR')}</TableCell>
                         </TableRow>
                       )}
@@ -356,12 +356,12 @@ export default function OverviewPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
-                  <span>{t('flight.basePrice')}</span>
+                  <span>{t('base_price')}</span>
                   <span>{formatCurrency(flight.price || 0, flight.currency || 'EUR')}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span>{t('payment.passengers')}</span>
+                  <span>{t('passengers')}</span>
                   <span>x {passengers?.length || 1}</span>
                 </div>
 
@@ -387,14 +387,14 @@ export default function OverviewPage() {
                     
                     {additionalServices?.hotelReservation && (
                       <div className="flex justify-between text-sm">
-                        <span>{t('service.hotelReservation')}</span>
+                        <span>{t('service_hotel_reservation')}</span>
                         <span>{formatCurrency(2, flight.currency || 'EUR')}</span>
                       </div>
                     )}
                     
                     {additionalServices?.insuranceLetter && (
                       <div className="flex justify-between text-sm">
-                        <span>{t('service.insuranceLetter')}</span>
+                        <span>{t('service_insurance_letter')}</span>
                         <span>{formatCurrency(2, flight.currency || 'EUR')}</span>
                       </div>
                     )}
@@ -404,14 +404,14 @@ export default function OverviewPage() {
                 <Separator />
 
                 <div className="flex justify-between font-bold text-lg">
-                  <span>{t('payment.totalAmount')}</span>
+                  <span>{t('total_amount')}</span>
                   <span>{formatCurrency(totalPrice, flight.currency || 'EUR')}</span>
                 </div>
 
                 <div className="bg-muted p-3 rounded-md text-sm text-muted-foreground">
                   <p>
                     <AlertTriangle className="h-4 w-4 inline-block mr-1" />
-                    {t('payment.disclaimer')}
+                    {t('payment_disclaimer')}
                   </p>
                 </div>
               </CardContent>
@@ -421,7 +421,7 @@ export default function OverviewPage() {
                   onClick={handlePaymentStripe}
                   disabled={isLoading}
                 >
-                  {isLoading ? t('payment.processing') : t('payment.proceedToPayment')}
+                  {isLoading ? t('processing') : t('proceed_to_payment')}
                 </Button>
                 
                 <Button 
@@ -430,7 +430,7 @@ export default function OverviewPage() {
                   onClick={() => navigate("/passenger-info")}
                   disabled={isLoading}
                 >
-                  {t('common.back')}
+                  {t('back')}
                 </Button>
               </CardFooter>
             </Card>
