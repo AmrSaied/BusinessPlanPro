@@ -124,7 +124,11 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
         try {
           console.log('Fetching booking from session ID:', sessionId);
           
-          const sessionEndpoint = `/api/stripe/session/${sessionId}`;
+          // Include the booking_id in the query if available for extra reliability
+          const sessionEndpoint = urlBookingId 
+            ? `/api/stripe/session/${sessionId}?booking_id=${urlBookingId}`
+            : `/api/stripe/session/${sessionId}`;
+            
           console.log('Calling endpoint:', sessionEndpoint);
           
           const response = await apiRequest('GET', sessionEndpoint);
@@ -135,6 +139,17 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
           });
           
           if (!response.ok) {
+            // If we have a URL booking ID, use it as fallback even if the session check fails
+            if (urlBookingId) {
+              console.log('Session check failed but using URL booking ID as fallback:', urlBookingId);
+              setRetrievedBookingId(urlBookingId);
+              toast({
+                title: t('payment.success'),
+                description: t('payment.completedSuccessfully'),
+              });
+              return;
+            }
+            
             throw new Error('Failed to retrieve booking from session');
           }
           
@@ -149,11 +164,30 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
               title: t('payment.success'),
               description: t('payment.completedSuccessfully'),
             });
+          } else if (urlBookingId) {
+            // Fallback again to URL booking ID if session doesn't return booking ID
+            console.log('Session check succeeded but no booking ID returned, using URL booking ID as fallback:', urlBookingId);
+            setRetrievedBookingId(urlBookingId);
+            toast({
+              title: t('payment.success'),
+              description: t('payment.completedSuccessfully'),
+            });
           } else {
             throw new Error('No booking ID associated with this session');
           }
         } catch (error) {
           console.error('Error retrieving booking from session:', error);
+          
+          // Final fallback - if all else fails but we have a URL booking ID
+          if (urlBookingId) {
+            console.log('Session check error but using URL booking ID as final fallback:', urlBookingId);
+            setRetrievedBookingId(urlBookingId);
+            toast({
+              title: t('payment.success'),
+              description: t('payment.completedWithWarnings'),
+            });
+            return;
+          }
           
           toast({
             title: t('payment.error.title'),

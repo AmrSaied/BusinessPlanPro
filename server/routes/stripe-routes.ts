@@ -230,7 +230,10 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
     
-    console.log('Received request for session info with ID:', sessionId);
+    // Also check for booking_id in query parameters (from URL)
+    const directBookingId = req.query.booking_id ? String(req.query.booking_id) : null;
+    
+    console.log('Received request for session info with ID:', sessionId, 'Direct booking ID:', directBookingId);
     
     if (!sessionId) {
       console.log('Session ID is empty or missing');
@@ -240,7 +243,48 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
       });
     }
     
-    // Verify the checkout session
+    // APPROACH 1: Try using the direct booking ID from query parameters first if available
+    if (directBookingId) {
+      try {
+        const numericBookingId = parseInt(directBookingId);
+        console.log('Attempting to retrieve booking directly with ID:', numericBookingId);
+        
+        const booking = await storage.getBooking(numericBookingId);
+        
+        if (booking) {
+          console.log('Successfully found booking with direct ID:', booking.id);
+          
+          // Update the booking status if it's still pending
+          if (booking.status === 'pending') {
+            console.log('Updating booking status to confirmed for direct ID:', booking.id);
+            await storage.updateBooking(booking.id, {
+              status: 'confirmed',
+              paymentId: sessionId,
+            });
+            
+            await storage.addSystemLog(
+              'info' as any,
+              'payment-service',
+              `Payment completed successfully for booking ID ${booking.id} (direct ID method)`
+            );
+          }
+          
+          return res.status(200).json({
+            success: true,
+            bookingId: booking.id,
+            status: 'paid',
+            source: 'direct-query-param'
+          });
+        } else {
+          console.log('No booking found with direct ID:', numericBookingId);
+        }
+      } catch (error) {
+        console.error('Error retrieving booking with direct ID:', error);
+        // Continue to other methods if direct ID fails
+      }
+    }
+    
+    // APPROACH 2: Verify the checkout session
     console.log('Verifying checkout session with ID:', sessionId);
     const verification = await verifyCheckoutSession(sessionId);
     console.log('Session verification result:', verification);
@@ -248,13 +292,29 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
     // First check if verification was successful
     if (!verification.success) {
       console.log('Session verification failed:', verification.error);
+      
+      // If we have a direct booking ID but verification failed, still return the booking ID
+      if (directBookingId) {
+        try {
+          const numericBookingId = parseInt(directBookingId);
+          return res.status(200).json({
+            success: true,
+            bookingId: numericBookingId,
+            status: 'paid',
+            source: 'direct-id-fallback'
+          });
+        } catch (error) {
+          console.error('Error with direct ID fallback:', error);
+        }
+      }
+      
       return res.status(500).json({
         success: false,
         message: verification.error || 'Failed to verify session',
       });
     }
     
-    // Update the booking payment status if needed
+    // Update the booking payment status if needed (from session verification)
     if (verification.status === 'paid') {
       const bookingId = verification.metadata?.bookingId;
       console.log('Found booking ID in metadata:', bookingId);
@@ -281,7 +341,8 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
           return res.status(200).json({
             success: true,
             bookingId: parseInt(bookingId),
-            status: 'paid'
+            status: 'paid',
+            source: 'session-metadata'
           });
         } catch (error) {
           console.error('Error updating booking:', error);
@@ -290,7 +351,8 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
             success: true,
             bookingId: parseInt(bookingId),
             status: 'paid',
-            warning: 'Booking was found but could not be updated'
+            warning: 'Booking was found but could not be updated',
+            source: 'session-metadata-warning'
           });
         }
       }

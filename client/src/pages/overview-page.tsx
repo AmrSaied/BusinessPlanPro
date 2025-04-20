@@ -147,8 +147,8 @@ export default function OverviewPage() {
         });
       }
       
-      // Create a Stripe checkout session
-      const successUrl = `${window.location.origin}/confirmation?session_id={CHECKOUT_SESSION_ID}`;
+      // Create a Stripe checkout session with booking ID directly in success URL
+      const successUrl = `${window.location.origin}/confirmation?booking_id=${bookingId}&session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = `${window.location.origin}/payment?booking_id=${bookingId}`;
       
       const stripeResponse = await apiRequest('POST', '/api/stripe/create-checkout-session', {
