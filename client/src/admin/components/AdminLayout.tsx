@@ -37,7 +37,6 @@ import {
   Sun,
   Tags,
   ChevronDown,
-  Laptop,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -267,10 +266,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   <Moon className="mr-2 h-4 w-4" />
                   <span>Dark</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  <Laptop className="mr-2 h-4 w-4" />
-                  <span>System</span>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -324,10 +319,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 <DropdownMenuItem onClick={() => setTheme("dark")}>
                   <Moon className="mr-2 h-4 w-4" />
                   <span>Dark</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  <Laptop className="mr-2 h-4 w-4" />
-                  <span>System</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
