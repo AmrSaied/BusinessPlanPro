@@ -356,50 +356,62 @@ const TicketsPage = () => {
                   <CardTitle className="text-base">Flight Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  {selectedBooking.flight ? (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Flight:</span>
-                        <span>
-                          {selectedBooking.flight.airlineCode} {selectedBooking.flight.flightNumber}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Route:</span>
-                        <span>
-                          {selectedBooking.flight.departureAirport} → {selectedBooking.flight.arrivalAirport}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Departure:</span>
-                        <span>
-                          {selectedBooking.flight.departureTime
-                            ? format(typeof selectedBooking.flight.departureTime === 'string' 
-                                ? parseISO(selectedBooking.flight.departureTime) 
-                                : selectedBooking.flight.departureTime, "PPp")
-                            : "—"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Arrival:</span>
-                        <span>
-                          {selectedBooking.flight.arrivalTime
-                            ? format(typeof selectedBooking.flight.arrivalTime === 'string' 
-                                ? parseISO(selectedBooking.flight.arrivalTime) 
-                                : selectedBooking.flight.arrivalTime, "PPp")
-                            : "—"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Aircraft:</span>
-                        <span>{selectedBooking.flight.aircraft || "—"}</span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center py-4 text-muted-foreground">
-                      No flight details available
-                    </div>
-                  )}
+                  {(() => {
+                    // Helper function to safely format the date
+                    const formatDate = (dateValue: any): string => {
+                      if (!dateValue) return "—";
+                      try {
+                        const date = typeof dateValue === 'string' 
+                          ? parseISO(dateValue)
+                          : new Date(dateValue);
+                        return isNaN(date.getTime()) ? "Invalid date" : format(date, "PPp");
+                      } catch (e) {
+                        console.error("Date formatting error:", e);
+                        return "Invalid date format";
+                      }
+                    };
+
+                    if (selectedBooking.flight && (selectedBooking.flight.airlineCode || selectedBooking.flight.flightNumber)) {
+                      return (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Flight:</span>
+                            <span>
+                              {selectedBooking.flight.airlineCode || ""} {selectedBooking.flight.flightNumber || ""}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Route:</span>
+                            <span>
+                              {selectedBooking.flight.departureAirport || "—"} → {selectedBooking.flight.arrivalAirport || "—"}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Departure:</span>
+                            <span>
+                              {formatDate(selectedBooking.flight.departureTime)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Arrival:</span>
+                            <span>
+                              {formatDate(selectedBooking.flight.arrivalTime)}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-medium">Aircraft:</span>
+                            <span>{selectedBooking.flight.aircraft || "—"}</span>
+                          </div>
+                        </>
+                      );
+                    } else {
+                      return (
+                        <div className="text-center py-4 text-muted-foreground">
+                          No flight details available
+                        </div>
+                      );
+                    }
+                  })()}
                 </CardContent>
               </Card>
 
@@ -582,11 +594,11 @@ const TicketsPage = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {booking.flight ? (
+                      {booking.flight && (booking.flight.airlineCode || booking.flight.flightNumber) ? (
                         <>
-                          {booking.flight.airlineCode} {booking.flight.flightNumber}
+                          {booking.flight.airlineCode || ""} {booking.flight.flightNumber || ""}
                           <div className="text-xs text-muted-foreground mt-1">
-                            {booking.flight.departureAirport} → {booking.flight.arrivalAirport}
+                            {booking.flight.departureAirport || "—"} → {booking.flight.arrivalAirport || "—"}
                           </div>
                         </>
                       ) : (
@@ -594,18 +606,18 @@ const TicketsPage = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {booking.flight && booking.flight.departureTime
-                        ? (() => {
-                            try {
-                              const date = typeof booking.flight.departureTime === 'string' 
-                                ? parseISO(booking.flight.departureTime)
-                                : new Date(booking.flight.departureTime);
-                              return isNaN(date.getTime()) ? "Invalid date" : format(date, "PP");
-                            } catch (e) {
-                              return "Invalid date format";
-                            }
-                          })()
-                        : "—"}
+                      {(() => {
+                        if (!booking.flight || !booking.flight.departureTime) return "—";
+                        try {
+                          const date = typeof booking.flight.departureTime === 'string' 
+                            ? parseISO(booking.flight.departureTime)
+                            : new Date(booking.flight.departureTime);
+                          return isNaN(date.getTime()) ? "Invalid date" : format(date, "PP");
+                        } catch (e) {
+                          console.error("Date formatting error:", e);
+                          return "Invalid date format";
+                        }
+                      })()}
                     </TableCell>
                     <TableCell>
                       {booking.currency} {booking.totalPrice}

@@ -400,23 +400,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .leftJoin(users, eq(bookings.userId, users.id));
       
       // Transform the results to the expected format
-      const transformedBookings = allBookings.map(({ booking, flight, user }) => ({
-        ...booking,
-        flight: flight ? {
-          ...flight,
-          // Add default values for any missing fields
-          aircraft: "Boeing 737", // Default aircraft
-          status: "scheduled",    // Default status
-          currency: "USD",        // Default currency
-          price: flight?.basePrice || 0, // Default price equals basePrice
-          departureCountry: flight?.departureCity ? `Country of ${flight.departureCity}` : "Unknown",
-          arrivalCountry: flight?.arrivalCity ? `Country of ${flight.arrivalCity}` : "Unknown",
-        } : null,
-        user,
-        // Add ticket details 
-        ticketNumber: `TKT${booking.bookingReference}`,
-        ticketPdfUrl: `/api/bookings/${booking.id}/ticket/download`,
-      }));
+      const transformedBookings = allBookings.map(({ booking, flight, user }) => {
+        // Check if flight object has actual data or is just empty properties
+        const hasFlightData = flight && (flight.airlineCode || flight.flightNumber);
+        
+        return {
+          ...booking,
+          flight: hasFlightData ? {
+            ...flight,
+            // Add default values for any missing fields
+            aircraft: flight.aircraft || "Boeing 737", // Default aircraft
+            status: "scheduled",    // Default status
+            currency: "USD",        // Default currency
+            price: flight.basePrice || 0, // Default price equals basePrice
+            departureCountry: flight.departureCity ? `Country of ${flight.departureCity}` : "Unknown",
+            arrivalCountry: flight.arrivalCity ? `Country of ${flight.arrivalCity}` : "Unknown",
+            // Ensure date fields are properly formed
+            departureTime: flight.departureTime ? new Date(flight.departureTime).toISOString() : null,
+            arrivalTime: flight.arrivalTime ? new Date(flight.arrivalTime).toISOString() : null,
+          } : null,
+          user,
+          // Add ticket details 
+          ticketNumber: `TKT${booking.bookingReference}`,
+          ticketPdfUrl: `/api/bookings/${booking.id}/ticket/download`,
+        };
+      });
       
       res.status(200).json(transformedBookings);
     } catch (error) {
