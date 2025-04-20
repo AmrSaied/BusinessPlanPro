@@ -748,8 +748,11 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             
             {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
             {savedPassengers !== undefined && (
-              <div className={cn("mt-4 w-full", isRTL ? "flex justify-end" : "")}>
-                <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2")}>
+              <div className="mt-4 w-full">
+                <div className={cn(
+                  "flex items-center", 
+                  isRTL ? "justify-end space-x-reverse space-x-2 flex-row-reverse" : "justify-start space-x-2"
+                )}>
                   <Checkbox 
                     id={`save-passenger-${index}`} 
                     checked={!!passenger.isSaved}
@@ -823,8 +826,11 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           
           {/* Save contact information checkbox - only show if user is authenticated */}
           {savedPassengers !== undefined && (
-            <div className={cn("mt-4 w-full", isRTL ? "flex justify-end" : "")}>
-              <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2")}>
+            <div className="mt-4 w-full">
+              <div className={cn(
+                "flex items-center", 
+                isRTL ? "justify-end space-x-reverse space-x-2 flex-row-reverse" : "justify-start space-x-2"
+              )}>
                 <Checkbox 
                   id="save-contact-info" 
                   checked={!!contactInfo.saveInfo}
