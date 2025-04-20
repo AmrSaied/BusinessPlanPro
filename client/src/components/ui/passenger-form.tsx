@@ -750,21 +750,43 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             {savedPassengers !== undefined && (
               <div className="mt-4 w-full">
                 <div 
-                  className="flex items-center checkbox-wrapper"
+                  className={cn(
+                    "flex items-center checkbox-wrapper",
+                    isRTL ? "justify-end" : "justify-start"
+                  )}
                   dir={isRTL ? "rtl" : "ltr"}
                 >
-                  <Checkbox 
-                    id={`save-passenger-${index}`} 
-                    checked={!!passenger.isSaved}
-                    onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
-                    className="checkbox"
-                  />
-                  <label 
-                    htmlFor={`save-passenger-${index}`}
-                    className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label"
-                  >
-                    {t('save_passenger', 'Save this passenger for future bookings')}
-                  </label>
+                  {isRTL ? (
+                    <>
+                      <label 
+                        htmlFor={`save-passenger-${index}`}
+                        className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label text-right"
+                      >
+                        {t('save_passenger', 'Save this passenger for future bookings')}
+                      </label>
+                      <Checkbox 
+                        id={`save-passenger-${index}`} 
+                        checked={!!passenger.isSaved}
+                        onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
+                        className="checkbox ml-2"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Checkbox 
+                        id={`save-passenger-${index}`} 
+                        checked={!!passenger.isSaved}
+                        onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
+                        className="checkbox mr-2"
+                      />
+                      <label 
+                        htmlFor={`save-passenger-${index}`}
+                        className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label"
+                      >
+                        {t('save_passenger', 'Save this passenger for future bookings')}
+                      </label>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -828,23 +850,47 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           {savedPassengers !== undefined && (
             <div className="mt-4 w-full">
               <div 
-                className="flex items-center checkbox-wrapper"
+                className={cn(
+                  "flex items-center checkbox-wrapper",
+                  isRTL ? "justify-end" : "justify-start"
+                )}
                 dir={isRTL ? "rtl" : "ltr"}
               >
-                <Checkbox 
-                  id="save-contact-info" 
-                  checked={!!contactInfo.saveInfo}
-                  onCheckedChange={(checked: CheckedState) => 
-                    setContactInfo({ ...contactInfo, saveInfo: checked === true })
-                  }
-                  className="checkbox"
-                />
-                <label 
-                  htmlFor="save-contact-info"
-                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label"
-                >
-                  {t('save_contact_info', 'Save contact information for future bookings')}
-                </label>
+                {isRTL ? (
+                  <>
+                    <label 
+                      htmlFor="save-contact-info"
+                      className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label text-right"
+                    >
+                      {t('save_contact_info', 'Save contact information for future bookings')}
+                    </label>
+                    <Checkbox 
+                      id="save-contact-info" 
+                      checked={!!contactInfo.saveInfo}
+                      onCheckedChange={(checked: CheckedState) => 
+                        setContactInfo({ ...contactInfo, saveInfo: checked === true })
+                      }
+                      className="checkbox ml-2"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Checkbox 
+                      id="save-contact-info" 
+                      checked={!!contactInfo.saveInfo}
+                      onCheckedChange={(checked: CheckedState) => 
+                        setContactInfo({ ...contactInfo, saveInfo: checked === true })
+                      }
+                      className="checkbox mr-2"
+                    />
+                    <label 
+                      htmlFor="save-contact-info"
+                      className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label"
+                    >
+                      {t('save_contact_info', 'Save contact information for future bookings')}
+                    </label>
+                  </>
+                )}
               </div>
             </div>
           )}
