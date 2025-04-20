@@ -320,6 +320,8 @@ export default {
   error_invalid_card: 'معلومات البطاقة غير صالحة',
   error_payment_failed: 'فشل الدفع. يرجى المحاولة مرة أخرى.',
   error_fields: 'يرجى ملء جميع الحقول المطلوبة',
+  error_same_airport_title: 'اختيار غير صالح',
+  error_same_airport: 'لا يمكن أن يكون المصدر والوجهة نفس المطار',
   invalid_airport_code: 'رمز المطار غير صالح',
   invalid_date_format: 'تنسيق التاريخ غير صالح، يرجى اختيار تاريخ صالح',
   return_date_required: 'تاريخ العودة مطلوب لرحلات الذهاب والعودة',

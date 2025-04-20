@@ -161,6 +161,8 @@ export default {
   error_invalid_card: 'Informations de carte invalides',
   error_payment_failed: 'Paiement échoué. Veuillez réessayer.',
   error_fields: 'Veuillez remplir tous les champs obligatoires',
+  error_same_airport_title: 'Sélection invalide',
+  error_same_airport: 'L\'origine et la destination ne peuvent pas être le même aéroport',
   invalid_airport_code: 'Code d\'aéroport invalide',
   invalid_date_format: 'Format de date invalide, veuillez sélectionner une date valide',
   return_date_required: 'Date de retour obligatoire pour les vols aller-retour',
