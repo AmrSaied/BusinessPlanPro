@@ -198,29 +198,34 @@ const Header = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden pb-4">
+            {/* Mobile Theme Toggle */}
+            <div className="flex items-center justify-between py-3 mb-3 border-b">
+              <span className="text-sm font-medium text-muted-foreground">{t('Toggle theme')}</span>
+              <ThemeToggle />
+            </div>
             <nav className="flex flex-col space-y-3">
               <Link href="/">
-                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_home')}</span>
+                <span className="font-medium text-foreground hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_home')}</span>
               </Link>
               <Link href="/how-it-works">
-                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_how_it_works')}</span>
+                <span className="font-medium text-foreground hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_how_it_works')}</span>
               </Link>
               <Link href="/faq">
-                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_faq')}</span>
+                <span className="font-medium text-foreground hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_faq')}</span>
               </Link>
               <Link href="/support">
-                <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_support')}</span>
+                <span className="font-medium text-foreground hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_support')}</span>
               </Link>
               
               {isLoggedIn ? (
                 <>
                   <Link href="/dashboard">
-                    <span className="font-medium text-gray-600 hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_dashboard')}</span>
+                    <span className="font-medium text-foreground hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_dashboard')}</span>
                   </Link>
 
                   <button 
                     onClick={() => logoutMutation.mutate()}
-                    className="flex items-center font-medium text-gray-600 hover:text-primary transition py-2"
+                    className="flex items-center font-medium text-foreground hover:text-primary transition py-2"
                   >
                     <LogOut className="h-4 w-4 ltr:mr-2 rtl:ml-2 flex-shrink-0" />
                     <span>{t('nav_logout')}</span>
