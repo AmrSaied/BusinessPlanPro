@@ -186,7 +186,6 @@ export default function OverviewPage() {
   };
 
   return (
-    <MainLayout>
       <div className="container mx-auto py-8">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold tracking-tight">{t('overview.title')}</h1>
@@ -453,6 +452,5 @@ export default function OverviewPage() {
           </div>
         </div>
       </div>
-    </MainLayout>
   );
 }
