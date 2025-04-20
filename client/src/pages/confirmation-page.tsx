@@ -77,7 +77,7 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   // Extract session_id or booking_id from URL if present
   useEffect(() => {
     // Parse query parameters from location.search
-    const searchParams = new URLSearchParams(location.search);
+    const searchParams = new URLSearchParams(window.location.search);
     const sessionId = searchParams.get('session_id');
     const urlBookingId = searchParams.get('booking_id'); // Try to get booking_id directly
     
@@ -178,16 +178,10 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   } = useQuery<TicketData>({
     queryKey: [`/api/bookings/${retrievedBookingId}/ticket`],
     enabled: !!retrievedBookingId,
-    retry: 2,
-    retryDelay: 1000,
-    onError: (err) => {
-      console.error('Error fetching ticket data:', err);
-      toast({
-        title: t('booking.notFound'),
-        description: t('booking.tryAgainOrContactSupport'),
-        variant: "destructive"
-      });
-    }
+    retry: 3,
+    retryDelay: 1500,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity 
   });
   
   // Handle ticket download

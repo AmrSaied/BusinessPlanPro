@@ -138,10 +138,10 @@ export async function createCheckoutSession(
         },
       ],
       mode: 'payment',
-      // Include the booking ID directly in the success URL for real Stripe sessions too
+      // Include both the booking ID and session ID directly in the success URL for real Stripe sessions
       success_url: successUrl.includes('?') 
-        ? `${successUrl}&session_id={CHECKOUT_SESSION_ID}`
-        : `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+        ? `${successUrl}&session_id={CHECKOUT_SESSION_ID}&booking_id=${bookingId}`
+        : `${successUrl}?session_id={CHECKOUT_SESSION_ID}&booking_id=${bookingId}`,
       cancel_url: cancelUrl,
       customer_email: customerEmail,
       metadata: {
