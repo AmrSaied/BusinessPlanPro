@@ -93,7 +93,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
     }
     
     setDestinationAirport(airport);
-    setValue("destination", airport.iataCode, { shouldValidate: true });
+    setValue("destination", airport.iataCode, { shouldValidate: false });
   };
 
   // Handle trip type change
