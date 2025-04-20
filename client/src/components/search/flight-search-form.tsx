@@ -282,11 +282,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                               return date < today;
                             }}
                             className="rounded-md border-0 bg-white [&_.rdp-day_button.rdp-day_selected]:bg-primary"
-                            footer={
-                              <p className="p-2 text-center text-sm text-gray-700 font-medium">
-                                {t("select_departure_date")}
-                              </p>
-                            }
+                            // Remove footer to prevent formatting message from appearing
                           />
                         </div>
                       </PopoverContent>
@@ -394,13 +390,7 @@ const FlightSearchForm = ({ onSubmit, className = "" }: FlightSearchFormProps) =
                                 return date < new Date();
                               }}
                               className="rounded-md border-0 bg-white [&_.rdp-day_button.rdp-day_selected]:bg-primary"
-                              footer={
-                                watchedDepartureDate ? (
-                                  <p className="p-2 text-center text-sm text-gray-700 font-medium">
-                                    {t("select_date_after")} {format(new Date(watchedDepartureDate), "PPP")}
-                                  </p>
-                                ) : null
-                              }
+                              // Remove footer to prevent formatting message from appearing
                             />
                           </div>
                         </PopoverContent>
