@@ -1001,24 +1001,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get ticket data (for preview)
   app.get("/api/bookings/:bookingId/ticket", async (req: Request, res: Response) => {
     try {
+      console.log(`[TICKET] Ticket request received for bookingId: ${req.params.bookingId}`);
+      
+      // Make sure bookingId is a valid number
+      if (!req.params.bookingId || isNaN(parseInt(req.params.bookingId))) {
+        console.log(`[TICKET] Invalid bookingId format: ${req.params.bookingId}`);
+        return res.status(400).json({ error: "Invalid booking ID format" });
+      }
+      
       const bookingId = parseInt(req.params.bookingId);
+      console.log(`[TICKET] Parsed bookingId: ${bookingId}`);
       
       // Check if booking exists and is confirmed
+      console.log(`[TICKET] Fetching booking with ID: ${bookingId}`);
       const booking = await storage.getBooking(bookingId);
+      
       if (!booking) {
+        console.log(`[TICKET] ERROR: Booking not found for ID: ${bookingId}`);
         return res.status(404).json({ error: "Booking not found" });
       }
       
+      console.log(`[TICKET] Found booking: ${booking.id}, status: ${booking.status}, reference: ${booking.bookingReference}`);
+      
       if (booking.status !== "confirmed") {
+        console.log(`[TICKET] ERROR: Booking status is not confirmed: ${booking.status}`);
         return res.status(400).json({ error: "Cannot generate ticket for unconfirmed booking" });
       }
       
       // Generate ticket data for preview
+      console.log(`[TICKET] Generating ticket data for booking: ${bookingId}`);
       const ticketData = await ticketService.generateTicketData(bookingId);
+      console.log(`[TICKET] Ticket data generated successfully`);
+      
+      // Log some details of the response before sending
+      console.log(`[TICKET] Sending ticket data with reference: ${ticketData.bookingReference}, status: ${ticketData.status}`);
       
       res.json(ticketData);
     } catch (err) {
-      console.error("Error generating ticket data:", err);
+      console.error("[TICKET] Error generating ticket data:", err);
+      await storage.addSystemLog(
+        'error' as any,
+        'ticket-service',
+        `Failed to generate ticket data: ${err instanceof Error ? err.message : String(err)}`
+      );
       res.status(500).json({ error: "Failed to generate ticket data" });
     }
   });
@@ -1026,30 +1051,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Download ticket as PDF
   app.get("/api/bookings/:bookingId/ticket/download", async (req: Request, res: Response) => {
     try {
+      console.log(`[TICKET-PDF] PDF request received for bookingId: ${req.params.bookingId}`);
+      
+      // Make sure bookingId is a valid number
+      if (!req.params.bookingId || isNaN(parseInt(req.params.bookingId))) {
+        console.log(`[TICKET-PDF] Invalid bookingId format: ${req.params.bookingId}`);
+        return res.status(400).json({ error: "Invalid booking ID format" });
+      }
+      
       const bookingId = parseInt(req.params.bookingId);
+      console.log(`[TICKET-PDF] Parsed bookingId: ${bookingId}`);
       
       // Check if booking exists and is confirmed
+      console.log(`[TICKET-PDF] Fetching booking with ID: ${bookingId}`);
       const booking = await storage.getBooking(bookingId);
+      
       if (!booking) {
+        console.log(`[TICKET-PDF] ERROR: Booking not found for ID: ${bookingId}`);
         return res.status(404).json({ error: "Booking not found" });
       }
       
+      console.log(`[TICKET-PDF] Found booking: ${booking.id}, status: ${booking.status}, reference: ${booking.bookingReference}`);
+      
       if (booking.status !== "confirmed") {
+        console.log(`[TICKET-PDF] ERROR: Booking status is not confirmed: ${booking.status}`);
         return res.status(400).json({ error: "Cannot generate ticket for unconfirmed booking" });
       }
       
       // Generate PDF buffer
+      console.log(`[TICKET-PDF] Generating PDF for booking: ${bookingId}`);
       const pdfBuffer = await ticketService.generatePDF(bookingId);
+      console.log(`[TICKET-PDF] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
       
       // Set response headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=flight-ticket-${booking.bookingReference}.pdf`);
       res.setHeader('Content-Length', pdfBuffer.length);
       
+      console.log(`[TICKET-PDF] Sending PDF response for booking: ${bookingId}`);
+      
       // Send the PDF buffer
       res.send(pdfBuffer);
     } catch (err) {
-      console.error("Error generating PDF ticket:", err);
+      console.error("[TICKET-PDF] Error generating PDF ticket:", err);
+      await storage.addSystemLog(
+        'error' as any,
+        'ticket-service',
+        `Failed to generate PDF ticket: ${err instanceof Error ? err.message : String(err)}`
+      );
       res.status(500).json({ error: "Failed to generate PDF ticket" });
     }
   });

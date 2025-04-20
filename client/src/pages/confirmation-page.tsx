@@ -178,6 +178,16 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
   } = useQuery<TicketData>({
     queryKey: [`/api/bookings/${retrievedBookingId}/ticket`],
     enabled: !!retrievedBookingId,
+    retry: 2,
+    retryDelay: 1000,
+    onError: (err) => {
+      console.error('Error fetching ticket data:', err);
+      toast({
+        title: t('booking.notFound'),
+        description: t('booking.tryAgainOrContactSupport'),
+        variant: "destructive"
+      });
+    }
   });
   
   // Handle ticket download
