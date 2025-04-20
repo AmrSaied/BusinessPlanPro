@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Menu, Globe, ChevronDown, User, LogOut } from 'lucide-react';
 import { User as SelectUser } from '@shared/schema';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 // Import useAuth from hooks
 import { useAuth } from '@/hooks/use-auth';
@@ -115,8 +116,11 @@ const Header = () => {
             </Link>
           </nav>
           
-          {/* Language and Account Section */}
+          {/* Language, Theme and Account Section */}
           <div className="flex items-center space-x-6 md:space-x-8 rtl:space-x-reverse">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
