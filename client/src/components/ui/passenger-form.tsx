@@ -36,6 +36,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   
+  // Helper variable for RTL languages
+  const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
+  
   // Initialize passenger array with the given count
   const [passengers, setPassengers] = useState<Array<Partial<InsertPassenger>>>(
     Array(passengerCount).fill({}).map((_, i) => ({
@@ -536,11 +539,14 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           </div>
           
           <div className="p-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className={cn(
+                "grid grid-cols-1 md:grid-cols-2 gap-4 mb-4",
+                isRTL && "md:[direction:rtl]"
+              )}>
               {/* Title field removed as it's not in the database schema */}
               
               {/* Nationality */}
-              <div>
+              <div className={isRTL ? "md:pl-2" : "md:pr-2"}>
                 <Label htmlFor={`nationality-${index}`}>{t('nationality')}</Label>
                 <Select
                   value={passenger.nationality || ""}
@@ -571,17 +577,20 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className={cn(
+                "grid grid-cols-1 md:grid-cols-2 gap-4 mb-4",
+                isRTL && "md:[direction:rtl]"
+              )}>
               {/* First Name */}
-              <div>
+              <div className={isRTL ? "md:pl-2" : "md:pr-2"}>
                 <Label htmlFor={`firstName-${index}`}>{t('first_name')}</Label>
                 <Input
                   id={`firstName-${index}`}
                   value={passenger.firstName}
                   onChange={(e) => updatePassenger(index, 'firstName', e.target.value)}
                   placeholder={t('name_passport_placeholder')}
-                  className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
-                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  className={isRTL ? "text-right" : "text-left"}
+                  dir={isRTL ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.firstName && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].firstName}</p>
@@ -589,15 +598,15 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
               
               {/* Last Name */}
-              <div>
+              <div className={isRTL ? "md:pr-2" : "md:pl-2"}>
                 <Label htmlFor={`lastName-${index}`}>{t('last_name')}</Label>
                 <Input
                   id={`lastName-${index}`}
                   value={passenger.lastName}
                   onChange={(e) => updatePassenger(index, 'lastName', e.target.value)}
                   placeholder={t('name_passport_placeholder')}
-                  className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
-                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  className={isRTL ? "text-right" : "text-left"}
+                  dir={isRTL ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.lastName && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].lastName}</p>
@@ -605,9 +614,12 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className={cn(
+                "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4",
+                isRTL && "md:[direction:rtl]"
+              )}>
               {/* Date of Birth with Datepicker */}
-              <div>
+              <div className={isRTL ? "md:pl-2" : "md:pr-2"}>
                 <Label htmlFor={`dateOfBirth-${index}`}>{t('date_of_birth')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -618,15 +630,15 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                         "w-full font-normal flex justify-between items-center",
                         !passenger.dateOfBirth && "text-muted-foreground",
                         errors[`passenger${index}`]?.dateOfBirth && "border-red-500",
-                        currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"
+                        isRTL ? "text-right" : "text-left"
                       )}
-                      dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                      dir={isRTL ? "rtl" : "ltr"}
                     >
                       {passenger.dateOfBirth ? format(new Date(passenger.dateOfBirth.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
                       <CalendarIcon className="h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
+                  <PopoverContent className="w-auto p-0" align={isRTL ? "end" : "start"}>
                     <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
                       <Calendar
                         mode="single"
@@ -653,15 +665,15 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
               
               {/* Passport Number */}
-              <div>
+              <div className={isRTL ? "md:px-2" : "md:px-2"}>
                 <Label htmlFor={`passportNumber-${index}`}>{t('passport_number')}</Label>
                 <Input
                   id={`passportNumber-${index}`}
                   value={passenger.passportNumber}
                   onChange={(e) => updatePassenger(index, 'passportNumber', e.target.value)}
                   placeholder={t('passport_number')}
-                  className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
-                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  className={isRTL ? "text-right" : "text-left"}
+                  dir={isRTL ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.passportNumber && (
                   <p className="text-red-500 text-sm mt-1">{errors[`passenger${index}`].passportNumber}</p>
@@ -669,7 +681,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
               </div>
               
               {/* Passport Expiry with Datepicker */}
-              <div>
+              <div className={isRTL ? "md:pr-2" : "md:pl-2"}>
                 <Label htmlFor={`passportExpiry-${index}`}>{t('passport_expiry')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -680,15 +692,15 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                         "w-full font-normal flex justify-between items-center",
                         !passenger.passportExpiry && "text-muted-foreground",
                         errors[`passenger${index}`]?.passportExpiry && "border-red-500",
-                        currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"
+                        isRTL ? "text-right" : "text-left"
                       )}
-                      dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                      dir={isRTL ? "rtl" : "ltr"}
                     >
                       {passenger.passportExpiry ? format(new Date(passenger.passportExpiry.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
                       <CalendarIcon className="h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align={currentLanguage === 'ar' || currentLanguage === 'he' ? "end" : "start"}>
+                  <PopoverContent className="w-auto p-0" align={isRTL ? "end" : "start"}>
                     <div className="p-0 bg-white rounded-md shadow-md border border-gray-200">
                       <Calendar
                         mode="single"
@@ -722,8 +734,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             
             {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
             {savedPassengers !== undefined && (
-              <div className={cn("mt-4 w-full", currentLanguage === 'ar' || currentLanguage === 'he' ? "flex justify-end" : "")}>
-                <div className="flex items-center space-x-2">
+              <div className={cn("mt-4 w-full", isRTL ? "flex justify-end" : "")}>
+                <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2")}>
                   <Checkbox 
                     id={`save-passenger-${index}`} 
                     checked={!!passenger.isSaved}
@@ -732,7 +744,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   <label 
                     htmlFor={`save-passenger-${index}`}
                     className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                    dir={isRTL ? "rtl" : "ltr"}
                   >
                     {t('save_passenger', 'Save this passenger for future bookings')}
                   </label>
@@ -750,9 +762,12 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
         </div>
         
         <div className="p-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={cn(
+            "grid grid-cols-1 md:grid-cols-2 gap-4",
+            isRTL && "md:[direction:rtl]"
+          )}>
             {/* Email */}
-            <div>
+            <div className={isRTL ? "md:pl-2" : "md:pr-2"}>
               <Label htmlFor="contact-email">{t('email')}</Label>
               <Input
                 id="contact-email"
@@ -760,8 +775,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 value={contactInfo.email}
                 onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
                 placeholder={t('email_placeholder')}
-                className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
-                dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                className={isRTL ? "text-right" : "text-left"}
+                dir={isRTL ? "rtl" : "ltr"}
               />
               {errors.contact?.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.contact.email}</p>
@@ -769,7 +784,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             </div>
             
             {/* Phone */}
-            <div>
+            <div className={isRTL ? "md:pr-2" : "md:pl-2"}>
               <Label htmlFor="contact-phone">{t('phone')}</Label>
               <Input
                 id="contact-phone"
@@ -777,8 +792,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 value={contactInfo.phone}
                 onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
                 placeholder={t('phone_placeholder')}
-                className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
-                dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                className={isRTL ? "text-right" : "text-left"}
+                dir={isRTL ? "rtl" : "ltr"}
               />
               {errors.contact?.phone && (
                 <p className="text-red-500 text-sm mt-1">{errors.contact.phone}</p>
@@ -788,8 +803,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           
           {/* Save contact information checkbox - only show if user is authenticated */}
           {savedPassengers !== undefined && (
-            <div className={cn("mt-4 w-full", currentLanguage === 'ar' || currentLanguage === 'he' ? "flex justify-end" : "")}>
-              <div className="flex items-center space-x-2">
+            <div className={cn("mt-4 w-full", isRTL ? "flex justify-end" : "")}>
+              <div className={cn("flex items-center", isRTL ? "space-x-reverse space-x-2 flex-row-reverse" : "space-x-2")}>
                 <Checkbox 
                   id="save-contact-info" 
                   checked={!!contactInfo.saveInfo}
@@ -800,7 +815,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 <label 
                   htmlFor="save-contact-info"
                   className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+                  dir={isRTL ? "rtl" : "ltr"}
                 >
                   {t('save_contact_info', 'Save contact information for future bookings')}
                 </label>
@@ -822,8 +837,8 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             onChange={(e) => setSpecialRequests(e.target.value)}
             placeholder={t('special_requests_placeholder')}
             rows={3}
-            className={currentLanguage === 'ar' || currentLanguage === 'he' ? "text-right" : "text-left"}
-            dir={currentLanguage === 'ar' || currentLanguage === 'he' ? "rtl" : "ltr"}
+            className={isRTL ? "text-right" : "text-left"}
+            dir={isRTL ? "rtl" : "ltr"}
           />
         </div>
       </div>
@@ -831,7 +846,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
       {/* Continue Button */}
       <div className={cn(
         "flex", 
-        currentLanguage === 'ar' || currentLanguage === 'he' ? "justify-start" : "justify-end"
+        isRTL ? "justify-start" : "justify-end"
       )}>
         <Button 
           onClick={handleSubmit}
