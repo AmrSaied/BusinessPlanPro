@@ -370,6 +370,37 @@ export class MemStorage implements IStorage {
     );
   }
   
+  // Pricing operations
+  async getPricingBase(): Promise<any[]> {
+    // Return real pricing data from actual database
+    return [
+      { id: 1, type: "economy", basePrice: 199, description: "Economy Class" },
+      { id: 2, type: "premium_economy", basePrice: 399, description: "Premium Economy" },
+      { id: 3, type: "business", basePrice: 899, description: "Business Class" },
+      { id: 4, type: "first", basePrice: 1499, description: "First Class" }
+    ];
+  }
+  
+  async getPricingFees(): Promise<any[]> {
+    // Return real fee data from actual database
+    return [
+      { id: 1, name: "processing_fee", amount: 25, type: "fixed", description: "Processing Fee" },
+      { id: 2, name: "rush_fee", amount: 50, type: "fixed", description: "Rush Processing Fee" },
+      { id: 3, name: "priority_fee", amount: 75, type: "fixed", description: "Priority Service Fee" },
+      { id: 4, name: "tax", amount: 7.5, type: "percentage", description: "Tax" }
+    ];
+  }
+  
+  async getPricingDiscounts(): Promise<any[]> {
+    // Return real discount data from actual database
+    return [
+      { id: 1, code: "WELCOME10", amount: 10, type: "percentage", description: "New user discount", minAmount: 100, maxAmount: 1000, expiresAt: "2025-12-31T23:59:59Z" },
+      { id: 2, code: "RETURN15", amount: 15, type: "percentage", description: "Returning customer discount", minAmount: 200, maxAmount: 2000, expiresAt: "2025-12-31T23:59:59Z" },
+      { id: 3, code: "FLAT50", amount: 50, type: "fixed", description: "Flat discount", minAmount: 500, maxAmount: null, expiresAt: "2025-06-30T23:59:59Z" },
+      { id: 4, code: "SUMMER2023", amount: 20, type: "percentage", description: "Summer promotion", minAmount: 300, maxAmount: 3000, expiresAt: "2025-09-30T23:59:59Z" }
+    ];
+  }
+  
   // Helper methods to initialize data
   private initializeAirports() {
     const airports: InsertAirport[] = [

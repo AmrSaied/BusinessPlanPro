@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import stripeRoutes from "./routes/stripe-routes";
+import { registerAdminRoutes } from "./routes/admin-routes";
 import { createHash, randomBytes } from "crypto";
 import { 
   flightSearchSchema, 
@@ -36,6 +37,9 @@ const aviationService = new AmadeusService(storage);
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  
+  // Set up admin routes
+  registerAdminRoutes(app);
   
   // Admin authentication middleware
   const isAdmin = (req: Request, res: Response, next: NextFunction) => {
