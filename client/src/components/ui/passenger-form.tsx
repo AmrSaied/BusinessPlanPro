@@ -749,19 +749,19 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             {/* Save passenger checkbox - only show if user is authenticated (savedPassengers exists) */}
             {savedPassengers !== undefined && (
               <div className="mt-4 w-full">
-                <div className={cn(
-                  "flex items-center", 
-                  isRTL ? "justify-end space-x-reverse space-x-2 flex-row-reverse" : "justify-start space-x-2"
-                )}>
+                <div 
+                  className="flex items-center checkbox-wrapper"
+                  dir={isRTL ? "rtl" : "ltr"}
+                >
                   <Checkbox 
                     id={`save-passenger-${index}`} 
                     checked={!!passenger.isSaved}
                     onCheckedChange={(checked: CheckedState) => updatePassenger(index, 'isSaved', checked === true)}
+                    className="checkbox"
                   />
                   <label 
                     htmlFor={`save-passenger-${index}`}
-                    className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    dir={isRTL ? "rtl" : "ltr"}
+                    className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label"
                   >
                     {t('save_passenger', 'Save this passenger for future bookings')}
                   </label>
@@ -827,21 +827,21 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
           {/* Save contact information checkbox - only show if user is authenticated */}
           {savedPassengers !== undefined && (
             <div className="mt-4 w-full">
-              <div className={cn(
-                "flex items-center", 
-                isRTL ? "justify-end space-x-reverse space-x-2 flex-row-reverse" : "justify-start space-x-2"
-              )}>
+              <div 
+                className="flex items-center checkbox-wrapper"
+                dir={isRTL ? "rtl" : "ltr"}
+              >
                 <Checkbox 
                   id="save-contact-info" 
                   checked={!!contactInfo.saveInfo}
                   onCheckedChange={(checked: CheckedState) => 
                     setContactInfo({ ...contactInfo, saveInfo: checked === true })
                   }
+                  className="checkbox"
                 />
                 <label 
                   htmlFor="save-contact-info"
-                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  dir={isRTL ? "rtl" : "ltr"}
+                  className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 checkbox-label"
                 >
                   {t('save_contact_info', 'Save contact information for future bookings')}
                 </label>

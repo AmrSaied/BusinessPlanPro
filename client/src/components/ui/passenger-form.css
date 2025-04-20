@@ -8,3 +8,37 @@ input::placeholder, textarea::placeholder {
 .date-picker-content {
   font-size: 0.75rem !important;
 }
+
+/* Checkbox spacing for all modes */
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* LTR mode - checkbox first, then label */
+[dir="ltr"] .checkbox-wrapper {
+  justify-content: flex-start;
+}
+
+[dir="ltr"] .checkbox-wrapper .checkbox {
+  order: 1;
+}
+
+[dir="ltr"] .checkbox-wrapper .checkbox-label {
+  order: 2;
+}
+
+/* RTL mode - checkbox first (on right side), then label */
+[dir="rtl"] .checkbox-wrapper {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+[dir="rtl"] .checkbox-wrapper .checkbox {
+  order: 1;
+}
+
+[dir="rtl"] .checkbox-wrapper .checkbox-label {
+  order: 2;
+}
