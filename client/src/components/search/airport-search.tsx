@@ -111,7 +111,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: Air
           type="text"
           dir={isRTL ? "rtl" : "ltr"}
           className={cn(
-            "py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary text-sm h-10 leading-normal",
+            "py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary text-[13px] h-10 leading-normal",
             isRTL ? "pr-10 pl-3" : "pl-10 pr-3",
             error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-primary'
           )}
