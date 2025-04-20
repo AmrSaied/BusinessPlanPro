@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Menu, Globe, ChevronDown, User, LogOut } from 'lucide-react';
 import { User as SelectUser } from '@shared/schema';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 // Import useAuth from hooks
 import { useAuth } from '@/hooks/use-auth';
@@ -118,9 +117,7 @@ const Header = () => {
           
           {/* Language, Theme and Account Section */}
           <div className="flex items-center space-x-6 md:space-x-8 rtl:space-x-reverse">
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
+
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -198,11 +195,6 @@ const Header = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden pb-4">
-            {/* Mobile Theme Toggle */}
-            <div className="flex items-center justify-between py-3 mb-3 border-b">
-              <span className="text-sm font-medium text-muted-foreground">{t('Toggle theme')}</span>
-              <ThemeToggle />
-            </div>
             <nav className="flex flex-col space-y-3">
               <Link href="/">
                 <span className="font-medium text-foreground hover:text-primary transition py-2 cursor-pointer inline-block">{t('nav_home')}</span>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { useTheme } from "next-themes";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn, queryClient } from "@/lib/queryClient";
 import { User } from "@shared/schema";
@@ -32,9 +31,7 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  Moon,
   Plane,
-  Sun,
   Tags,
   ChevronDown,
 } from "lucide-react";
@@ -47,7 +44,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [location] = useLocation();
-  const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Fetch current user data
@@ -247,27 +243,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  {theme === "light" ? (
-                    <Sun className="h-5 w-5" />
-                  ) : (
-                    <Moon className="h-5 w-5" />
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  <Sun className="mr-2 h-4 w-4" />
-                  <span>Light</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  <Moon className="mr-2 h-4 w-4" />
-                  <span>Dark</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -299,31 +274,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         {/* Desktop Header */}
         <div className="sticky top-0 z-10 md:flex items-center justify-end h-16 bg-card border-b shadow-sm px-4 hidden">
           <div className="flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 gap-1">
-                  {theme === "light" ? (
-                    <Sun className="h-4 w-4" />
-                  ) : (
-                    <Moon className="h-4 w-4" />
-                  )}
-                  <span>Theme</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  <Sun className="mr-2 h-4 w-4" />
-                  <span>Light</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  <Moon className="mr-2 h-4 w-4" />
-                  <span>Dark</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Separator orientation="vertical" className="h-8" />
 
             <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
               Visit Site
