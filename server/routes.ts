@@ -409,7 +409,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           flight: hasFlightData ? {
             ...flight,
             // Add default values for any missing fields
-            aircraft: flight.aircraft || "Boeing 737", // Default aircraft
+            aircraft: "Boeing 737", // Default aircraft type
             status: "scheduled",    // Default status
             currency: "USD",        // Default currency
             price: flight.basePrice || 0, // Default price equals basePrice
@@ -1504,11 +1504,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           pages: Math.ceil(totalCount / limit)
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching logs:", error);
       // Log the error in our system logs
       try {
-        await storage.addSystemLog('error', 'system', `Error fetching logs: ${error.message}`);
+        await storage.addSystemLog('error', 'system', `Error fetching logs: ${error.message || 'Unknown error'}`);
       } catch (logError) {
         console.error("Could not log error:", logError);
       }
