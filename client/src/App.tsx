@@ -59,11 +59,7 @@ function Router() {
           <PassengerInfoPage />
         </MainLayout>
       )} />
-      <Route path="/overview" component={() => (
-        <MainLayout>
-          <OverviewPage />
-        </MainLayout>
-      )} />
+      <Route path="/overview" component={OverviewPage} />
       <Route path="/payment" component={() => (
         <MainLayout>
           <PaymentPage />
