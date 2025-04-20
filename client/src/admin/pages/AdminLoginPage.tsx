@@ -85,10 +85,8 @@ const AdminLoginPage = () => {
               <Button variant="outline" size="icon">
                 {theme === "light" ? (
                   <Sun className="h-5 w-5" />
-                ) : theme === "dark" ? (
-                  <Moon className="h-5 w-5" />
                 ) : (
-                  <Laptop className="h-5 w-5" />
+                  <Moon className="h-5 w-5" />
                 )}
               </Button>
             </DropdownMenuTrigger>
@@ -101,10 +99,7 @@ const AdminLoginPage = () => {
                 <Moon className="mr-2 h-4 w-4" />
                 <span>Dark</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
-                <Laptop className="mr-2 h-4 w-4" />
-                <span>System</span>
-              </DropdownMenuItem>
+
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

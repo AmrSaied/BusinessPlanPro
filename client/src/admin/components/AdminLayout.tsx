@@ -309,10 +309,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 <Button variant="ghost" size="sm" className="h-8 gap-1">
                   {theme === "light" ? (
                     <Sun className="h-4 w-4" />
-                  ) : theme === "dark" ? (
-                    <Moon className="h-4 w-4" />
                   ) : (
-                    <Laptop className="h-4 w-4" />
+                    <Moon className="h-4 w-4" />
                   )}
                   <span>Theme</span>
                   <ChevronDown className="h-4 w-4" />
