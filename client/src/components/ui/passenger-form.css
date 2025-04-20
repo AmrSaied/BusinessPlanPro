@@ -14,11 +14,13 @@ input::placeholder, textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 /* LTR mode - checkbox first, then label */
 [dir="ltr"] .checkbox-wrapper {
   justify-content: flex-start;
+  text-align: left;
 }
 
 [dir="ltr"] .checkbox-wrapper .checkbox {
@@ -29,16 +31,14 @@ input::placeholder, textarea::placeholder {
   order: 2;
 }
 
-/* RTL mode - checkbox first (on right side), then label */
+/* RTL mode - label on right side, checkbox on left side */
 [dir="rtl"] .checkbox-wrapper {
-  flex-direction: row;
-  justify-content: flex-end;
+  flex-direction: row-reverse; /* Reverse the order */
+  justify-content: flex-start; /* Start from the right */
+  text-align: right;
 }
 
 [dir="rtl"] .checkbox-wrapper .checkbox {
-  order: 1;
-}
-
-[dir="rtl"] .checkbox-wrapper .checkbox-label {
-  order: 2;
+  margin-right: 0;
+  margin-left: 8px;
 }
