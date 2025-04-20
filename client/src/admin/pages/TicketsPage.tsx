@@ -595,9 +595,16 @@ const TicketsPage = () => {
                     </TableCell>
                     <TableCell>
                       {booking.flight && booking.flight.departureTime
-                        ? format(typeof booking.flight.departureTime === 'string' 
-                            ? parseISO(booking.flight.departureTime) 
-                            : booking.flight.departureTime, "PP")
+                        ? (() => {
+                            try {
+                              const date = typeof booking.flight.departureTime === 'string' 
+                                ? parseISO(booking.flight.departureTime)
+                                : new Date(booking.flight.departureTime);
+                              return isNaN(date.getTime()) ? "Invalid date" : format(date, "PP");
+                            } catch (e) {
+                              return "Invalid date format";
+                            }
+                          })()
                         : "—"}
                     </TableCell>
                     <TableCell>
