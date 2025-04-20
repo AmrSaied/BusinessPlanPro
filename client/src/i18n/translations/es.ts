@@ -258,6 +258,7 @@ export default {
   error_fields: 'Por favor, complete todos los campos obligatorios',
   error_same_airport_title: 'Selección inválida',
   error_same_airport: 'El origen y el destino no pueden ser el mismo aeropuerto',
+  origin_destination_same: 'El origen y el destino no pueden ser el mismo aeropuerto',
   
   // Get Ticket Now widget
   get_ticket_now_title: '¿Listo Para Crear Su Reserva de Vuelo?',
