@@ -470,15 +470,7 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
                       <div className="text-2xl font-mono font-bold">{ticketData.bookingReference}</div>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button
-                        onClick={handleDownloadTicket}
-                        className="bg-primary text-white flex items-center"
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        {t('download_ticket')}
-                      </Button>
-                      
+                    <div className="flex justify-center">
                       <Button
                         variant="outline"
                         onClick={handlePrintTicket}
