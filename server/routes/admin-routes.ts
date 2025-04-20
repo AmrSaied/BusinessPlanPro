@@ -1,6 +1,6 @@
 import { Express, Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
-import { LogLevel } from "@shared/schema";
+import { LogLevelEnum } from "@shared/schema";
 
 export function registerAdminRoutes(app: Express) {
   // Authentication middleware
@@ -101,7 +101,7 @@ export function registerAdminRoutes(app: Express) {
       
       // Log this activity
       await storage.addSystemLog(
-        LogLevel.INFO,
+        "info",
         "admin",
         `Admin dashboard stats accessed by ${req.user.username}`
       );
@@ -131,7 +131,7 @@ export function registerAdminRoutes(app: Express) {
       });
     } catch (error: any) {
       await storage.addSystemLog(
-        LogLevel.ERROR,
+        "error",
         "admin",
         `Error retrieving dashboard stats: ${error.message}`
       );

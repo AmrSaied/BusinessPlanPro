@@ -31,14 +31,23 @@ input::placeholder, textarea::placeholder {
   order: 2;
 }
 
-/* RTL mode - label on right side, checkbox on left side */
+/* RTL mode - set label to right, checkbox to left for Arabic/Hebrew */
 [dir="rtl"] .checkbox-wrapper {
   flex-direction: row-reverse; /* Reverse the order */
-  justify-content: flex-start; /* Start from the right */
+  justify-content: flex-end; /* Align at the end (which is the right side in RTL) */
   text-align: right;
 }
 
 [dir="rtl"] .checkbox-wrapper .checkbox {
   margin-right: 0;
   margin-left: 8px;
+}
+
+/* Explicit ordering for RTL checkbox and label */
+[dir="rtl"] .checkbox-wrapper label {
+  order: 1; /* Put label first in RTL mode */
+}
+
+[dir="rtl"] .checkbox-wrapper .checkbox {
+  order: 2; /* Put checkbox second in RTL mode */
 }
