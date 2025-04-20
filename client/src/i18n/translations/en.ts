@@ -459,6 +459,8 @@ export default {
   error_invalid_card: 'Invalid card information',
   error_payment_failed: 'Payment failed. Please try again.',
   error_fields: 'Please fill in all required fields',
+  error_same_airport_title: 'Invalid Selection',
+  error_same_airport: 'Origin and destination cannot be the same airport',
   invalid_departure_date: 'Departure date must be today or in the future',
   invalid_return_date: 'Return date must be after departure date',
   invalid_date_format: 'Invalid date format, please select a valid date',
