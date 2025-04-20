@@ -253,10 +253,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 <Button variant="ghost" size="icon">
                   {theme === "light" ? (
                     <Sun className="h-5 w-5" />
-                  ) : theme === "dark" ? (
-                    <Moon className="h-5 w-5" />
                   ) : (
-                    <Laptop className="h-5 w-5" />
+                    <Moon className="h-5 w-5" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
