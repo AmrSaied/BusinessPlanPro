@@ -166,7 +166,7 @@ const TicketsPage = () => {
 
   // Download ticket
   const handleDownloadTicket = (bookingId: number) => {
-    window.open(`/api/admin/bookings/${bookingId}/ticket/download`, "_blank");
+    window.open(`/api/bookings/${bookingId}/ticket/download`, "_blank");
   };
 
   // Loading state

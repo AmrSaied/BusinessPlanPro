@@ -94,7 +94,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const navigationItems = [
     { name: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
     { name: "Users", href: "/admin/users", icon: <Users className="h-5 w-5" /> },
-    { name: "Flights", href: "/admin/flights", icon: <Plane className="h-5 w-5" /> },
     { name: "Tickets", href: "/admin/tickets", icon: <Ticket className="h-5 w-5" /> },
     { name: "Pricing", href: "/admin/pricing", icon: <Tags className="h-5 w-5" /> },
     { name: "Settings", href: "/admin/settings", icon: <Settings className="h-5 w-5" /> },
