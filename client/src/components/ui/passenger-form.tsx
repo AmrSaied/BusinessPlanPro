@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import './passenger-form.css';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
@@ -640,7 +641,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       )}
                       dir={isRTL ? "rtl" : "ltr"}
                     >
-                      {passenger.dateOfBirth ? format(new Date(passenger.dateOfBirth.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      <span className="date-picker-content">
+                        {passenger.dateOfBirth ? format(new Date(passenger.dateOfBirth.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      </span>
                       <CalendarIcon className="h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -705,7 +708,9 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       )}
                       dir={isRTL ? "rtl" : "ltr"}
                     >
-                      {passenger.passportExpiry ? format(new Date(passenger.passportExpiry.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      <span className="date-picker-content">
+                        {passenger.passportExpiry ? format(new Date(passenger.passportExpiry.split('/').reverse().join('-')), "PP") : "DD/MM/YYYY"}
+                      </span>
                       <CalendarIcon className="h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>

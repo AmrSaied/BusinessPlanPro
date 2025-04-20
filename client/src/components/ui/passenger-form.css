@@ -1,0 +1,10 @@
+/* Additional styling for passenger form input fields */
+input::placeholder, textarea::placeholder {
+  font-size: 0.75rem !important; /* Even smaller than text-sm */
+  opacity: 0.7;
+}
+
+/* Style the date picker buttons content */
+.date-picker-content {
+  font-size: 0.75rem !important;
+}
