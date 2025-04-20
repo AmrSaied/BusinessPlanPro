@@ -589,7 +589,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.firstName}
                   onChange={(e) => updatePassenger(index, 'firstName', e.target.value)}
                   placeholder={t('name_passport_placeholder')}
-                  className={isRTL ? "text-right" : "text-left"}
+                  className={cn(
+                    "text-sm",
+                    isRTL ? "text-right" : "text-left"
+                  )}
                   dir={isRTL ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.firstName && (
@@ -605,7 +608,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.lastName}
                   onChange={(e) => updatePassenger(index, 'lastName', e.target.value)}
                   placeholder={t('name_passport_placeholder')}
-                  className={isRTL ? "text-right" : "text-left"}
+                  className={cn(
+                    "text-sm",
+                    isRTL ? "text-right" : "text-left"
+                  )}
                   dir={isRTL ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.lastName && (
@@ -627,7 +633,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       id={`dateOfBirth-${index}`}
                       variant="outline"
                       className={cn(
-                        "w-full font-normal flex justify-between items-center",
+                        "w-full font-normal text-sm flex justify-between items-center",
                         !passenger.dateOfBirth && "text-muted-foreground",
                         errors[`passenger${index}`]?.dateOfBirth && "border-red-500",
                         isRTL ? "text-right" : "text-left"
@@ -672,7 +678,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                   value={passenger.passportNumber}
                   onChange={(e) => updatePassenger(index, 'passportNumber', e.target.value)}
                   placeholder={t('passport_number')}
-                  className={isRTL ? "text-right" : "text-left"}
+                  className={cn(
+                    "text-sm",
+                    isRTL ? "text-right" : "text-left"
+                  )}
                   dir={isRTL ? "rtl" : "ltr"}
                 />
                 {errors[`passenger${index}`]?.passportNumber && (
@@ -689,7 +698,7 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                       id={`passportExpiry-${index}`}
                       variant="outline"
                       className={cn(
-                        "w-full font-normal flex justify-between items-center",
+                        "w-full font-normal text-sm flex justify-between items-center",
                         !passenger.passportExpiry && "text-muted-foreground",
                         errors[`passenger${index}`]?.passportExpiry && "border-red-500",
                         isRTL ? "text-right" : "text-left"
@@ -775,7 +784,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 value={contactInfo.email}
                 onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
                 placeholder={t('email_placeholder')}
-                className={isRTL ? "text-right" : "text-left"}
+                className={cn(
+                  "text-sm",
+                  isRTL ? "text-right" : "text-left"
+                )}
                 dir={isRTL ? "rtl" : "ltr"}
               />
               {errors.contact?.email && (
@@ -792,7 +804,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
                 value={contactInfo.phone}
                 onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
                 placeholder={t('phone_placeholder')}
-                className={isRTL ? "text-right" : "text-left"}
+                className={cn(
+                  "text-sm",
+                  isRTL ? "text-right" : "text-left"
+                )}
                 dir={isRTL ? "rtl" : "ltr"}
               />
               {errors.contact?.phone && (
@@ -837,7 +852,10 @@ const PassengerForm = ({ passengerCount, onSubmit, savedPassengers = [] }: Passe
             onChange={(e) => setSpecialRequests(e.target.value)}
             placeholder={t('special_requests_placeholder')}
             rows={3}
-            className={isRTL ? "text-right" : "text-left"}
+            className={cn(
+              "text-sm",
+              isRTL ? "text-right" : "text-left"
+            )}
             dir={isRTL ? "rtl" : "ltr"}
           />
         </div>
