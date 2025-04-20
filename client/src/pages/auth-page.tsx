@@ -56,11 +56,12 @@ function AuthPage() {
   
   console.log("Auth page - current user:", user ? `ID: ${user.id}, Username: ${user.username}` : "Not logged in");
 
-  // Redirect to home if already logged in
-  if (user) {
-    navigate("/");
-    return null;
-  }
+  // Use effect for redirection instead of conditional return to avoid hook errors
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   // Login form
   const loginForm = useForm<LoginFormValues>({
