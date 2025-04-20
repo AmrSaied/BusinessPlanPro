@@ -78,11 +78,12 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: Air
     setSelectedAirport(airport);
     onSelect(airport);
     
-    // Format display value based on language direction
+    // Format display value based on language direction but keep it shorter
     const isRTL = currentLanguage === 'ar' || currentLanguage === 'he';
+    // Use only the airport code and short city name to avoid overflow
     setDisplayValue(isRTL 
-      ? `${airport.city} - ${airport.iataCode}` 
-      : `${airport.iataCode} - ${airport.city}`
+      ? `${airport.iataCode} - ${airport.city.split(',')[0]}` 
+      : `${airport.iataCode} - ${airport.city.split(',')[0]}`
     );
     
     setIsOpen(false);
@@ -110,7 +111,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: Air
           type="text"
           dir={isRTL ? "rtl" : "ltr"}
           className={cn(
-            "py-3 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary",
+            "py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-primary text-sm h-10 leading-normal",
             isRTL ? "pr-10 pl-3" : "pl-10 pr-3",
             error ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300 focus:ring-primary'
           )}
