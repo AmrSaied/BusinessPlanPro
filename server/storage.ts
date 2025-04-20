@@ -20,6 +20,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<User>): Promise<User | undefined>;
+  getUsers(): Promise<User[]>; // Added for admin dashboard
   
   // Flight operations
   getFlight(id: number): Promise<Flight | undefined>;
@@ -39,6 +40,7 @@ export interface IStorage {
   getBooking(id: number): Promise<Booking | undefined>;
   getBookingByReference(reference: string): Promise<Booking | undefined>;
   getBookingsByUserId(userId: number): Promise<Booking[]>;
+  getBookingsByStatus(status: string): Promise<Booking[]>; // Added for admin dashboard
   createBooking(booking: InsertBooking): Promise<Booking>;
   updateBooking(id: number, booking: Partial<Booking>): Promise<Booking | undefined>;
   
@@ -52,6 +54,11 @@ export interface IStorage {
   // Booking-Passenger operations
   createBookingPassenger(bookingPassenger: InsertBookingPassenger): Promise<BookingPassenger>;
   getPassengersByBookingId(bookingId: number): Promise<Passenger[]>;
+  
+  // Pricing operations
+  getPricingBase(): Promise<any[]>; // Added for admin dashboard
+  getPricingFees(): Promise<any[]>; // Added for admin dashboard
+  getPricingDiscounts(): Promise<any[]>; // Added for admin dashboard
   
   // System logs operations
   getSystemLogs(level: string, search: string, page: number, limit: number): Promise<SystemLog[]>;
@@ -124,6 +131,10 @@ export class MemStorage implements IStorage {
     return Array.from(this.users.values()).find(
       (user) => user.email === email,
     );
+  }
+  
+  async getUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -241,6 +252,16 @@ export class MemStorage implements IStorage {
     return Array.from(this.bookings.values()).filter(
       (booking) => booking.userId === userId,
     );
+  }
+  
+  async getBookingsByStatus(status: string): Promise<Booking[]> {
+    const bookings = Array.from(this.bookings.values());
+    
+    if (status === 'all') {
+      return bookings;
+    }
+    
+    return bookings.filter(booking => booking.status === status);
   }
   
   async createBooking(insertBooking: InsertBooking): Promise<Booking> {
