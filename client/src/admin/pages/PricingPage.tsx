@@ -98,7 +98,7 @@ interface ServiceFee {
 
 const PricingPage = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("base-pricing");
+  const [activeTab, setActiveTab] = useState("fees");
   const [isBaseModalOpen, setIsBaseModalOpen] = useState(false);
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
   const [isFeeModalOpen, setIsFeeModalOpen] = useState(false);
@@ -487,11 +487,10 @@ const PricingPage = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="base-pricing" onValueChange={setActiveTab}>
+        <Tabs defaultValue="fees" onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="base-pricing">Base Pricing</TabsTrigger>
             <TabsTrigger value="discounts">Discounts & Promotions</TabsTrigger>
-            <TabsTrigger value="fees">Service Fees</TabsTrigger>
+            <TabsTrigger value="fees">Additional Services</TabsTrigger>
           </TabsList>
 
           <TabsContent value="base-pricing" className="space-y-4">
@@ -666,19 +665,19 @@ const PricingPage = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
                 <div>
-                  <CardTitle>Service Fees</CardTitle>
+                  <CardTitle>Additional Services</CardTitle>
                   <CardDescription>
-                    Manage additional service fees and charges.
+                    Manage additional services and their charges.
                   </CardDescription>
                 </div>
                 <Button onClick={() => openFeeModal()}>
-                  <Plus className="mr-2 h-4 w-4" /> Add New Fee
+                  <Plus className="mr-2 h-4 w-4" /> Add New Service
                 </Button>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border">
                   <Table>
-                    <TableCaption>A list of service fees.</TableCaption>
+                    <TableCaption>A list of additional services.</TableCaption>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Name</TableHead>
@@ -736,7 +735,7 @@ const PricingPage = () => {
                       ) : (
                         <TableRow>
                           <TableCell colSpan={5} className="text-center">
-                            No service fees found.
+                            No additional services found.
                           </TableCell>
                         </TableRow>
                       )}
