@@ -1578,11 +1578,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public endpoint to get active additional services
   app.get("/api/services", async (req, res) => {
     try {
+      // Fetch fresh data directly from database to ensure we get latest changes from admin panel
       // Only return active services
       const services = await storage.getAdditionalServices(true);
       
       // Log for debugging
       console.log(`Fetched ${services.length} active services for client`);
+      console.log("Service prices:", services.map(s => `${s.name}: $${s.price}`).join(', '));
+      
+      // Set cache control headers to prevent client-side caching
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       
       res.status(200).json(services);
     } catch (error) {

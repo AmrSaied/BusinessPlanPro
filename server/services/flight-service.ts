@@ -22,7 +22,8 @@ export class FlightService {
       departureDate
     );
     
-    // Get pricing from admin panel
+    // Get pricing from admin panel - Force refresh from database with each call
+    console.log("Fetching latest pricing data from database");
     const pricingList = await this.storage.getFlightPricing();
     
     // Apply pricing from admin panel to the flights

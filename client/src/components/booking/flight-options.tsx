@@ -33,23 +33,32 @@ const FlightOptions = ({
   const [visible, setVisible] = useState(false);
   
   // Fetch additional services from the API - this pulls from the admin-configured services
-  const { data: services, isLoading } = useQuery<AdditionalService[]>({
+  const { data: services, isLoading, refetch } = useQuery<AdditionalService[]>({
     queryKey: ["/api/services"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     enabled: !!selectedFlight,
     // Make sure to refetch when the component mounts to keep pricing up to date with admin panel
-    refetchOnMount: true,
+    refetchOnMount: "always", // Always refetch on mount to get latest prices
     refetchOnWindowFocus: true,
-    staleTime: 10000 // Refetch after 10 seconds to reflect admin changes quickly
+    staleTime: 0, // Always consider data stale to ensure fresh data
+    gcTime: 5000 // Short garbage collection time (renamed from cacheTime in v5)
   });
+  
+  // Force refetch when component mounts to ensure latest data
+  useEffect(() => {
+    if (selectedFlight) {
+      refetch();
+      console.log("Refetching service data to ensure up-to-date pricing");
+    }
+  }, [selectedFlight, refetch]);
 
   // Calculate total price when selected services change
   useEffect(() => {
     let price = selectedFlight?.price || 12;
     
     // Add price of selected services from admin panel
-    if (services && selectedServices) {
-      services.forEach(service => {
+    if (services && Array.isArray(services) && selectedServices) {
+      services.forEach((service: AdditionalService) => {
         if (selectedServices[service.id]) {
           price += service.price;
         }
@@ -79,8 +88,8 @@ const FlightOptions = ({
     // Create a map from service type to boolean
     const serviceTypeMap: Record<string, boolean> = {};
     
-    if (services) {
-      services.forEach(service => {
+    if (services && Array.isArray(services)) {
+      services.forEach((service: AdditionalService) => {
         if (selectedServices[service.id]) {
           serviceTypeMap[service.type] = true;
         }
