@@ -117,9 +117,21 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: "Users", href: "/admin/users", icon: <Users className="h-5 w-5" /> },
     { name: "Tickets", href: "/admin/tickets", icon: <Ticket className="h-5 w-5" /> },
     { 
-      name: "Services Pricing", 
-      href: "/admin/prices/services", 
-      icon: <CircleDollarSign className="h-5 w-5" />
+      name: "Pricing", 
+      href: "#", 
+      icon: <DollarSign className="h-5 w-5" />,
+      children: [
+        { 
+          name: "Services", 
+          href: "/admin/prices/services", 
+          icon: <PackagePlus className="h-4 w-4" />
+        },
+        { 
+          name: "Base Prices", 
+          href: "/admin/prices/base", 
+          icon: <CircleDollarSign className="h-4 w-4" />
+        }
+      ]
     },
     { name: "Settings", href: "/admin/settings", icon: <Settings className="h-5 w-5" /> },
   ];

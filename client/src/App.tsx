@@ -36,11 +36,8 @@ import PricingPage from "@/admin/pages/PricingPage";
 import SettingsPage from "@/admin/pages/SettingsPage";
 
 // Admin Prices Page imports
-import PricesPage from "@/admin/pages/prices/PricesPage";
-import BasePricesPage from "@/admin/pages/prices/BasePricesPage";
 import ServicesPage from "@/admin/pages/prices/ServicesPage";
-import DiscountsPage from "@/admin/pages/prices/DiscountsPage";
-import CurrencyPage from "@/admin/pages/prices/CurrencyPage";
+import BasePricePage from "@/admin/pages/prices/BasePricePage";
 
 function Router() {
   return (
@@ -127,8 +124,9 @@ function Router() {
       <AdminProtectedRoute path="/admin/pricing" component={() => <PricingPage />} />
       <AdminProtectedRoute path="/admin/settings" component={() => <SettingsPage />} />
       
-      {/* Admin Prices Routes - Base prices and discounts removed */}
+      {/* Admin Prices Routes */}
       <AdminProtectedRoute path="/admin/prices/services" component={() => <ServicesPage />} />
+      <AdminProtectedRoute path="/admin/prices/base" component={() => <BasePricePage />} />
       
       {/* 404 Route */}
       <Route component={() => (
