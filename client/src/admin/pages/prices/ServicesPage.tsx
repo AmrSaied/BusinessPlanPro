@@ -79,6 +79,7 @@ const serviceTypes = [
   { value: "meal", label: "Meal Options" },
   { value: "priority", label: "Priority Services" },
   { value: "insurance", label: "Insurance" },
+  { value: "hotel", label: "Hotel" },
   { value: "other", label: "Other" },
 ];
 
@@ -92,7 +93,7 @@ const ServiceFormSchema = z.object({
   name: z.string().min(3, { message: "Service name is required" }),
   description: z.string().min(3, { message: "Description is required" }),
   price: z.number().min(0, { message: "Price must be a positive number" }),
-  type: z.enum(["baggage", "seat", "meal", "priority", "insurance", "other"]),
+  type: z.enum(["baggage", "seat", "meal", "priority", "insurance", "hotel", "other"]),
   currency: z.string().min(1, { message: "Currency is required" }),
   // Keep these fields in schema for backward compatibility but don't display in UI
   isRequired: z.boolean().default(false),
@@ -320,6 +321,8 @@ const ServicesPage = () => {
         return "destructive";
       case "insurance":
         return "success";
+      case "hotel":
+        return "info";
       default:
         return "default";
     }
@@ -481,13 +484,14 @@ const ServicesPage = () => {
               Add, edit or remove additional services that customers can purchase during booking.
             </CardDescription>
             <Tabs defaultValue="all" className="mt-6" onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-7 max-w-screen-lg">
+              <TabsList className="grid grid-cols-8 max-w-screen-lg">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="baggage">Baggage</TabsTrigger>
                 <TabsTrigger value="seat">Seats</TabsTrigger>
                 <TabsTrigger value="meal">Meals</TabsTrigger>
                 <TabsTrigger value="priority">Priority</TabsTrigger>
                 <TabsTrigger value="insurance">Insurance</TabsTrigger>
+                <TabsTrigger value="hotel">Hotel</TabsTrigger>
                 <TabsTrigger value="other">Other</TabsTrigger>
               </TabsList>
             </Tabs>

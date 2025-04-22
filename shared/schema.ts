@@ -276,7 +276,7 @@ export const additionalServices = pgTable("additional_services", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   price: doublePrecision("price").notNull(),
-  type: text("type").notNull().$type<"baggage" | "seat" | "meal" | "priority" | "insurance" | "other">(),
+  type: text("type").notNull().$type<"baggage" | "seat" | "meal" | "priority" | "insurance" | "hotel" | "other">(),
   currency: text("currency").default("EUR"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
