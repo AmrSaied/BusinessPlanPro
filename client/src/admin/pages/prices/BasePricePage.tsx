@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminLayout from "@/admin/components/AdminLayout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, queryClient, apiRequest } from "@/lib/queryClient";
@@ -84,10 +84,18 @@ export default function BasePricePage() {
   const [activeTab, setActiveTab] = useState("standard");
 
   // Fetch flight pricing from the API
-  const { data: pricingList, isLoading } = useQuery<FlightPricing[]>({
+  const { data: pricingList, isLoading, error } = useQuery<FlightPricing[]>({
     queryKey: ["/api/admin/flight-pricing"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  
+  // Log data for debugging
+  useEffect(() => {
+    console.log("BasePricePage component mounted");
+    console.log("Pricing list data:", pricingList);
+    console.log("Loading state:", isLoading);
+    console.log("Error state:", error);
+  }, [pricingList, isLoading, error]);
 
   // Edit standard pricing form
   const editStandardForm = useForm<z.infer<typeof StandardPricingFormSchema>>({

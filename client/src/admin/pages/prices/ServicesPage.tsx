@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
@@ -103,6 +103,7 @@ const ServiceFormSchema = z.object({
 });
 
 const ServicesPage = () => {
+  console.log("ServicesPage component mounting");
   const { toast } = useToast();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -110,10 +111,17 @@ const ServicesPage = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
 
   // Fetch services from the API
-  const { data: services, isLoading } = useQuery<AdditionalService[]>({
+  const { data: services, isLoading, error } = useQuery<AdditionalService[]>({
     queryKey: ["/api/admin/services"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  
+  // Log data for debugging
+  useEffect(() => {
+    console.log("Services data:", services);
+    console.log("Loading state:", isLoading);
+    console.log("Error state:", error);
+  }, [services, isLoading, error]);
 
   // Filter services based on active tab
   const filteredServices = services?.filter(
