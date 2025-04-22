@@ -76,6 +76,9 @@ export class FlightService {
     // Only use active pricing rules
     const activePricing = pricingList.filter(p => p.isActive);
     
+    console.log(`Applying pricing for ${origin} -> ${destination}, trip type: ${tripType}`);
+    console.log(`Available pricing rules: ${activePricing.length}`);
+    
     return flights.map(flight => {
       // Start with the flight's original base price
       let priceAdjusted = false;
@@ -91,6 +94,7 @@ export class FlightService {
       );
       
       if (routeSpecificPricing) {
+        console.log(`Found route-specific pricing for ${origin} -> ${destination}: $${routeSpecificPricing.basePrice}`);
         finalPrice = routeSpecificPricing.basePrice;
         priceAdjusted = true;
       } else {
@@ -102,18 +106,22 @@ export class FlightService {
         );
         
         if (standardPricing) {
+          console.log(`Found standard pricing for trip type ${tripType}: $${standardPricing.basePrice}`);
           finalPrice = standardPricing.basePrice;
           priceAdjusted = true;
+        } else {
+          console.log(`No pricing rule found, using default price: $${finalPrice}`);
         }
       }
       
       // Return the flight with adjusted price
-      return {
+      const updatedFlight = {
         ...flight,
         price: finalPrice,
-        // Set priceAdjusted flag for debugging
         priceSource: priceAdjusted ? 'admin' : 'default'
       };
+      
+      return updatedFlight;
     });
   }
   
