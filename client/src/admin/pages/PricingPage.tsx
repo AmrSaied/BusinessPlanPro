@@ -1076,7 +1076,7 @@ const PricingPage = () => {
                 onChange={(e) =>
                   setFeeForm({ ...feeForm, name: e.target.value })
                 }
-                placeholder="Express Processing"
+                placeholder="Travel Insurance"
               />
             </div>
             <div className="space-y-2">

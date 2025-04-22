@@ -582,21 +582,7 @@ const PaymentForm = ({
                   <span className="font-medium">€{flight.basePrice.toFixed(2)}</span>
                 </div>
                 
-                {/* Express Processing */}
-                {options.expressProcessing && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('summary_express')}</span>
-                    <span className="font-medium">€2.00</span>
-                  </div>
-                )}
-                
-                {/* Editable Ticket */}
-                {options.editableTicket && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">{t('summary_editable')}</span>
-                    <span className="font-medium">€2.00</span>
-                  </div>
-                )}
+                {/* Express Processing and Editable Ticket options removed as per requirements */}
                 
                 {/* Hotel Reservation */}
                 {options.hotelReservation && (

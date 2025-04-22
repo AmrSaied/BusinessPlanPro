@@ -344,8 +344,7 @@ const ConfirmationPage = ({ bookingId }: ConfirmationPageProps) => {
               <div class="ticket-options">
                 <h2>Additional Services</h2>
                 <ul>
-                  ${ticketData.ticketOptions.expressProcessing ? '<li>Express Processing</li>' : ''}
-                  ${ticketData.ticketOptions.editableTicket ? '<li>Editable Ticket</li>' : ''}
+                  <!-- Express Processing and Editable Ticket options removed as per requirements -->
                   ${ticketData.ticketOptions.hotelReservation ? '<li>Hotel Reservation</li>' : ''}
                   ${ticketData.ticketOptions.insuranceLetter ? '<li>Insurance Letter</li>' : ''}
                 </ul>
