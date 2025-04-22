@@ -168,15 +168,20 @@ export class MemStorage implements IStorage {
     });
     
     const id = this.currentUserId++;
+    // Explicitly set all fields with proper null handling
     const user: User = { 
-      ...insertUser, 
-      id, 
+      id,
+      username: insertUser.username,
+      password: insertUser.password,
+      email: insertUser.email, 
       createdAt: new Date(),
       firstName: insertUser.firstName ?? null,
       lastName: insertUser.lastName ?? null,
       phone: insertUser.phone ?? null,
       preferredEmail: insertUser.preferredEmail ?? null,
-      preferredLanguage: insertUser.preferredLanguage ?? "en" 
+      preferredLanguage: insertUser.preferredLanguage ?? "en",
+      role: insertUser.role ?? null,
+      isActive: insertUser.isActive ?? true
     };
     
     try {
@@ -230,7 +235,27 @@ export class MemStorage implements IStorage {
   
   async createFlight(insertFlight: InsertFlight): Promise<Flight> {
     const id = this.currentFlightId++;
-    const flight: Flight = { ...insertFlight, id };
+    // Create flight object with all required fields properly set
+    const flight: Flight = {
+      id,
+      airlineCode: insertFlight.airlineCode,
+      airlineName: insertFlight.airlineName,
+      flightNumber: insertFlight.flightNumber,
+      departureAirport: insertFlight.departureAirport,
+      departureCity: insertFlight.departureCity,
+      departureCountry: insertFlight.departureCountry,
+      arrivalAirport: insertFlight.arrivalAirport,
+      arrivalCity: insertFlight.arrivalCity,
+      arrivalCountry: insertFlight.arrivalCountry,
+      departureTime: insertFlight.departureTime,
+      arrivalTime: insertFlight.arrivalTime,
+      duration: insertFlight.duration,
+      basePrice: insertFlight.basePrice,
+      status: insertFlight.status || "scheduled",
+      aircraft: insertFlight.aircraft || "Boeing 737",
+      seatsAvailable: insertFlight.seatsAvailable || 180,
+      currency: insertFlight.currency || "USD"
+    };
     this.flights.set(id, flight);
     return flight;
   }
@@ -518,9 +543,15 @@ export class MemStorage implements IStorage {
       
       services.forEach(service => {
         const id = this.currentServiceId++;
+        // Ensure all required fields have values to satisfy TypeScript
         this.additionalServices.set(id, {
-          ...service,
           id,
+          name: service.name,
+          description: service.description,
+          price: service.price,
+          type: service.type as "baggage" | "seat" | "meal" | "priority" | "insurance" | "other",
+          currency: service.currency || "USD",
+          isActive: service.isActive === undefined ? true : service.isActive,
           createdAt: new Date()
         });
       });
