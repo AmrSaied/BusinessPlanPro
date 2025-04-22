@@ -266,8 +266,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   <nav className="space-y-1 px-2">
                     {navigationItems.map((item) => {
                       const isActive = location === item.href;
-                      const hasChildren = item.children && item.children.length > 0;
-                      const isChildActive = hasChildren && item.children.some((child) => location === child.href);
+                      const hasChildren = item.children !== undefined && item.children.length > 0;
+                      const isChildActive = hasChildren && item.children?.some((child) => location === child.href);
                       
                       if (!hasChildren) {
                         return (
