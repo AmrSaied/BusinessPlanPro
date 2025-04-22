@@ -10,7 +10,7 @@ export function registerAdminRoutes(app: Express) {
       return res.status(401).json({ message: "Not authenticated" });
     }
     
-    if (req.user.username !== "admin") {
+    if (!req.user || req.user.username !== "admin") {
       return res.status(403).json({ message: "Not authorized" });
     }
     
@@ -386,7 +386,7 @@ export function registerAdminRoutes(app: Express) {
       await storage.addSystemLog(
         "info",
         "admin",
-        `Base flight pricing deleted by ${req.user.username}: ID ${id}`
+        `Base flight pricing deleted by ${req.user?.username || "unknown"}: ID ${id}`
       );
       
       res.status(204).end();
