@@ -1519,8 +1519,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Additional Services Management Routes
   app.get("/api/admin/services", isAdmin, async (req, res) => {
     try {
+      console.log("Received request for admin services");
       // Get all additional services from the storage
       const services = await storage.getAdditionalServices();
+      console.log(`Returning ${services.length} services from storage`);
       res.status(200).json(services);
     } catch (error) {
       console.error("Error fetching additional services:", error);
