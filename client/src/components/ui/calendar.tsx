@@ -50,6 +50,24 @@ const monthLabels = {
       "أكتوبر",
       "نوفمبر",
       "ديسمبر",
+    ],
+    weekdays: [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس",
+      "الجمعة",
+      "السبت"
+    ],
+    weekdaysShort: [
+      "أحد",
+      "إثن",
+      "ثلا",
+      "أرب",
+      "خمي",
+      "جمع",
+      "سبت"
     ]
   }
 };
@@ -74,41 +92,50 @@ function Calendar({
           return monthLabels.ar.months[monthIndex];
         },
         formatWeekdayName: (date: Date) => {
-          // Get localized day name in Arabic
-          return date.toLocaleDateString('ar', { weekday: 'short' });
+          // Get custom localized day name in Arabic from our array
+          const dayIndex = date.getDay();
+          return monthLabels.ar.weekdaysShort[dayIndex];
         },
         formatCaption: (date: Date, options: any) => {
           // Custom caption formatting for Arabic
           const monthName = monthLabels.ar.months[date.getMonth()];
           return (
-            <div className="rdp-caption_dropdowns" style={{display: 'flex', gap: '0.5rem'}}>
-              <div className="rdp-dropdown_month">
-                <select
-                  aria-label="شهر"
-                  className="rdp-dropdown_month-select"
-                  value={date.getMonth()}
-                  onChange={(e) => options.onMonthChange?.(Number(e.target.value))}
-                >
-                  {monthLabels.ar.months.map((month, i) => (
-                    <option key={i} value={i}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
+            <div className="rdp-caption_dropdowns arabic-calendar-caption" dir="rtl">
+              <div className="rdp-caption_label arabic-month-label" style={{marginLeft: '0.5rem'}}>
+                <span>{monthName}</span>
+                <span>{date.getFullYear()}</span>
               </div>
-              <div className="rdp-dropdown_year">
-                <select
-                  aria-label="سنة"
-                  className="rdp-dropdown_year-select"
-                  value={date.getFullYear()}
-                  onChange={(e) => options.onYearChange?.(Number(e.target.value))}
-                >
-                  {Array.from({ length: 10 }, (_, i) => date.getFullYear() - 5 + i).map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
+              <div className="rdp-dropdown_container" style={{display: 'flex', gap: '0.5rem', width: '100%', justifyContent: 'flex-end'}}>
+                <div className="rdp-dropdown_year" style={{marginLeft: '0.5rem'}}>
+                  <select
+                    aria-label="سنة"
+                    className="rdp-dropdown_year-select arabic-select"
+                    value={date.getFullYear()}
+                    onChange={(e) => options.onYearChange?.(Number(e.target.value))}
+                    style={{textAlign: 'right', direction: 'rtl', paddingRight: '0.5rem'}}
+                  >
+                    {Array.from({ length: 20 }, (_, i) => date.getFullYear() - 10 + i).map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="rdp-dropdown_month">
+                  <select
+                    aria-label="شهر"
+                    className="rdp-dropdown_month-select arabic-select"
+                    value={date.getMonth()}
+                    onChange={(e) => options.onMonthChange?.(Number(e.target.value))}
+                    style={{textAlign: 'right', direction: 'rtl', paddingRight: '0.5rem'}}
+                  >
+                    {monthLabels.ar.months.map((month, i) => (
+                      <option key={i} value={i}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           );
@@ -118,12 +145,16 @@ function Calendar({
     return {};
   }, [currentLanguage]);
   
+  // Set additional classes for RTL mode
+  const isArabic = currentLanguage === 'ar';
+  
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       locale={currentLocale}
-      className={cn("p-3 calendar-component", className)}
+      className={cn("p-3 calendar-component", isArabic ? "arabic-calendar" : "", className)}
       formatters={formatters}
+      dir={isArabic ? "rtl" : "ltr"}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",

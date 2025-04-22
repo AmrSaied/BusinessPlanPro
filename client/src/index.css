@@ -251,7 +251,8 @@
   }
   
   /* RTL styling for calendar dropdown selects */
-  html[dir="rtl"] .rdp-dropdown select {
+  html[dir="rtl"] .rdp-dropdown select,
+  html[dir="rtl"] .arabic-select {
     text-align: right !important;
     direction: rtl !important;
   }
@@ -263,12 +264,40 @@
     background-color: white !important;
   }
   
+  /* Specific styles for Arabic calendar */
+  .arabic-calendar-caption {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    background-color: white !important;
+    width: 100% !important;
+  }
+  
+  .arabic-month-label {
+    display: flex !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .arabic-select {
+    background-color: white !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.25rem !important;
+    min-width: 90px !important;
+    font-size: 0.875rem !important;
+    color: #1f2937 !important;
+  }
+  
+  /* Fix for all calendar views */
   .rdp-dropdown {
     display: flex !important;
     position: relative !important;
     background-color: white !important;
   }
   
+  /* Standard select elements in calendar */
   .rdp-dropdown_month select,
   .rdp-dropdown_year select {
     cursor: pointer !important;
@@ -281,6 +310,40 @@
     padding: 0.25rem 1rem 0.25rem 0.5rem !important;
     font-size: 0.875rem !important;
     color: #1f2937 !important;
+  }
+  
+  /* Fix navigation buttons for RTL */
+  html[dir="rtl"] .rdp-nav {
+    flex-direction: row-reverse !important;
+  }
+  
+  html[dir="rtl"] .rdp-nav_button_previous {
+    left: auto !important;
+    right: 1rem !important;
+  }
+  
+  html[dir="rtl"] .rdp-nav_button_next {
+    right: auto !important;
+    left: 1rem !important;
+  }
+  
+  /* RTL fixes for weekday names and table layout */
+  html[dir="rtl"] .rdp-head_row {
+    flex-direction: row-reverse !important;
+  }
+  
+  html[dir="rtl"] .rdp-row {
+    flex-direction: row-reverse !important;
+  }
+
+  /* Additional Arabic calendar styling */
+  html[dir="rtl"] .rdp-dropdown_container {
+    flex-direction: row-reverse !important;
+  }
+  
+  html[dir="rtl"] .arabic-month-label {
+    flex-direction: row-reverse !important;
+    margin-right: 0.5rem !important;
   }
 }
 
