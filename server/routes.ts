@@ -1561,11 +1561,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Reset services to the specified defaults
+  app.post("/api/admin/services/reset", isAdmin, async (req, res) => {
+    try {
+      const resetServices = await storage.resetAdditionalServices();
+      res.status(200).json({ 
+        message: "Services reset successfully", 
+        services: resetServices 
+      });
+    } catch (error) {
+      console.error("Error resetting services:", error);
+      res.status(500).json({ error: "Failed to reset services" });
+    }
+  });
+  
   // Public endpoint to get active additional services
   app.get("/api/services", async (req, res) => {
     try {
       // Only return active services
       const services = await storage.getAdditionalServices(true);
+      
+      // Log for debugging
+      console.log(`Fetched ${services.length} active services for client`);
+      
       res.status(200).json(services);
     } catch (error) {
       console.error("Error fetching services:", error);

@@ -844,4 +844,55 @@ export class DatabaseStorage implements IStorage {
       return false;
     }
   }
+  
+  async clearAllAdditionalServices(): Promise<boolean> {
+    try {
+      await db.delete(additionalServices);
+      console.log('All additional services deleted');
+      return true;
+    } catch (error) {
+      console.error('Error clearing additional services:', error);
+      return false;
+    }
+  }
+  
+  async resetAdditionalServices(): Promise<AdditionalService[]> {
+    try {
+      // First clear all existing services
+      await this.clearAllAdditionalServices();
+      
+      // Add the two required services
+      const services = [
+        {
+          name: "Hotel Reservation",
+          description: "Add a matching hotel reservation document",
+          price: 2,
+          type: "insurance",
+          currency: "USD",
+          isActive: true
+        },
+        {
+          name: "Insurance Letter",
+          description: "Travel insurance confirmation document",
+          price: 2,
+          type: "insurance",
+          currency: "USD",
+          isActive: true
+        }
+      ];
+      
+      const createdServices = [];
+      
+      for (const service of services) {
+        const createdService = await this.createAdditionalService(service);
+        createdServices.push(createdService);
+      }
+      
+      console.log(`Reset additional services: ${createdServices.length} services added`);
+      return createdServices;
+    } catch (error) {
+      console.error('Error resetting additional services:', error);
+      return [];
+    }
+  }
 }
