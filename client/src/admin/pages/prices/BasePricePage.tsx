@@ -61,6 +61,7 @@ const FlightPricingFormSchema = z.object({
   destinationAirport: z.string().min(3, "Destination airport is required"),
   currency: z.string().default("USD"),
   travelClass: z.string().default("economy"),
+  tripType: z.string().default("one-way"),
   isActive: z.boolean().default(true),
 });
 
@@ -85,6 +86,7 @@ export default function BasePricePage() {
       destinationAirport: "",
       currency: "USD",
       travelClass: "economy",
+      tripType: "one-way",
       isActive: true,
     },
   });
@@ -98,6 +100,7 @@ export default function BasePricePage() {
       destinationAirport: "",
       currency: "USD",
       travelClass: "economy",
+      tripType: "one-way",
       isActive: true,
     },
   });
@@ -206,6 +209,7 @@ export default function BasePricePage() {
       destinationAirport: pricing.destinationAirport,
       currency: pricing.currency || "USD",
       travelClass: pricing.travelClass || "economy",
+      tripType: pricing.tripType || "one-way",
       isActive: pricing.isActive === null ? true : pricing.isActive,
     });
     setIsEditDialogOpen(true);
@@ -333,7 +337,7 @@ export default function BasePricePage() {
                       )}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <FormField
                       control={addForm.control}
                       name="travelClass"
@@ -350,6 +354,28 @@ export default function BasePricePage() {
                               <SelectItem value="economy">Economy</SelectItem>
                               <SelectItem value="business">Business</SelectItem>
                               <SelectItem value="first">First</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={addForm.control}
+                      name="tripType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Trip Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select trip type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="one-way">One Way</SelectItem>
+                              <SelectItem value="round-trip">Round Trip</SelectItem>
+                              <SelectItem value="multi-city">Multi City</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -468,7 +494,7 @@ export default function BasePricePage() {
                       )}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <FormField
                       control={editForm.control}
                       name="travelClass"
@@ -485,6 +511,28 @@ export default function BasePricePage() {
                               <SelectItem value="economy">Economy</SelectItem>
                               <SelectItem value="business">Business</SelectItem>
                               <SelectItem value="first">First</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="tripType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Trip Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select trip type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="one-way">One Way</SelectItem>
+                              <SelectItem value="round-trip">Round Trip</SelectItem>
+                              <SelectItem value="multi-city">Multi City</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />

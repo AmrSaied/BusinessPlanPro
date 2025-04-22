@@ -1685,17 +1685,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Public routes for services
-  app.get("/api/services", async (req, res) => {
-    try {
-      // Only return active services for public route
-      const services = await storage.getAdditionalServices(true);
-      res.status(200).json(services);
-    } catch (error) {
-      console.error("Error fetching additional services:", error);
-      res.status(500).json({ error: "Failed to fetch additional services" });
-    }
-  });
+  // Public routes for services handled above (around line 1565)
 
   const httpServer = createServer(app);
   return httpServer;

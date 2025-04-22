@@ -293,8 +293,9 @@ export const flightPricing = pgTable("flight_pricing", {
   originAirport: text("origin_airport").notNull(),
   destinationAirport: text("destination_airport").notNull(),
   basePrice: doublePrecision("base_price").notNull(),
-  currency: text("currency").default("EUR"),
-  travelClass: text("travel_class").default("economy"),
+  currency: text("currency").default("USD"),
+  travelClass: text("travel_class").default("economy"), 
+  tripType: text("trip_type").default("one-way"),  // Added for price based on trip type
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
 });
