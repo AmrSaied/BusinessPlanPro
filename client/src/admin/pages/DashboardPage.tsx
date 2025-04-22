@@ -176,33 +176,33 @@ const DashboardPage = () => {
           </Card>
 
           {/* Flights Stats Card */}
-          <Card className="bg-white dark:bg-gray-800 border-none shadow-md hover:shadow-lg transition-shadow">
+          <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Flights</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
-                <Plane className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <CardTitle className="text-sm font-medium text-gray-800">Active Flights</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-emerald-50 flex items-center justify-center">
+                <Plane className="h-5 w-5 text-emerald-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-800 dark:text-gray-200">{dashboardStats.flights.total}</div>
+              <div className="text-3xl font-bold text-gray-800">{dashboardStats.flights.total}</div>
               <div className="flex justify-between items-center mt-2">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   {dashboardStats.flights.active} currently active
                 </p>
-                <div className="flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 rounded-full">
+                <div className="flex items-center text-xs font-medium text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
                   <Activity className="h-3 w-3 mr-1" />
                   {Math.round(dashboardStats.flights.active / (dashboardStats.flights.total || 1) * 100)}% active
                 </div>
               </div>
               <div className="mt-4 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Active rate</span>
-                  <span className="font-medium">
+                  <span className="text-gray-500">Active rate</span>
+                  <span className="font-medium text-gray-700">
                     {Math.round(dashboardStats.flights.active / (dashboardStats.flights.total || 1) * 100)}%
                   </span>
                 </div>
                 <Progress 
-                  className="h-1.5 bg-emerald-100 dark:bg-emerald-900/20" 
+                  className="h-1.5 bg-emerald-100" 
                   value={dashboardStats.flights.active / (dashboardStats.flights.total || 1) * 100}
                 />
               </div>
@@ -210,26 +210,26 @@ const DashboardPage = () => {
           </Card>
 
           {/* Revenue Stats Card */}
-          <Card className="bg-white dark:bg-gray-800 border-none shadow-md hover:shadow-lg transition-shadow">
+          <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <CardTitle className="text-sm font-medium text-gray-800">Total Revenue</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-amber-50 flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-amber-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-gray-800 dark:text-gray-200">
+              <div className="text-3xl font-bold text-gray-800">
                 {dashboardStats.revenue.currency} {dashboardStats.revenue.total.toLocaleString()}
               </div>
               <div className="flex justify-between items-center mt-2">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   {dashboardStats.revenue.currency} {dashboardStats.revenue.thisMonth.toLocaleString()} this month
                 </p>
                 {dashboardStats.revenue.lastMonth > 0 && (
-                  <div className={`flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${
+                  <div className={`flex items-center text-xs font-medium px-2 py-0.5 rounded-full border ${
                     dashboardStats.revenue.thisMonth >= dashboardStats.revenue.lastMonth 
-                      ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20" 
-                      : "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
+                      ? "text-green-600 bg-green-50 border-green-100" 
+                      : "text-red-600 bg-red-50 border-red-100"
                   }`}>
                     <ArrowUpRight className="h-3 w-3 mr-1" />
                     {((Math.abs(dashboardStats.revenue.thisMonth - dashboardStats.revenue.lastMonth) / 
@@ -239,8 +239,8 @@ const DashboardPage = () => {
               </div>
               <div className="mt-4 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Monthly progress</span>
-                  <span className="font-medium">
+                  <span className="text-gray-500">Monthly progress</span>
+                  <span className="font-medium text-gray-700">
                     {Math.min(
                       Math.round(dashboardStats.revenue.thisMonth / (dashboardStats.revenue.lastMonth || 1) * 100),
                       100
@@ -248,7 +248,7 @@ const DashboardPage = () => {
                   </span>
                 </div>
                 <Progress 
-                  className="h-1.5 bg-amber-100 dark:bg-amber-900/20" 
+                  className="h-1.5 bg-amber-100" 
                   value={Math.min(
                     dashboardStats.revenue.thisMonth / (dashboardStats.revenue.lastMonth || 1) * 100, 
                     100
@@ -261,24 +261,24 @@ const DashboardPage = () => {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="mt-8">
-          <TabsList className="inline-flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+          <TabsList className="inline-flex bg-gray-100 p-1 rounded-lg">
             <TabsTrigger 
               value="overview" 
-              className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+              className="rounded-md data-[state=active]:bg-white text-gray-700 data-[state=active]:text-gray-900"
             >
               <ListChecks className="h-4 w-4 mr-2" />
               Overview
             </TabsTrigger>
             <TabsTrigger 
               value="activity" 
-              className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+              className="rounded-md data-[state=active]:bg-white text-gray-700 data-[state=active]:text-gray-900"
             >
               <Activity className="h-4 w-4 mr-2" />
               Activity
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
-              className="rounded-md data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700"
+              className="rounded-md data-[state=active]:bg-white text-gray-700 data-[state=active]:text-gray-900"
             >
               <BarChart className="h-4 w-4 mr-2" />
               Analytics
@@ -288,40 +288,40 @@ const DashboardPage = () => {
           <TabsContent value="overview" className="space-y-6 mt-6">
             {/* Key Metrics Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-white dark:bg-gray-800 border-none shadow-md">
+              <Card className="bg-white border border-gray-200 shadow-md">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Weekly Performance</CardTitle>
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-base text-gray-800">Weekly Performance</CardTitle>
+                    <Calendar className="h-4 w-4 text-gray-500" />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between mb-4">
                     <div className="space-y-1">
-                      <span className="text-sm text-muted-foreground">Tickets sold</span>
-                      <div className="text-2xl font-semibold">{dashboardStats.tickets.confirmedToday * 7}</div>
+                      <span className="text-sm text-gray-500">Tickets sold</span>
+                      <div className="text-2xl font-semibold text-gray-800">{dashboardStats.tickets.confirmedToday * 7}</div>
                     </div>
-                    <div className="h-12 w-12 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
-                      <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
+                    <div className="h-12 w-12 rounded-full bg-green-50 flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-green-600" />
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded-md">
-                        <div className="text-xs text-muted-foreground">Mon</div>
-                        <div className="text-sm font-semibold">{dashboardStats.tickets.confirmedToday}</div>
+                      <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
+                        <div className="text-xs text-gray-500">Mon</div>
+                        <div className="text-sm font-semibold text-gray-700">{dashboardStats.tickets.confirmedToday}</div>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded-md">
-                        <div className="text-xs text-muted-foreground">Tue</div>
-                        <div className="text-sm font-semibold">{dashboardStats.tickets.confirmedToday + 1}</div>
+                      <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
+                        <div className="text-xs text-gray-500">Tue</div>
+                        <div className="text-sm font-semibold text-gray-700">{dashboardStats.tickets.confirmedToday + 1}</div>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-2 rounded-md">
-                        <div className="text-xs text-muted-foreground">Wed</div>
-                        <div className="text-sm font-semibold">{dashboardStats.tickets.confirmedToday - 1}</div>
+                      <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
+                        <div className="text-xs text-gray-500">Wed</div>
+                        <div className="text-sm font-semibold text-gray-700">{dashboardStats.tickets.confirmedToday - 1}</div>
                       </div>
                     </div>
-                    <Progress className="h-1.5" value={75} />
-                    <div className="text-xs text-muted-foreground">
+                    <Progress className="h-1.5 bg-green-100" value={75} />
+                    <div className="text-xs text-gray-500">
                       75% of weekly target reached
                     </div>
                   </div>
