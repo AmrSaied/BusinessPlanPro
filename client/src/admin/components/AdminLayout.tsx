@@ -34,6 +34,11 @@ import {
   Plane,
   Tags,
   ChevronDown,
+  DollarSign,
+  CircleDollarSign,
+  Percent,
+  CreditCard,
+  PackagePlus,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -95,7 +100,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
     { name: "Users", href: "/admin/users", icon: <Users className="h-5 w-5" /> },
     { name: "Tickets", href: "/admin/tickets", icon: <Ticket className="h-5 w-5" /> },
-    { name: "Pricing", href: "/admin/pricing", icon: <Tags className="h-5 w-5" /> },
+    { 
+      name: "Prices", 
+      href: "/admin/prices", 
+      icon: <CircleDollarSign className="h-5 w-5" />,
+      children: [
+        { name: "Base Prices", href: "/admin/prices/base", icon: <DollarSign className="h-4 w-4" /> },
+        { name: "Additional Services", href: "/admin/prices/services", icon: <PackagePlus className="h-4 w-4" /> },
+        { name: "Discounts", href: "/admin/prices/discounts", icon: <Percent className="h-4 w-4" /> },
+        { name: "Currency Settings", href: "/admin/prices/currency", icon: <CreditCard className="h-4 w-4" /> },
+      ]
+    },
     { name: "Settings", href: "/admin/settings", icon: <Settings className="h-5 w-5" /> },
   ];
 
@@ -116,26 +131,83 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <nav className="flex-1 px-2 space-y-1">
               {navigationItems.map((item) => {
                 const isActive = location === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <div
-                      className={`mr-3 ${
-                        isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                const hasChildren = item.children && item.children.length > 0;
+                const isChildActive = hasChildren && item.children.some((child) => location === child.href);
+                
+                if (!hasChildren) {
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        isActive
+                          ? "bg-primary text-primary-foreground"
+                          : "text-foreground hover:bg-muted"
                       }`}
                     >
-                      {item.icon}
+                      <div
+                        className={`mr-3 ${
+                          isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        }`}
+                      >
+                        {item.icon}
+                      </div>
+                      {item.name}
+                    </Link>
+                  );
+                } else {
+                  return (
+                    <div key={item.name} className="space-y-1">
+                      <Link
+                        href={item.href}
+                        className={`group flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          isActive || isChildActive
+                            ? "bg-primary text-primary-foreground"
+                            : "text-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <div
+                            className={`mr-3 ${
+                              isActive || isChildActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                            }`}
+                          >
+                            {item.icon}
+                          </div>
+                          {item.name}
+                        </div>
+                        <ChevronDown className={`h-4 w-4 transition-transform ${isActive || isChildActive ? "transform rotate-180 text-primary-foreground" : "text-muted-foreground"}`} />
+                      </Link>
+                      {(isActive || isChildActive) && item.children && (
+                        <div className="ml-6 space-y-1 mt-1">
+                          {item.children.map((child) => {
+                            const isChildItemActive = location === child.href;
+                            return (
+                              <Link
+                                key={child.name}
+                                href={child.href}
+                                className={`group flex items-center px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                                  isChildItemActive
+                                    ? "bg-primary/20 text-primary"
+                                    : "text-foreground hover:bg-muted"
+                                }`}
+                              >
+                                <div
+                                  className={`mr-3 ${
+                                    isChildItemActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                                  }`}
+                                >
+                                  {child.icon}
+                                </div>
+                                {child.name}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                    {item.name}
-                  </Link>
-                );
+                  );
+                }
               })}
             </nav>
           </div>
@@ -184,27 +256,85 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                   <nav className="space-y-1 px-2">
                     {navigationItems.map((item) => {
                       const isActive = location === item.href;
-                      return (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className={`group flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors ${
-                            isActive
-                              ? "bg-primary text-primary-foreground"
-                              : "text-foreground hover:bg-muted"
-                          }`}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          <div
-                            className={`mr-3 ${
-                              isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                      const hasChildren = item.children && item.children.length > 0;
+                      const isChildActive = hasChildren && item.children.some((child) => location === child.href);
+                      
+                      if (!hasChildren) {
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
+                            className={`group flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors ${
+                              isActive
+                                ? "bg-primary text-primary-foreground"
+                                : "text-foreground hover:bg-muted"
                             }`}
+                            onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            {item.icon}
+                            <div
+                              className={`mr-3 ${
+                                isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                              }`}
+                            >
+                              {item.icon}
+                            </div>
+                            {item.name}
+                          </Link>
+                        );
+                      } else {
+                        return (
+                          <div key={item.name} className="space-y-1">
+                            <Link
+                              href={item.href}
+                              className={`group flex items-center justify-between px-3 py-2 text-base font-medium rounded-md transition-colors ${
+                                isActive || isChildActive
+                                  ? "bg-primary text-primary-foreground"
+                                  : "text-foreground hover:bg-muted"
+                              }`}
+                            >
+                              <div className="flex items-center">
+                                <div
+                                  className={`mr-3 ${
+                                    isActive || isChildActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                                  }`}
+                                >
+                                  {item.icon}
+                                </div>
+                                {item.name}
+                              </div>
+                              <ChevronDown className={`h-4 w-4 transition-transform ${isActive || isChildActive ? "transform rotate-180 text-primary-foreground" : "text-muted-foreground"}`} />
+                            </Link>
+                            {(isActive || isChildActive) && item.children && (
+                              <div className="ml-6 space-y-1 mt-1">
+                                {item.children.map((child) => {
+                                  const isChildItemActive = location === child.href;
+                                  return (
+                                    <Link
+                                      key={child.name}
+                                      href={child.href}
+                                      className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                                        isChildItemActive
+                                          ? "bg-primary/20 text-primary"
+                                          : "text-foreground hover:bg-muted"
+                                      }`}
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                      <div
+                                        className={`mr-3 ${
+                                          isChildItemActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                                        }`}
+                                      >
+                                        {child.icon}
+                                      </div>
+                                      {child.name}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
-                          {item.name}
-                        </Link>
-                      );
+                        );
+                      }
                     })}
                   </nav>
                 </div>
