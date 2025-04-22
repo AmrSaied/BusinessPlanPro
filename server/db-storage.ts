@@ -867,7 +867,7 @@ export class DatabaseStorage implements IStorage {
           name: "Hotel Reservation",
           description: "Add a matching hotel reservation document",
           price: 2,
-          type: "insurance",
+          type: "hotel", // Changed from "insurance" to "hotel" to match client-side mapping
           currency: "USD",
           isActive: true
         },
