@@ -53,9 +53,19 @@ import {
 import { FlightPricing } from "@shared/schema";
 import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Form schema for flight pricing
-const FlightPricingFormSchema = z.object({
+// Form schema for standard pricing
+const StandardPricingFormSchema = z.object({
+  basePrice: z.coerce.number().min(5, "Base price must be at least $5"),
+  currency: z.string().default("USD"),
+  travelClass: z.string().default("economy"),
+  tripType: z.string().default("one-way"),
+  isActive: z.boolean().default(true),
+});
+
+// Form schema for custom route pricing
+const RoutePricingFormSchema = z.object({
   basePrice: z.coerce.number().min(5, "Base price must be at least $5"),
   originAirport: z.string().min(3, "Origin airport is required"),
   destinationAirport: z.string().min(3, "Destination airport is required"),
@@ -67,9 +77,11 @@ const FlightPricingFormSchema = z.object({
 
 export default function BasePricePage() {
   const { toast } = useToast();
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditStandardOpen, setIsEditStandardOpen] = useState(false);
+  const [isAddRouteOpen, setIsAddRouteOpen] = useState(false);
+  const [isEditRouteOpen, setIsEditRouteOpen] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState<FlightPricing | null>(null);
+  const [activeTab, setActiveTab] = useState("standard");
 
   // Fetch flight pricing from the API
   const { data: pricingList, isLoading } = useQuery<FlightPricing[]>({
@@ -77,9 +89,21 @@ export default function BasePricePage() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  // Add new pricing form
-  const addForm = useForm<z.infer<typeof FlightPricingFormSchema>>({
-    resolver: zodResolver(FlightPricingFormSchema),
+  // Edit standard pricing form
+  const editStandardForm = useForm<z.infer<typeof StandardPricingFormSchema>>({
+    resolver: zodResolver(StandardPricingFormSchema),
+    defaultValues: {
+      basePrice: 50,
+      currency: "USD",
+      travelClass: "economy",
+      tripType: "one-way",
+      isActive: true,
+    },
+  });
+
+  // Add custom route pricing form
+  const addRouteForm = useForm<z.infer<typeof RoutePricingFormSchema>>({
+    resolver: zodResolver(RoutePricingFormSchema),
     defaultValues: {
       basePrice: 50,
       originAirport: "",
@@ -91,9 +115,9 @@ export default function BasePricePage() {
     },
   });
 
-  // Edit pricing form
-  const editForm = useForm<z.infer<typeof FlightPricingFormSchema>>({
-    resolver: zodResolver(FlightPricingFormSchema),
+  // Edit custom route pricing form
+  const editRouteForm = useForm<z.infer<typeof RoutePricingFormSchema>>({
+    resolver: zodResolver(RoutePricingFormSchema),
     defaultValues: {
       basePrice: 50,
       originAirport: "",
