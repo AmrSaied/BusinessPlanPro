@@ -131,7 +131,7 @@ export default function BasePricePage() {
 
   // Mutations for pricing operations
   const addMutation = useMutation({
-    mutationFn: async (data: z.infer<typeof FlightPricingFormSchema>) => {
+    mutationFn: async (data: z.infer<typeof RoutePricingFormSchema>) => {
       const res = await apiRequest("POST", "/api/admin/flight-pricing", data);
       if (!res.ok) {
         const error = await res.json();
@@ -144,8 +144,8 @@ export default function BasePricePage() {
         title: "Pricing added",
         description: "The base pricing has been added successfully.",
       });
-      setIsAddDialogOpen(false);
-      addForm.reset();
+      setIsAddRouteOpen(false);
+      addRouteForm.reset();
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/admin/flight-pricing"] });
     },
@@ -159,7 +159,7 @@ export default function BasePricePage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: z.infer<typeof FlightPricingFormSchema> }) => {
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
       const res = await apiRequest("PATCH", `/api/admin/flight-pricing/${id}`, data);
       if (!res.ok) {
         const error = await res.json();
@@ -172,9 +172,9 @@ export default function BasePricePage() {
         title: "Pricing updated",
         description: "The base pricing has been updated successfully.",
       });
-      setIsEditDialogOpen(false);
+      setIsEditStandardOpen(false);
+      setIsEditRouteOpen(false);
       setSelectedPrice(null);
-      editForm.reset();
       // Refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/admin/flight-pricing"] });
     },
@@ -213,21 +213,40 @@ export default function BasePricePage() {
     },
   });
 
-  // Handle adding a new pricing
-  const handleAddPricing = (data: z.infer<typeof FlightPricingFormSchema>) => {
-    addMutation.mutate(data);
-  };
-
-  // Handle editing a pricing
-  const handleEditPricing = (data: z.infer<typeof FlightPricingFormSchema>) => {
+  // Handle adding a standard pricing
+  const handleEditStandardPricing = (data: z.infer<typeof StandardPricingFormSchema>) => {
     if (!selectedPrice) return;
     updateMutation.mutate({ id: selectedPrice.id, data });
   };
 
-  // Open edit dialog with selected pricing data
-  const openEditDialog = (pricing: FlightPricing) => {
+  // Handle adding a route pricing
+  const handleAddRoutePricing = (data: z.infer<typeof RoutePricingFormSchema>) => {
+    addMutation.mutate(data);
+  };
+
+  // Handle editing a route pricing
+  const handleEditRoutePricing = (data: z.infer<typeof RoutePricingFormSchema>) => {
+    if (!selectedPrice) return;
+    updateMutation.mutate({ id: selectedPrice.id, data });
+  };
+
+  // Open standard pricing edit dialog
+  const openEditStandardDialog = (pricing: FlightPricing) => {
     setSelectedPrice(pricing);
-    editForm.reset({
+    editStandardForm.reset({
+      basePrice: pricing.basePrice,
+      currency: pricing.currency || "USD",
+      travelClass: pricing.travelClass || "economy",
+      tripType: pricing.tripType || "one-way",
+      isActive: pricing.isActive === null ? true : pricing.isActive,
+    });
+    setIsEditStandardOpen(true);
+  };
+
+  // Open route pricing edit dialog
+  const openEditRouteDialog = (pricing: FlightPricing) => {
+    setSelectedPrice(pricing);
+    editRouteForm.reset({
       basePrice: pricing.basePrice,
       originAirport: pricing.originAirport,
       destinationAirport: pricing.destinationAirport,
@@ -236,7 +255,7 @@ export default function BasePricePage() {
       tripType: pricing.tripType || "one-way",
       isActive: pricing.isActive === null ? true : pricing.isActive,
     });
-    setIsEditDialogOpen(true);
+    setIsEditRouteOpen(true);
   };
 
   // Handle deleting a pricing
@@ -275,402 +294,626 @@ export default function BasePricePage() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold tracking-tight">Base Flight Pricing</h1>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Add New Base Price
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Add New Base Price</DialogTitle>
-                <DialogDescription>
-                  Create a new base pricing for flight routes.
-                </DialogDescription>
-              </DialogHeader>
-              <Form {...addForm}>
-                <form onSubmit={addForm.handleSubmit(handleAddPricing)} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={addForm.control}
-                      name="originAirport"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Origin Airport</FormLabel>
-                          <FormControl>
-                            <Input placeholder="JFK" {...field} />
-                          </FormControl>
-                          <FormDescription>Enter the IATA code</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addForm.control}
-                      name="destinationAirport"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Destination Airport</FormLabel>
-                          <FormControl>
-                            <Input placeholder="LHR" {...field} />
-                          </FormControl>
-                          <FormDescription>Enter the IATA code</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={addForm.control}
-                      name="basePrice"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Base Price</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="50" 
-                              {...field} 
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addForm.control}
-                      name="currency"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Currency</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select currency" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="USD">USD</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={addForm.control}
-                      name="travelClass"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Travel Class</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select class" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="economy">Economy</SelectItem>
-                              <SelectItem value="business">Business</SelectItem>
-                              <SelectItem value="first">First</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addForm.control}
-                      name="tripType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Trip Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select trip type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="one-way">One Way</SelectItem>
-                              <SelectItem value="round-trip">Round Trip</SelectItem>
-                              <SelectItem value="multi-city">Multi City</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addForm.control}
-                      name="isActive"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-end space-x-3 space-y-0 rounded-md border p-4">
-                          <FormControl>
-                            <input
-                              type="checkbox"
-                              checked={field.value}
-                              onChange={field.onChange}
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Active</FormLabel>
-                            <FormDescription>
-                              Set this pricing as active
-                            </FormDescription>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit">Add Base Price</Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Edit Dialog */}
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Edit Base Price</DialogTitle>
-                <DialogDescription>
-                  Update the details of this base pricing.
-                </DialogDescription>
-              </DialogHeader>
-              <Form {...editForm}>
-                <form onSubmit={editForm.handleSubmit(handleEditPricing)} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={editForm.control}
-                      name="originAirport"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Origin Airport</FormLabel>
-                          <FormControl>
-                            <Input placeholder="JFK" {...field} />
-                          </FormControl>
-                          <FormDescription>Enter the IATA code</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={editForm.control}
-                      name="destinationAirport"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Destination Airport</FormLabel>
-                          <FormControl>
-                            <Input placeholder="LHR" {...field} />
-                          </FormControl>
-                          <FormDescription>Enter the IATA code</FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={editForm.control}
-                      name="basePrice"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Base Price</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="50" 
-                              {...field} 
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={editForm.control}
-                      name="currency"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Currency</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select currency" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="USD">USD</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={editForm.control}
-                      name="travelClass"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Travel Class</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select class" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="economy">Economy</SelectItem>
-                              <SelectItem value="business">Business</SelectItem>
-                              <SelectItem value="first">First</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={editForm.control}
-                      name="tripType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Trip Type</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select trip type" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="one-way">One Way</SelectItem>
-                              <SelectItem value="round-trip">Round Trip</SelectItem>
-                              <SelectItem value="multi-city">Multi City</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={editForm.control}
-                      name="isActive"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-end space-x-3 space-y-0 rounded-md border p-4">
-                          <FormControl>
-                            <input
-                              type="checkbox"
-                              checked={field.value}
-                              onChange={field.onChange}
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Active</FormLabel>
-                            <FormDescription>
-                              Set this pricing as active
-                            </FormDescription>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit">Update Base Price</Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          <Card className="bg-white">
-            <CardHeader>
-              <CardTitle>Base Price Management</CardTitle>
-              <CardDescription>
-                Manage the base prices for flight routes based on origin, destination, and class.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableCaption>List of current base pricing configurations</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Origin</TableHead>
-                    <TableHead>Destination</TableHead>
-                    <TableHead>Class</TableHead>
-                    <TableHead className="text-right">Base Price</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pricingList && pricingList.length > 0 ? (
-                    pricingList.map((pricing) => (
-                      <TableRow key={pricing.id}>
-                        <TableCell className="font-medium">{pricing.originAirport}</TableCell>
-                        <TableCell>{pricing.destinationAirport}</TableCell>
-                        <TableCell>
-                          <Badge variant={getTravelClassBadgeVariant(pricing.travelClass)}>
-                            {pricing.travelClass ? (pricing.travelClass.charAt(0).toUpperCase() + pricing.travelClass.slice(1)) : "Economy"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">${pricing.basePrice.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Badge variant={pricing.isActive ? "default" : "secondary"}>
-                            {pricing.isActive ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openEditDialog(pricing)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDeletePricing(pricing.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="standard">Standard Pricing</TabsTrigger>
+            <TabsTrigger value="custom">Custom Routes</TabsTrigger>
+          </TabsList>
+          
+          {/* Standard Pricing Tab Content */}
+          <TabsContent value="standard" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Standard Pricing</CardTitle>
+                <CardDescription>Standard prices for different trip types and travel classes</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableCaption>Standard pricing across all routes</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Travel Class</TableHead>
+                      <TableHead>Trip Type</TableHead>
+                      <TableHead>Base Price</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pricingList && pricingList.length > 0 ? (
+                      // Filter for standard pricing (where origin and destination are 'ANY')
+                      pricingList
+                        .filter(p => p.originAirport === 'ANY' && p.destinationAirport === 'ANY')
+                        .map((pricing) => (
+                          <TableRow key={pricing.id}>
+                            <TableCell>
+                              <Badge variant={getTravelClassBadgeVariant(pricing.travelClass)}>
+                                {pricing.travelClass ? 
+                                  pricing.travelClass.charAt(0).toUpperCase() + pricing.travelClass.slice(1) 
+                                  : "Economy"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {pricing.tripType ? 
+                                pricing.tripType.charAt(0).toUpperCase() + pricing.tripType.slice(1).replace('-', ' ') 
+                                : "One-way"}
+                            </TableCell>
+                            <TableCell>
+                              {pricing.basePrice} {pricing.currency || "USD"}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={pricing.isActive ? "default" : "outline"}>
+                                {pricing.isActive ? "Active" : "Inactive"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => openEditStandardDialog(pricing)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center">
+                          No standard pricing found
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Custom Routes Tab Content */}
+          <TabsContent value="custom" className="space-y-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Custom Route Pricing</CardTitle>
+                  <CardDescription>Special pricing for specific routes</CardDescription>
+                </div>
+                <Dialog open={isAddRouteOpen} onOpenChange={setIsAddRouteOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Custom Price
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                      <DialogTitle>Add Custom Route Price</DialogTitle>
+                      <DialogDescription>
+                        Create a special price for a specific route.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <Form {...addRouteForm}>
+                      <form onSubmit={addRouteForm.handleSubmit(handleAddRoutePricing)} className="space-y-6">
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={addRouteForm.control}
+                            name="originAirport"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Origin Airport</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="JFK" {...field} />
+                                </FormControl>
+                                <FormDescription>Enter the IATA code</FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addRouteForm.control}
+                            name="destinationAirport"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Destination Airport</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="LHR" {...field} />
+                                </FormControl>
+                                <FormDescription>Enter the IATA code</FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={addRouteForm.control}
+                            name="basePrice"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Base Price</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    type="number" 
+                                    placeholder="50" 
+                                    {...field} 
+                                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addRouteForm.control}
+                            name="currency"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Currency</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select currency" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="USD">USD</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <FormField
+                            control={addRouteForm.control}
+                            name="travelClass"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Travel Class</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select class" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="economy">Economy</SelectItem>
+                                    <SelectItem value="business">Business</SelectItem>
+                                    <SelectItem value="first">First</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addRouteForm.control}
+                            name="tripType"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Trip Type</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select trip type" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="one-way">One-way</SelectItem>
+                                    <SelectItem value="round-trip">Round-trip</SelectItem>
+                                    <SelectItem value="multi-city">Multi-city</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={addRouteForm.control}
+                            name="isActive"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                <FormControl>
+                                  <input
+                                    type="checkbox"
+                                    className="h-4 w-4 text-primary"
+                                    checked={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel>Active</FormLabel>
+                                  <FormDescription>
+                                    Make this pricing active
+                                  </FormDescription>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit">
+                            {addMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Add Custom Price
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableCaption>Custom pricing for specific routes</TableCaption>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-6 text-gray-500">
-                        No base pricing defined yet. Add a new base price to get started.
-                      </TableCell>
+                      <TableHead>Origin</TableHead>
+                      <TableHead>Destination</TableHead>
+                      <TableHead>Travel Class</TableHead>
+                      <TableHead>Trip Type</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <div className="text-sm text-gray-500">
-                Base pricing will be applied to all bookings based on these rules.
-              </div>
-            </CardFooter>
-          </Card>
-        </div>
+                  </TableHeader>
+                  <TableBody>
+                    {pricingList && pricingList.length > 0 ? (
+                      // Filter for custom pricing (where origin and destination are NOT 'ANY')
+                      pricingList
+                        .filter(p => p.originAirport !== 'ANY' || p.destinationAirport !== 'ANY')
+                        .map((pricing) => (
+                          <TableRow key={pricing.id}>
+                            <TableCell className="font-medium">{pricing.originAirport}</TableCell>
+                            <TableCell>{pricing.destinationAirport}</TableCell>
+                            <TableCell>
+                              <Badge variant={getTravelClassBadgeVariant(pricing.travelClass)}>
+                                {pricing.travelClass ? 
+                                  pricing.travelClass.charAt(0).toUpperCase() + pricing.travelClass.slice(1) 
+                                  : "Economy"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {pricing.tripType ? 
+                                pricing.tripType.charAt(0).toUpperCase() + pricing.tripType.slice(1).replace('-', ' ') 
+                                : "One-way"}
+                            </TableCell>
+                            <TableCell>
+                              {pricing.basePrice} {pricing.currency || "USD"}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={pricing.isActive ? "default" : "outline"}>
+                                {pricing.isActive ? "Active" : "Inactive"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => openEditRouteDialog(pricing)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => handleDeletePricing(pricing.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center">
+                          No custom route pricing found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
+
+      {/* Edit Standard Pricing Dialog */}
+      <Dialog open={isEditStandardOpen} onOpenChange={setIsEditStandardOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Standard Price</DialogTitle>
+            <DialogDescription>
+              Update standard pricing for a travel class and trip type.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...editStandardForm}>
+            <form onSubmit={editStandardForm.handleSubmit(handleEditStandardPricing)} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={editStandardForm.control}
+                  name="basePrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Base Price</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="50" 
+                          {...field} 
+                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editStandardForm.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={editStandardForm.control}
+                  name="travelClass"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Travel Class</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select class" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="economy">Economy</SelectItem>
+                          <SelectItem value="business">Business</SelectItem>
+                          <SelectItem value="first">First</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editStandardForm.control}
+                  name="tripType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trip Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select trip type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="one-way">One-way</SelectItem>
+                          <SelectItem value="round-trip">Round-trip</SelectItem>
+                          <SelectItem value="multi-city">Multi-city</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editStandardForm.control}
+                  name="isActive"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 text-primary"
+                          checked={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Active</FormLabel>
+                        <FormDescription>
+                          Make this pricing active
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter>
+                <Button type="submit">
+                  {updateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Update Price
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Custom Route Pricing Dialog */}
+      <Dialog open={isEditRouteOpen} onOpenChange={setIsEditRouteOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit Custom Route Price</DialogTitle>
+            <DialogDescription>
+              Update pricing for a specific custom route.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...editRouteForm}>
+            <form onSubmit={editRouteForm.handleSubmit(handleEditRoutePricing)} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={editRouteForm.control}
+                  name="originAirport"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Origin Airport</FormLabel>
+                      <FormControl>
+                        <Input placeholder="JFK" {...field} />
+                      </FormControl>
+                      <FormDescription>Enter the IATA code</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editRouteForm.control}
+                  name="destinationAirport"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Destination Airport</FormLabel>
+                      <FormControl>
+                        <Input placeholder="LHR" {...field} />
+                      </FormControl>
+                      <FormDescription>Enter the IATA code</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={editRouteForm.control}
+                  name="basePrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Base Price</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="50" 
+                          {...field} 
+                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editRouteForm.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="USD">USD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <FormField
+                  control={editRouteForm.control}
+                  name="travelClass"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Travel Class</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select class" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="economy">Economy</SelectItem>
+                          <SelectItem value="business">Business</SelectItem>
+                          <SelectItem value="first">First</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editRouteForm.control}
+                  name="tripType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trip Type</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select trip type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="one-way">One-way</SelectItem>
+                          <SelectItem value="round-trip">Round-trip</SelectItem>
+                          <SelectItem value="multi-city">Multi-city</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={editRouteForm.control}
+                  name="isActive"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 text-primary"
+                          checked={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Active</FormLabel>
+                        <FormDescription>
+                          Make this pricing active
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <DialogFooter>
+                <Button type="submit">
+                  {updateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Update Price
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
