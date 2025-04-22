@@ -1529,6 +1529,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch additional services" });
     }
   });
+  
+
 
   app.get("/api/admin/services/:id", isAdmin, async (req, res) => {
     try {

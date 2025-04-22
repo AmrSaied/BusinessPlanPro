@@ -184,12 +184,12 @@ const FlightOptions = ({
             </div>
 
             <div className="divide-y divide-gray-200">
-              {/* Base Ticket */}
-              <div className="p-5 flex justify-between items-center">
+              {/* Base Flight Price - Always included */}
+              <div className="p-5 flex justify-between items-center bg-gray-50">
                 <div>
                   <div className="font-medium">{t("options.basic")}</div>
                   <div className="text-sm text-gray-600">
-                    Verifiable PNR code, airline formatted
+                    {t("options.basicDescription")}
                   </div>
                 </div>
                 <div className="font-semibold text-primary">
