@@ -16,9 +16,10 @@ import {
 } from 'lucide-react';
 
 const HomePage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [_, setLocation] = useLocation();
   const { setSearchParams } = useBooking();
+  const isRTL = i18n.dir() === 'rtl';
   
   const handleSearchSubmit = (data: FlightSearch) => {
     console.log('Search submitted:', data);
@@ -90,47 +91,47 @@ const HomePage = () => {
           </div>
           <div className="md:w-1/2">
             <div className="bg-white rounded-lg shadow-xl p-6 text-gray-800">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-heading font-semibold text-xl">{t('advantages_title')}</h2>
+              <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <h2 className={`font-heading font-semibold text-xl ${isRTL ? 'text-right' : ''}`}>{t('advantages_title')}</h2>
                 <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
                   {t('advantages_24_7')}
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start">
-                  <div className="mr-3 mt-1 text-primary">
+                <div className={`flex items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                  <div className={`${isRTL ? 'ml-3 mr-0' : 'mr-3'} mt-1 text-primary`}>
                     <CheckCircle className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium">{t('advantage_pnr_title')}</h3>
-                    <p className="text-sm text-gray-600">{t('advantage_pnr_text')}</p>
+                    <h3 className="font-medium text-base">{t('advantage_pnr_title')}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{t('advantage_pnr_text')}</p>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <div className="mr-3 mt-1 text-primary">
+                <div className={`flex items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                  <div className={`${isRTL ? 'ml-3 mr-0' : 'mr-3'} mt-1 text-primary`}>
                     <Zap className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium">{t('advantage_delivery_title')}</h3>
-                    <p className="text-sm text-gray-600">{t('advantage_delivery_text')}</p>
+                    <h3 className="font-medium text-base">{t('advantage_delivery_title')}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{t('advantage_delivery_text')}</p>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <div className="mr-3 mt-1 text-primary">
+                <div className={`flex items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                  <div className={`${isRTL ? 'ml-3 mr-0' : 'mr-3'} mt-1 text-primary`}>
                     <DollarSign className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium">{t('advantage_price_title')}</h3>
-                    <p className="text-sm text-gray-600">{t('advantage_price_text')}</p>
+                    <h3 className="font-medium text-base">{t('advantage_price_title')}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{t('advantage_price_text')}</p>
                   </div>
                 </div>
-                <div className="flex items-start">
-                  <div className="mr-3 mt-1 text-primary">
+                <div className={`flex items-start ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                  <div className={`${isRTL ? 'ml-3 mr-0' : 'mr-3'} mt-1 text-primary`}>
                     <Headphones className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-medium">{t('advantage_support_title')}</h3>
-                    <p className="text-sm text-gray-600">{t('advantage_support_text')}</p>
+                    <h3 className="font-medium text-base">{t('advantage_support_title')}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{t('advantage_support_text')}</p>
                   </div>
                 </div>
               </div>
