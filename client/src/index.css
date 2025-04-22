@@ -375,3 +375,35 @@
 .font-heading {
   font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
 }
+
+/* RTL support for select components */
+html[dir="rtl"] .rtl-select-trigger span {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+html[dir="rtl"] .rtl-select-item {
+  direction: rtl !important;
+  justify-content: flex-start !important;
+}
+
+/* Ensure select dropdown has proper RTL styling */
+html[dir="rtl"] .select-dropdown-menu {
+  direction: rtl !important;
+}
+
+html[dir="rtl"] [role="listbox"] {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+html[dir="rtl"] .select-content {
+  text-align: right !important;
+}
+
+/* Fix trigger text alignment in RTL mode */
+html[dir="rtl"] [aria-haspopup="listbox"] > span {
+  text-align: right !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+}
