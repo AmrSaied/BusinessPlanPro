@@ -17,6 +17,7 @@ import {
   CreditCard,
   PackagePlus,
   ArrowRight,
+  BarChart,
 } from "lucide-react";
 
 const PricesPage = () => {
@@ -69,13 +70,13 @@ const PricesPage = () => {
 
         <div className="grid md:grid-cols-2 gap-6">
           {pricingModules.map((module) => (
-            <Card key={module.title} className="overflow-hidden">
+            <Card key={module.title} className="bg-white dark:bg-gray-800 border-none shadow-md hover:shadow-lg transition-shadow overflow-hidden">
               <CardHeader className="pb-4">
-                <div className="flex items-center gap-2">
-                  <div className={`p-2 rounded-md ${module.color}`}>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl">{module.title}</CardTitle>
+                  <div className={`h-10 w-10 rounded-full ${module.color} flex items-center justify-center`}>
                     <div className={module.iconColor}>{module.icon}</div>
                   </div>
-                  <CardTitle className="text-xl">{module.title}</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -97,16 +98,21 @@ const PricesPage = () => {
           ))}
         </div>
 
-        <Card className="mt-8">
+        <Card className="mt-8 bg-white dark:bg-gray-800 border-none shadow-md">
           <CardHeader>
-            <CardTitle>Price Strategy Overview</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Price Strategy Overview</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                <BarChart className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
+            </div>
             <CardDescription>
               Your pricing framework combines multiple components to create the final price offered to customers.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="p-4 border rounded-md bg-muted/50">
+              <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-800/50">
                 <h3 className="font-semibold text-base mb-2">How Pricing Works</h3>
                 <ol className="list-decimal ml-5 space-y-2 text-sm">
                   <li>
@@ -128,13 +134,13 @@ const PricesPage = () => {
                 <p className="mb-2">
                   Example Price Calculation:
                 </p>
-                <div className="font-mono bg-background border p-3 rounded-md">
+                <div className="font-mono bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 p-3 rounded-md">
                   <div>Base Price (Economy LAX to JFK) = $250.00</div>
                   <div>+ Extra Baggage = $50.00</div>
                   <div>+ Priority Boarding = $20.00</div>
                   <div>= Subtotal: $320.00</div>
                   <div>- Discount (15% SUMMER2025) = -$48.00</div>
-                  <div className="border-t mt-1 pt-1 font-bold">Final Price = $272.00</div>
+                  <div className="border-t border-gray-200 dark:border-gray-700 mt-1 pt-1 font-bold">Final Price = $272.00</div>
                 </div>
               </div>
             </div>
