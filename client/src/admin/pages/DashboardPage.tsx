@@ -328,11 +328,11 @@ const DashboardPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white dark:bg-gray-800 border-none shadow-md">
+              <Card className="bg-white border border-gray-200 shadow-md">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Top Routes</CardTitle>
-                    <PieChart className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-base text-gray-800">Top Routes</CardTitle>
+                    <PieChart className="h-4 w-4 text-gray-500" />
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -341,11 +341,11 @@ const DashboardPage = () => {
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-8 bg-blue-500 rounded-full"></div>
                         <div>
-                          <div className="text-sm font-medium">NYC → LON</div>
-                          <div className="text-xs text-muted-foreground">30% of sales</div>
+                          <div className="text-sm font-medium text-gray-800">NYC → LON</div>
+                          <div className="text-xs text-gray-500">30% of sales</div>
                         </div>
                       </div>
-                      <div className="text-sm font-semibold">
+                      <div className="text-sm font-semibold text-gray-700">
                         {Math.round(dashboardStats.tickets.total * 0.3)} tickets
                       </div>
                     </div>
@@ -354,11 +354,11 @@ const DashboardPage = () => {
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
                         <div>
-                          <div className="text-sm font-medium">LAX → TOK</div>
-                          <div className="text-xs text-muted-foreground">25% of sales</div>
+                          <div className="text-sm font-medium text-gray-800">LAX → TOK</div>
+                          <div className="text-xs text-gray-500">25% of sales</div>
                         </div>
                       </div>
-                      <div className="text-sm font-semibold">
+                      <div className="text-sm font-semibold text-gray-700">
                         {Math.round(dashboardStats.tickets.total * 0.25)} tickets
                       </div>
                     </div>
@@ -367,11 +367,11 @@ const DashboardPage = () => {
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-8 bg-amber-500 rounded-full"></div>
                         <div>
-                          <div className="text-sm font-medium">CHI → PAR</div>
-                          <div className="text-xs text-muted-foreground">20% of sales</div>
+                          <div className="text-sm font-medium text-gray-800">CHI → PAR</div>
+                          <div className="text-xs text-gray-500">20% of sales</div>
                         </div>
                       </div>
-                      <div className="text-sm font-semibold">
+                      <div className="text-sm font-semibold text-gray-700">
                         {Math.round(dashboardStats.tickets.total * 0.2)} tickets
                       </div>
                     </div>
@@ -379,11 +379,11 @@ const DashboardPage = () => {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white dark:bg-gray-800 border-none shadow-md">
+              <Card className="bg-white border border-gray-200 shadow-md">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">System Health</CardTitle>
-                    <Settings className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-base text-gray-800">System Health</CardTitle>
+                    <Settings className="h-4 w-4 text-gray-500" />
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -392,44 +392,44 @@ const DashboardPage = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                          <span className="text-sm font-medium">Web Platform</span>
+                          <span className="text-sm font-medium text-gray-700">Web Platform</span>
                         </div>
-                        <span className="text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-medium px-2 py-0.5 rounded-full">Operational</span>
+                        <span className="text-xs bg-green-50 text-green-700 font-medium px-2 py-0.5 rounded-full border border-green-100">Operational</span>
                       </div>
-                      <Progress value={100} className="h-1.5 bg-green-100 dark:bg-green-900/20" />
+                      <Progress value={100} className="h-1.5 bg-green-100" />
                     </div>
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                          <span className="text-sm font-medium">Database</span>
+                          <span className="text-sm font-medium text-gray-700">Database</span>
                         </div>
-                        <span className="text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-medium px-2 py-0.5 rounded-full">Operational</span>
+                        <span className="text-xs bg-green-50 text-green-700 font-medium px-2 py-0.5 rounded-full border border-green-100">Operational</span>
                       </div>
-                      <Progress value={100} className="h-1.5 bg-green-100 dark:bg-green-900/20" />
+                      <Progress value={100} className="h-1.5 bg-green-100" />
                     </div>
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                          <span className="text-sm font-medium">API Services</span>
+                          <span className="text-sm font-medium text-gray-700">API Services</span>
                         </div>
-                        <span className="text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-medium px-2 py-0.5 rounded-full">Operational</span>
+                        <span className="text-xs bg-green-50 text-green-700 font-medium px-2 py-0.5 rounded-full border border-green-100">Operational</span>
                       </div>
-                      <Progress value={100} className="h-1.5 bg-green-100 dark:bg-green-900/20" />
+                      <Progress value={100} className="h-1.5 bg-green-100" />
                     </div>
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                          <span className="text-sm font-medium">Payment System</span>
+                          <span className="text-sm font-medium text-gray-700">Payment System</span>
                         </div>
-                        <span className="text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 font-medium px-2 py-0.5 rounded-full">Operational</span>
+                        <span className="text-xs bg-green-50 text-green-700 font-medium px-2 py-0.5 rounded-full border border-green-100">Operational</span>
                       </div>
-                      <Progress value={100} className="h-1.5 bg-green-100 dark:bg-green-900/20" />
+                      <Progress value={100} className="h-1.5 bg-green-100" />
                     </div>
                   </div>
                 </CardContent>
@@ -437,27 +437,27 @@ const DashboardPage = () => {
             </div>
 
             {/* Activity Timeline */}
-            <Card className="bg-white dark:bg-gray-800 border-none shadow-md">
+            <Card className="bg-white border border-gray-200 shadow-md">
               <CardHeader>
-                <CardTitle>Recent System Activity</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-gray-800">Recent System Activity</CardTitle>
+                <CardDescription className="text-gray-600">
                   Latest events and updates from the system
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="relative">
-                  <div className="absolute top-0 bottom-0 left-4 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+                  <div className="absolute top-0 bottom-0 left-4 w-0.5 bg-gray-200"></div>
                   <div className="space-y-6">
                     <div className="relative pl-10">
-                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
-                        <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-green-100 border border-green-200 flex items-center justify-center">
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-                        <p className="text-sm font-medium">System Update</p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                      <div className="bg-gray-50 border border-gray-100 p-3 rounded-lg">
+                        <p className="text-sm font-medium text-gray-800">System Update</p>
+                        <p className="text-xs text-gray-600 mt-1">
                           All systems successfully updated to the latest version
                         </p>
-                        <div className="flex items-center mt-2 text-xs text-muted-foreground">
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
                           <Clock className="h-3.5 w-3.5 mr-1" />
                           <span>{new Date().toLocaleString()}</span>
                         </div>
@@ -465,15 +465,15 @@ const DashboardPage = () => {
                     </div>
                     
                     <div className="relative pl-10">
-                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center">
+                        <Users className="h-4 w-4 text-blue-600" />
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-                        <p className="text-sm font-medium">User Activity</p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                      <div className="bg-gray-50 border border-gray-100 p-3 rounded-lg">
+                        <p className="text-sm font-medium text-gray-800">User Activity</p>
+                        <p className="text-xs text-gray-600 mt-1">
                           {dashboardStats.users.newToday} new users registered today
                         </p>
-                        <div className="flex items-center mt-2 text-xs text-muted-foreground">
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
                           <Clock className="h-3.5 w-3.5 mr-1" />
                           <span>{new Date().toLocaleString()}</span>
                         </div>
@@ -481,15 +481,15 @@ const DashboardPage = () => {
                     </div>
                     
                     <div className="relative pl-10">
-                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/20 flex items-center justify-center">
-                        <Ticket className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center">
+                        <Ticket className="h-4 w-4 text-indigo-600" />
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-                        <p className="text-sm font-medium">Ticket Sales</p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                      <div className="bg-gray-50 border border-gray-100 p-3 rounded-lg">
+                        <p className="text-sm font-medium text-gray-800">Ticket Sales</p>
+                        <p className="text-xs text-gray-600 mt-1">
                           {dashboardStats.tickets.confirmedToday} tickets issued today
                         </p>
-                        <div className="flex items-center mt-2 text-xs text-muted-foreground">
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
                           <Clock className="h-3.5 w-3.5 mr-1" />
                           <span>{new Date().toLocaleString()}</span>
                         </div>
@@ -497,15 +497,15 @@ const DashboardPage = () => {
                     </div>
                     
                     <div className="relative pl-10">
-                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/20 flex items-center justify-center">
-                        <DollarSign className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      <div className="absolute left-0 top-1 w-8 h-8 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center">
+                        <DollarSign className="h-4 w-4 text-amber-600" />
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
-                        <p className="text-sm font-medium">Revenue Update</p>
-                        <p className="text-xs text-muted-foreground mt-1">
+                      <div className="bg-gray-50 border border-gray-100 p-3 rounded-lg">
+                        <p className="text-sm font-medium text-gray-800">Revenue Update</p>
+                        <p className="text-xs text-gray-600 mt-1">
                           {dashboardStats.revenue.currency} {dashboardStats.revenue.thisMonth.toLocaleString()} revenue generated this month
                         </p>
-                        <div className="flex items-center mt-2 text-xs text-muted-foreground">
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
                           <Clock className="h-3.5 w-3.5 mr-1" />
                           <span>{new Date().toLocaleString()}</span>
                         </div>
@@ -518,20 +518,20 @@ const DashboardPage = () => {
           </TabsContent>
 
           <TabsContent value="activity" className="mt-6">
-            <Card className="bg-white dark:bg-gray-800 border-none shadow-md">
+            <Card className="bg-white border border-gray-200 shadow-md">
               <CardHeader>
-                <CardTitle>Recent Activity Log</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-gray-800">Recent Activity Log</CardTitle>
+                <CardDescription className="text-gray-600">
                   Detailed log of recent actions and events
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-16 text-muted-foreground">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                <div className="text-center py-16 text-gray-500">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
                     <Clock className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-lg font-medium">Activity Log Coming Soon</p>
-                  <p className="text-sm mt-2 max-w-md mx-auto">
+                  <p className="text-lg font-medium text-gray-700">Activity Log Coming Soon</p>
+                  <p className="text-sm mt-2 max-w-md mx-auto text-gray-500">
                     A detailed activity log is under development and will be available in the next release.
                   </p>
                 </div>
@@ -540,20 +540,20 @@ const DashboardPage = () => {
           </TabsContent>
 
           <TabsContent value="analytics" className="mt-6">
-            <Card className="bg-white dark:bg-gray-800 border-none shadow-md">
+            <Card className="bg-white border border-gray-200 shadow-md">
               <CardHeader>
-                <CardTitle>Performance Analytics</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-gray-800">Performance Analytics</CardTitle>
+                <CardDescription className="text-gray-600">
                   Detailed performance metrics and trends
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-16 text-muted-foreground">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                <div className="text-center py-16 text-gray-500">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center">
                     <BarChart className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-lg font-medium">Analytics Dashboard Coming Soon</p>
-                  <p className="text-sm mt-2 max-w-md mx-auto">
+                  <p className="text-lg font-medium text-gray-700">Analytics Dashboard Coming Soon</p>
+                  <p className="text-sm mt-2 max-w-md mx-auto text-gray-500">
                     A comprehensive analytics dashboard with detailed charts and insights will be available in the next release.
                   </p>
                 </div>
