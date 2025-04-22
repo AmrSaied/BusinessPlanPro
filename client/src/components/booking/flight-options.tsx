@@ -36,8 +36,7 @@ const FlightOptions = ({
   // Calculate total price when options change
   useEffect(() => {
     let price = selectedFlight?.price || 12;
-    if (options.expressProcessing) price += 2;
-    if (options.editableTicket) price += 2;
+    // Removed express processing and editable ticket options
     if (options.hotelReservation) price += 2;
     if (options.insuranceLetter) price += 2;
     setTotalPrice(price);
@@ -139,49 +138,7 @@ const FlightOptions = ({
                 </div>
               </div>
 
-              {/* Express Processing */}
-              <div className="p-5 flex justify-between items-center">
-                <div className="flex-1">
-                  <div className="flex items-center">
-                    <div className="font-medium mr-2">{t("options.express")}</div>
-                    <Badge
-                      variant="secondary"
-                      className="bg-secondary-100 text-secondary-800 hover:bg-secondary-100"
-                    >
-                      {t("options.recommended")}
-                    </Badge>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Priority handling, guaranteed in 5 minutes
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
-                  <Checkbox
-                    id="express"
-                    checked={options.expressProcessing}
-                    onCheckedChange={() => handleOptionChange("expressProcessing")}
-                  />
-                </div>
-              </div>
 
-              {/* Editable Ticket */}
-              <div className="p-5 flex justify-between items-center">
-                <div className="flex-1">
-                  <div className="font-medium">{t("options.editable")}</div>
-                  <div className="text-sm text-gray-600">
-                    Make changes to your ticket after purchase
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
-                  <Checkbox
-                    id="editable"
-                    checked={options.editableTicket}
-                    onCheckedChange={() => handleOptionChange("editableTicket")}
-                  />
-                </div>
-              </div>
 
               {/* Hotel Reservation */}
               <div className="p-5 flex justify-between items-center">
