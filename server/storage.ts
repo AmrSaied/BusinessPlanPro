@@ -5,7 +5,9 @@ import {
   Booking, InsertBooking, 
   Airport, InsertAirport,
   BookingPassenger, InsertBookingPassenger,
-  SystemLog, InsertSystemLog, LogLevel
+  SystemLog, InsertSystemLog, LogLevel,
+  AdditionalService, InsertAdditionalService,
+  FlightPricing, InsertFlightPricing
 } from "@shared/schema";
 
 import session from "express-session";
@@ -100,6 +102,9 @@ export class MemStorage implements IStorage {
   
   sessionStore: session.Store;
 
+  private currentServiceId: number;
+  private currentPricingId: number;
+
   constructor() {
     this.users = new Map();
     this.flights = new Map();
@@ -108,6 +113,8 @@ export class MemStorage implements IStorage {
     this.airports = new Map();
     this.bookingPassengers = new Map();
     this.systemLogs = new Map();
+    this.additionalServices = new Map();
+    this.flightPricing = new Map();
     
     this.currentUserId = 1;
     this.currentFlightId = 1;
@@ -116,6 +123,8 @@ export class MemStorage implements IStorage {
     this.currentAirportId = 1;
     this.currentBookingPassengerId = 1;
     this.currentLogId = 1;
+    this.currentServiceId = 1;
+    this.currentPricingId = 1;
     
     // Initialize memory store for sessions
     this.sessionStore = new MemoryStore({
@@ -125,6 +134,7 @@ export class MemStorage implements IStorage {
     // Initialize with some sample airports
     this.initializeAirports();
     this.initializeFlights();
+    this.initializeAdditionalServices();
   }
 
   // User operations
@@ -382,6 +392,77 @@ export class MemStorage implements IStorage {
   }
   
   // Pricing operations
+  // Flight Pricing Methods
+  async getFlightPricing(id?: number): Promise<FlightPricing[]> {
+    if (id) {
+      const pricing = this.flightPricing.get(id);
+      return pricing ? [pricing] : [];
+    }
+    return Array.from(this.flightPricing.values());
+  }
+
+  async createFlightPricing(pricing: InsertFlightPricing): Promise<FlightPricing> {
+    const id = this.currentPricingId++;
+    const flightPricing: FlightPricing = {
+      ...pricing,
+      id,
+      createdAt: new Date()
+    };
+    this.flightPricing.set(id, flightPricing);
+    return flightPricing;
+  }
+
+  async updateFlightPricing(id: number, pricing: Partial<FlightPricing>): Promise<FlightPricing | undefined> {
+    const existingPricing = this.flightPricing.get(id);
+    if (!existingPricing) return undefined;
+
+    const updatedPricing = { ...existingPricing, ...pricing };
+    this.flightPricing.set(id, updatedPricing);
+    return updatedPricing;
+  }
+
+  async deleteFlightPricing(id: number): Promise<boolean> {
+    return this.flightPricing.delete(id);
+  }
+
+  // Additional Services Methods
+  async getAdditionalServices(active?: boolean): Promise<AdditionalService[]> {
+    const services = Array.from(this.additionalServices.values());
+    if (active !== undefined) {
+      return services.filter(service => service.isActive === active);
+    }
+    return services;
+  }
+
+  async getAdditionalService(id: number): Promise<AdditionalService | undefined> {
+    return this.additionalServices.get(id);
+  }
+
+  async createAdditionalService(service: InsertAdditionalService): Promise<AdditionalService> {
+    const id = this.currentServiceId++;
+    const additionalService: AdditionalService = {
+      ...service,
+      id,
+      createdAt: new Date()
+    };
+    this.additionalServices.set(id, additionalService);
+    return additionalService;
+  }
+
+  async updateAdditionalService(id: number, service: Partial<AdditionalService>): Promise<AdditionalService | undefined> {
+    const existingService = this.additionalServices.get(id);
+    if (!existingService) return undefined;
+
+    const updatedService = { ...existingService, ...service };
+    this.additionalServices.set(id, updatedService);
+    return updatedService;
+  }
+
+  async deleteAdditionalService(id: number): Promise<boolean> {
+    return this.additionalServices.delete(id);
+  }
+
+  // Keep these for backwards compatibility
   async getPricingBase(): Promise<any[]> {
     // Return real pricing data from actual database
     return [
@@ -413,6 +494,39 @@ export class MemStorage implements IStorage {
   }
   
   // Helper methods to initialize data
+  private initializeAdditionalServices() {
+    // Only initialize if empty
+    if (this.additionalServices.size === 0) {
+      const services: InsertAdditionalService[] = [
+        {
+          name: "Hotel Reservation",
+          description: "Add a matching hotel reservation document",
+          price: 2,
+          type: "other",
+          currency: "EUR",
+          isActive: true
+        },
+        {
+          name: "Insurance Letter",
+          description: "Travel insurance confirmation document",
+          price: 2,
+          type: "insurance",
+          currency: "EUR",
+          isActive: true
+        }
+      ];
+      
+      services.forEach(service => {
+        const id = this.currentServiceId++;
+        this.additionalServices.set(id, {
+          ...service,
+          id,
+          createdAt: new Date()
+        });
+      });
+    }
+  }
+  
   private initializeAirports() {
     const airports: InsertAirport[] = [
       // ViewTrip ticket sample airports
