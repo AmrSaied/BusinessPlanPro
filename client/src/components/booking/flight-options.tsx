@@ -37,11 +37,10 @@ const FlightOptions = ({
     queryKey: ["/api/services"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     enabled: !!selectedFlight,
-    // Make sure to refetch when the component mounts to keep pricing up to date with admin panel
+    // These settings ensure fresh data on every component mount
     refetchOnMount: "always", // Always refetch on mount to get latest prices
-    refetchOnWindowFocus: true,
-    staleTime: 0, // Always consider data stale to ensure fresh data
-    gcTime: 5000 // Short garbage collection time (renamed from cacheTime in v5)
+    refetchOnWindowFocus: true, // Refetch when window gets focus
+    staleTime: 0 // Always consider data stale to ensure fresh data
   });
   
   // Force refetch when component mounts to ensure latest data
