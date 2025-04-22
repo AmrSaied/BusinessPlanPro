@@ -2,9 +2,9 @@ import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 import { useTranslation } from "react-i18next"
-import type { Locale } from "date-fns"
 
 // Import date-fns locales
+import { enUS } from "date-fns/locale"
 import { ar } from "date-fns/locale"
 import { es } from "date-fns/locale"
 import { fr } from "date-fns/locale"
@@ -22,7 +22,7 @@ export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
 // Map language codes to date-fns locales
 const localeMap: Record<string, any> = {
-  en: undefined, // English is the default
+  en: enUS,
   ar,
   es,
   fr,
@@ -32,7 +32,27 @@ const localeMap: Record<string, any> = {
   pt,
   hi,
   ja
-}
+};
+
+// Localized month labels for languages that might need special handling
+const monthLabels = {
+  ar: {
+    months: [
+      "يناير",
+      "فبراير",
+      "مارس",
+      "أبريل",
+      "مايو",
+      "يونيو",
+      "يوليو",
+      "أغسطس",
+      "سبتمبر",
+      "أكتوبر",
+      "نوفمبر",
+      "ديسمبر",
+    ]
+  }
+};
 
 function Calendar({
   className,
@@ -42,13 +62,68 @@ function Calendar({
 }: CalendarProps) {
   // Get current language from i18next
   const { i18n } = useTranslation();
-  const currentLocale = localeMap[i18n.language] || undefined;
+  const currentLanguage = i18n.language;
+  const currentLocale = localeMap[currentLanguage] || enUS;
+  
+  // Use custom formatting for languages that need it
+  const formatters = React.useMemo(() => {
+    if (currentLanguage === 'ar') {
+      return {
+        formatMonthCaption: (date: Date) => {
+          const monthIndex = date.getMonth();
+          return monthLabels.ar.months[monthIndex];
+        },
+        formatWeekdayName: (date: Date) => {
+          // Get localized day name in Arabic
+          return date.toLocaleDateString('ar', { weekday: 'short' });
+        },
+        formatCaption: (date: Date, options: any) => {
+          // Custom caption formatting for Arabic
+          const monthName = monthLabels.ar.months[date.getMonth()];
+          return (
+            <div className="rdp-caption_dropdowns" style={{display: 'flex', gap: '0.5rem'}}>
+              <div className="rdp-dropdown_month">
+                <select
+                  aria-label="شهر"
+                  className="rdp-dropdown_month-select"
+                  value={date.getMonth()}
+                  onChange={(e) => options.onMonthChange?.(Number(e.target.value))}
+                >
+                  {monthLabels.ar.months.map((month, i) => (
+                    <option key={i} value={i}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="rdp-dropdown_year">
+                <select
+                  aria-label="سنة"
+                  className="rdp-dropdown_year-select"
+                  value={date.getFullYear()}
+                  onChange={(e) => options.onYearChange?.(Number(e.target.value))}
+                >
+                  {Array.from({ length: 10 }, (_, i) => date.getFullYear() - 5 + i).map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          );
+        }
+      };
+    }
+    return {};
+  }, [currentLanguage]);
   
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       locale={currentLocale}
       className={cn("p-3 calendar-component", className)}
+      formatters={formatters}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
