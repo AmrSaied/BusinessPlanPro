@@ -124,7 +124,7 @@ const AirportSearch = ({ label, placeholder, icon, onSelect, value, error }: Air
 
         {/* Results dropdown */}
         {isOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
+          <div className="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm airport-dropdown-menu">
             {isLoading ? (
               <div className="flex justify-center py-4">
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />

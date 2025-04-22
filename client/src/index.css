@@ -148,6 +148,40 @@
   [data-radix-popper-content-wrapper] ::-webkit-scrollbar-thumb {
     background: #e2e8f0 !important;
   }
+  
+  /* Airport dropdown scrollbar styles */
+  .airport-dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .airport-dropdown-menu::-webkit-scrollbar-track {
+    background: #ffffff !important;
+  }
+  
+  .airport-dropdown-menu::-webkit-scrollbar-thumb {
+    background: #e2e8f0 !important;
+  }
+  
+  .airport-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1 !important;
+  }
+  
+  /* Select dropdown scrollbar styles */
+  .select-dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .select-dropdown-menu::-webkit-scrollbar-track {
+    background: #ffffff !important;
+  }
+  
+  .select-dropdown-menu::-webkit-scrollbar-thumb {
+    background: #e2e8f0 !important;
+  }
+  
+  .select-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1 !important;
+  }
 }
 
 .font-heading {

@@ -111,7 +111,7 @@ const AirportAutocomplete = ({
       {showResults && (
         <div 
           ref={resultsRef}
-          className="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm"
+          className="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm airport-dropdown-menu"
         >
           {isLoading ? (
             <div className="py-2 px-4 text-sm text-gray-500 flex items-center">
