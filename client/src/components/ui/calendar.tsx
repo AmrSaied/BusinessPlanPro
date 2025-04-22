@@ -1,11 +1,38 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
+import { useTranslation } from "react-i18next"
+import type { Locale } from "date-fns"
+
+// Import date-fns locales
+import { ar } from "date-fns/locale"
+import { es } from "date-fns/locale"
+import { fr } from "date-fns/locale"
+import { de } from "date-fns/locale"
+import { zhCN } from "date-fns/locale"
+import { ru } from "date-fns/locale"
+import { pt } from "date-fns/locale"
+import { hi } from "date-fns/locale"
+import { ja } from "date-fns/locale"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
+
+// Map language codes to date-fns locales
+const localeMap: Record<string, any> = {
+  en: undefined, // English is the default
+  ar,
+  es,
+  fr,
+  de,
+  zh: zhCN,
+  ru,
+  pt,
+  hi,
+  ja
+}
 
 function Calendar({
   className,
@@ -13,9 +40,14 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  // Get current language from i18next
+  const { i18n } = useTranslation();
+  const currentLocale = localeMap[i18n.language] || undefined;
+  
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      locale={currentLocale}
       className={cn("p-3 calendar-component", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
