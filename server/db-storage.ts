@@ -726,4 +726,122 @@ export class DatabaseStorage implements IStorage {
       { id: 4, code: "SUMMER2023", amount: 20, type: "percentage", description: "Summer promotion", minAmount: 300, maxAmount: 3000, expiresAt: "2025-09-30T23:59:59Z" }
     ];
   }
+
+  // Flight Pricing Methods
+  async getFlightPricing(id?: number): Promise<FlightPricing[]> {
+    try {
+      if (id) {
+        const results = await db.select().from(flightPricing).where(eq(flightPricing.id, id));
+        return results;
+      }
+      return await db.select().from(flightPricing);
+    } catch (error) {
+      console.error('Error fetching flight pricing:', error);
+      return [];
+    }
+  }
+
+  async createFlightPricing(pricing: InsertFlightPricing): Promise<FlightPricing> {
+    try {
+      const results = await db.insert(flightPricing).values({
+        ...pricing,
+        createdAt: new Date(),
+        isActive: pricing.isActive ?? true,
+        currency: pricing.currency ?? 'USD',
+        travelClass: pricing.travelClass ?? 'economy'
+      }).returning();
+      return results[0];
+    } catch (error) {
+      console.error('Error creating flight pricing:', error);
+      throw error;
+    }
+  }
+
+  async updateFlightPricing(id: number, pricing: Partial<FlightPricing>): Promise<FlightPricing | undefined> {
+    try {
+      const results = await db.update(flightPricing)
+        .set(pricing)
+        .where(eq(flightPricing.id, id))
+        .returning();
+      return results[0];
+    } catch (error) {
+      console.error('Error updating flight pricing:', error);
+      return undefined;
+    }
+  }
+
+  async deleteFlightPricing(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(flightPricing)
+        .where(eq(flightPricing.id, id))
+        .returning({ id: flightPricing.id });
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error deleting flight pricing:', error);
+      return false;
+    }
+  }
+
+  // Additional Services Methods
+  async getAdditionalServices(active?: boolean): Promise<AdditionalService[]> {
+    try {
+      if (active !== undefined) {
+        return await db.select().from(additionalServices).where(eq(additionalServices.isActive, active));
+      }
+      return await db.select().from(additionalServices);
+    } catch (error) {
+      console.error('Error fetching additional services:', error);
+      return [];
+    }
+  }
+
+  async getAdditionalService(id: number): Promise<AdditionalService | undefined> {
+    try {
+      const results = await db.select().from(additionalServices).where(eq(additionalServices.id, id));
+      return results[0];
+    } catch (error) {
+      console.error('Error fetching additional service:', error);
+      return undefined;
+    }
+  }
+
+  async createAdditionalService(service: InsertAdditionalService): Promise<AdditionalService> {
+    try {
+      const results = await db.insert(additionalServices).values({
+        ...service,
+        createdAt: new Date(),
+        isActive: service.isActive ?? true,
+        currency: service.currency ?? 'USD'
+      }).returning();
+      return results[0];
+    } catch (error) {
+      console.error('Error creating additional service:', error);
+      throw error;
+    }
+  }
+
+  async updateAdditionalService(id: number, service: Partial<AdditionalService>): Promise<AdditionalService | undefined> {
+    try {
+      const results = await db.update(additionalServices)
+        .set(service)
+        .where(eq(additionalServices.id, id))
+        .returning();
+      return results[0];
+    } catch (error) {
+      console.error('Error updating additional service:', error);
+      return undefined;
+    }
+  }
+
+  async deleteAdditionalService(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(additionalServices)
+        .where(eq(additionalServices.id, id))
+        .returning({ id: additionalServices.id });
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error deleting additional service:', error);
+      return false;
+    }
+  }
 }

@@ -175,7 +175,7 @@ const ServicesPage = () => {
   // Fetch services from the API
   const { data: services, isLoading } = useQuery<AdditionalService[]>({
     queryKey: ["/api/admin/services"],
-    queryFn: getQueryFn({}),
+    queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
   // Filter services based on active tab
