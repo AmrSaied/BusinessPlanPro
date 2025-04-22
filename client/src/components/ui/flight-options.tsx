@@ -1,8 +1,11 @@
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Flight } from '@shared/schema';
+import { Flight, AdditionalService } from '@shared/schema';
 import { useState, useEffect } from 'react';
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { Loader2 } from "lucide-react";
 
 interface FlightOptionsProps {
   selectedFlight: Flight;
@@ -18,6 +21,7 @@ interface FlightOptionsProps {
 const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOptionsProps) => {
   const { t } = useTranslation();
   
+  // Default options structure maintained for backward compatibility
   const [options, setOptions] = useState({
     expressProcessing: false,
     editableTicket: false,
@@ -26,25 +30,66 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
   });
   
   const [totalPrice, setTotalPrice] = useState(selectedFlight.basePrice);
+  const [selectedServices, setSelectedServices] = useState<Record<number, boolean>>({});
   
-  // Update total price when options change
+  // Fetch additional services from the API - this pulls from the admin-configured services
+  const { data: services, isLoading, refetch } = useQuery<AdditionalService[]>({
+    queryKey: ["/api/services"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+    // These settings ensure fresh data on every component mount
+    refetchOnMount: "always", // Always refetch on mount to get latest prices
+    refetchOnWindowFocus: true, // Refetch when window gets focus
+    staleTime: 0 // Always consider data stale to ensure fresh data
+  });
+  
+  // Force refetch when component mounts to ensure latest data
   useEffect(() => {
-    let price = selectedFlight.basePrice;
-    
-    if (options.expressProcessing) price += 2;
-    if (options.editableTicket) price += 2;
-    if (options.hotelReservation) price += 2;
-    if (options.insuranceLetter) price += 2;
-    
-    setTotalPrice(price);
-  }, [options, selectedFlight.basePrice]);
+    refetch();
+    console.log("Fetching services from admin panel");
+  }, [refetch]);
   
+  // Handle service selection toggle for the admin-defined services
+  const handleServiceChange = (serviceId: number, serviceType: string) => {
+    setSelectedServices(prev => {
+      const updated = {
+        ...prev,
+        [serviceId]: !prev[serviceId]
+      };
+      
+      // Update the legacy options structure based on service type
+      if (serviceType === 'hotel' || serviceType === 'other') {
+        setOptions(prev => ({ ...prev, hotelReservation: updated[serviceId] }));
+      } else if (serviceType === 'insurance') {
+        setOptions(prev => ({ ...prev, insuranceLetter: updated[serviceId] }));
+      }
+      
+      return updated;
+    });
+  };
+  
+  // Legacy handler - no longer used, but kept for type checking
   const handleOptionChange = (option: keyof typeof options) => {
     setOptions(prev => ({
       ...prev,
       [option]: !prev[option]
     }));
   };
+  
+  // Update total price when options change
+  useEffect(() => {
+    let price = selectedFlight.basePrice;
+    
+    // Add price of selected services from admin panel
+    if (services && Array.isArray(services)) {
+      services.forEach((service: AdditionalService) => {
+        if (selectedServices[service.id]) {
+          price += service.price;
+        }
+      });
+    }
+    
+    setTotalPrice(price);
+  }, [selectedServices, selectedFlight.basePrice, services]);
   
   const handleContinue = () => {
     onContinue(options, totalPrice);
@@ -93,81 +138,52 @@ const FlightOptions = ({ selectedFlight, onChangeFlight, onContinue }: FlightOpt
         </div>
         
         <div className="divide-y divide-gray-200">
-          {/* Base Ticket */}
-          <div className="p-5 flex justify-between items-center">
+          {/* Base Flight Price - Always included */}
+          <div className="p-5 flex justify-between items-center bg-gray-50">
             <div>
               <div className="font-medium">{t('option_basic_title')}</div>
               <div className="text-sm text-gray-600">{t('option_basic_text')}</div>
             </div>
-            <div className="font-semibold text-primary">€{selectedFlight.basePrice}</div>
+            <div className="font-semibold text-primary">${selectedFlight.basePrice?.toFixed(2) || "12.00"}</div>
           </div>
-          
-          {/* Express Processing */}
-          <div className="p-5 flex justify-between items-center">
-            <div className="flex-1">
-              <div className="flex items-center">
-                <div className="font-medium mr-2">{t('option_express_title')}</div>
-                <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">{t('option_express_recommended')}</span>
-              </div>
-              <div className="text-sm text-gray-600">{t('option_express_text')}</div>
+
+          {/* Loading State */}
+          {isLoading ? (
+            <div className="p-5 flex justify-center items-center">
+              <Loader2 className="h-5 w-5 animate-spin text-primary mr-2" />
+              <span>Loading services...</span>
             </div>
-            <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+€2</div>
-              <Checkbox 
-                id="expressProcessing"
-                checked={options.expressProcessing}
-                onCheckedChange={() => handleOptionChange('expressProcessing')}
-              />
-            </div>
-          </div>
-          
-          {/* Editable Ticket */}
-          <div className="p-5 flex justify-between items-center">
-            <div className="flex-1">
-              <div className="font-medium">{t('option_editable_title')}</div>
-              <div className="text-sm text-gray-600">{t('option_editable_text')}</div>
-            </div>
-            <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+€2</div>
-              <Checkbox 
-                id="editableTicket"
-                checked={options.editableTicket}
-                onCheckedChange={() => handleOptionChange('editableTicket')}
-              />
-            </div>
-          </div>
-          
-          {/* Hotel Reservation */}
-          <div className="p-5 flex justify-between items-center">
-            <div className="flex-1">
-              <div className="font-medium">{t('option_hotel_title')}</div>
-              <div className="text-sm text-gray-600">{t('option_hotel_text')}</div>
-            </div>
-            <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+€2</div>
-              <Checkbox 
-                id="hotelReservation"
-                checked={options.hotelReservation}
-                onCheckedChange={() => handleOptionChange('hotelReservation')}
-              />
-            </div>
-          </div>
-          
-          {/* Insurance Letter */}
-          <div className="p-5 flex justify-between items-center">
-            <div className="flex-1">
-              <div className="font-medium">{t('option_insurance_title')}</div>
-              <div className="text-sm text-gray-600">{t('option_insurance_text')}</div>
-            </div>
-            <div className="flex items-center">
-              <div className="font-semibold text-gray-800 mr-4">+€2</div>
-              <Checkbox 
-                id="insuranceLetter"
-                checked={options.insuranceLetter}
-                onCheckedChange={() => handleOptionChange('insuranceLetter')}
-              />
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* Dynamic Services from Admin Panel API */}
+              {services && services.length > 0 ? (
+                services.map(service => (
+                  <div key={service.id} className="p-5 flex justify-between items-center">
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <div className="font-medium">{service.name}</div>
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {service.description}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="font-semibold text-gray-800 mr-4">+${service.price.toFixed(2)}</div>
+                      <Checkbox
+                        id={`service-${service.id}`}
+                        checked={selectedServices[service.id] || false}
+                        onCheckedChange={() => handleServiceChange(service.id, service.type)}
+                      />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-5 text-center text-gray-500">
+                  No additional services available
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
       
