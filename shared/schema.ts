@@ -270,5 +270,43 @@ export const insertSystemLogSchema = createInsertSchema(systemLogs).omit({
   timestamp: true
 });
 
+// Additional Services Schema
+export const additionalServices = pgTable("additional_services", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  price: doublePrecision("price").notNull(),
+  type: text("type").notNull().$type<"baggage" | "seat" | "meal" | "priority" | "insurance" | "other">(),
+  currency: text("currency").default("EUR"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertAdditionalServiceSchema = createInsertSchema(additionalServices).omit({
+  id: true,
+  createdAt: true
+});
+
+// Flight Pricing Schema
+export const flightPricing = pgTable("flight_pricing", {
+  id: serial("id").primaryKey(),
+  originAirport: text("origin_airport").notNull(),
+  destinationAirport: text("destination_airport").notNull(),
+  basePrice: doublePrecision("base_price").notNull(),
+  currency: text("currency").default("EUR"),
+  travelClass: text("travel_class").default("economy"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertFlightPricingSchema = createInsertSchema(flightPricing).omit({
+  id: true,
+  createdAt: true
+});
+
 export type SystemLog = typeof systemLogs.$inferSelect;
 export type InsertSystemLog = z.infer<typeof insertSystemLogSchema>;
+export type AdditionalService = typeof additionalServices.$inferSelect;
+export type InsertAdditionalService = z.infer<typeof insertAdditionalServiceSchema>;
+export type FlightPricing = typeof flightPricing.$inferSelect;
+export type InsertFlightPricing = z.infer<typeof insertFlightPricingSchema>;

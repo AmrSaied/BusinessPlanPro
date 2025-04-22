@@ -56,9 +56,18 @@ export interface IStorage {
   getPassengersByBookingId(bookingId: number): Promise<Passenger[]>;
   
   // Pricing operations
-  getPricingBase(): Promise<any[]>; // Added for admin dashboard
-  getPricingFees(): Promise<any[]>; // Added for admin dashboard
-  getPricingDiscounts(): Promise<any[]>; // Added for admin dashboard
+  // Flight pricing management
+  getFlightPricing(id?: number): Promise<FlightPricing[]>;
+  createFlightPricing(pricing: InsertFlightPricing): Promise<FlightPricing>;
+  updateFlightPricing(id: number, pricing: Partial<FlightPricing>): Promise<FlightPricing | undefined>;
+  deleteFlightPricing(id: number): Promise<boolean>;
+  
+  // Additional services management
+  getAdditionalServices(active?: boolean): Promise<AdditionalService[]>;
+  getAdditionalService(id: number): Promise<AdditionalService | undefined>;
+  createAdditionalService(service: InsertAdditionalService): Promise<AdditionalService>;
+  updateAdditionalService(id: number, service: Partial<AdditionalService>): Promise<AdditionalService | undefined>;
+  deleteAdditionalService(id: number): Promise<boolean>;
   
   // System logs operations
   getSystemLogs(level: string, search: string, page: number, limit: number): Promise<SystemLog[]>;
@@ -78,6 +87,8 @@ export class MemStorage implements IStorage {
   private airports: Map<number, Airport>;
   private bookingPassengers: Map<number, BookingPassenger>;
   private systemLogs: Map<number, SystemLog>;
+  private additionalServices: Map<number, AdditionalService>;
+  private flightPricing: Map<number, FlightPricing>;
   
   private currentUserId: number;
   private currentFlightId: number;
