@@ -1,6 +1,7 @@
 import { Express, Request, Response, NextFunction } from "express";
 import { storage } from "../storage";
-import { LogLevelEnum } from "@shared/schema";
+import { LogLevelEnum, insertFlightPricingSchema, InsertFlightPricing } from "@shared/schema";
+import { z } from "zod";
 
 export function registerAdminRoutes(app: Express) {
   // Authentication middleware
@@ -256,6 +257,157 @@ export function registerAdminRoutes(app: Express) {
         { id: 3, code: "FLAT50", amount: 50, type: "fixed", description: "Flat discount", minAmount: 500, maxAmount: null, expiresAt: "2025-06-30T23:59:59Z" },
         { id: 4, code: "SUMMER2023", amount: 20, type: "percentage", description: "Summer promotion", minAmount: 300, maxAmount: 3000, expiresAt: "2025-09-30T23:59:59Z" }
       ]);
+    }
+  });
+
+  // Flight Pricing API Endpoints
+  app.get("/api/admin/flight-pricing", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const pricingList = await storage.getFlightPricing();
+      res.json(pricingList);
+    } catch (error: any) {
+      console.error("Error retrieving flight pricing:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/flight-pricing", isAdmin, async (req: Request, res: Response) => {
+    try {
+      // Validate the request body using the flight pricing schema
+      const pricingData = insertFlightPricingSchema.parse(req.body);
+      
+      // Update currency to USD as per requirements
+      pricingData.currency = "USD";
+      
+      // Create the flight pricing
+      const pricing = await storage.createFlightPricing(pricingData);
+      
+      await storage.addSystemLog(
+        "info",
+        "admin",
+        `Base flight pricing created by ${req.user.username}: ${pricing.originAirport} → ${pricing.destinationAirport}`
+      );
+      
+      res.status(201).json(pricing);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      
+      console.error("Error creating flight pricing:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/admin/flight-pricing/:id", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+      
+      const pricingList = await storage.getFlightPricing(id);
+      if (!pricingList || pricingList.length === 0) {
+        return res.status(404).json({ message: "Flight pricing not found" });
+      }
+      
+      res.json(pricingList[0]);
+    } catch (error: any) {
+      console.error("Error retrieving flight pricing:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/admin/flight-pricing/:id", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+      
+      // Get the existing pricing first to check if it exists
+      const existingPricing = await storage.getFlightPricing(id);
+      if (!existingPricing || existingPricing.length === 0) {
+        return res.status(404).json({ message: "Flight pricing not found" });
+      }
+      
+      // Validate the request body
+      const pricingData = req.body;
+      
+      // Enforce USD currency regardless of what was submitted
+      if (pricingData.currency) {
+        pricingData.currency = "USD";
+      }
+      
+      // Update the flight pricing
+      const updatedPricing = await storage.updateFlightPricing(id, pricingData);
+      
+      if (!updatedPricing) {
+        return res.status(500).json({ message: "Failed to update flight pricing" });
+      }
+      
+      await storage.addSystemLog(
+        "info",
+        "admin",
+        `Base flight pricing updated by ${req.user.username}: ${updatedPricing.originAirport} → ${updatedPricing.destinationAirport}`
+      );
+      
+      res.json(updatedPricing);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      
+      console.error("Error updating flight pricing:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/admin/flight-pricing/:id", isAdmin, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+      
+      // Get the existing pricing first to check if it exists
+      const existingPricing = await storage.getFlightPricing(id);
+      if (!existingPricing || existingPricing.length === 0) {
+        return res.status(404).json({ message: "Flight pricing not found" });
+      }
+      
+      // Delete the flight pricing
+      const success = await storage.deleteFlightPricing(id);
+      
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete flight pricing" });
+      }
+      
+      await storage.addSystemLog(
+        "info",
+        "admin",
+        `Base flight pricing deleted by ${req.user.username}: ID ${id}`
+      );
+      
+      res.status(204).end();
+    } catch (error: any) {
+      console.error("Error deleting flight pricing:", error);
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Public API endpoint to get active flight pricing (for frontend)
+  app.get("/api/flight-pricing", async (req: Request, res: Response) => {
+    try {
+      const pricingList = await storage.getFlightPricing();
+      
+      // Filter to include only active pricing
+      const activePricing = pricingList.filter(pricing => pricing.isActive);
+      
+      res.json(activePricing);
+    } catch (error: any) {
+      console.error("Error retrieving flight pricing:", error);
+      res.status(500).json({ message: error.message });
     }
   });
 }
