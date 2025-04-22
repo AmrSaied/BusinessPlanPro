@@ -97,41 +97,37 @@ function Calendar({
           return monthLabels.ar.weekdaysShort[dayIndex];
         },
         formatCaption: (date: Date, options: any) => {
-          // Custom caption formatting for Arabic
-          const monthName = monthLabels.ar.months[date.getMonth()];
+          // Simplified caption formatting for Arabic with proper labeling
           return (
-            <div className="rdp-caption_dropdowns arabic-calendar-caption" dir="rtl">
-              <div className="rdp-caption_label arabic-month-label" style={{marginLeft: '0.5rem'}}>
-                <span>{monthName}</span>
-                <span>{date.getFullYear()}</span>
-              </div>
-              <div className="rdp-dropdown_container" style={{display: 'flex', gap: '0.5rem', width: '100%', justifyContent: 'flex-end'}}>
-                <div className="rdp-dropdown_year" style={{marginLeft: '0.5rem'}}>
-                  <select
-                    aria-label="سنة"
-                    className="rdp-dropdown_year-select arabic-select"
-                    value={date.getFullYear()}
-                    onChange={(e) => options.onYearChange?.(Number(e.target.value))}
-                    style={{textAlign: 'right', direction: 'rtl', paddingRight: '0.5rem'}}
-                  >
-                    {Array.from({ length: 20 }, (_, i) => date.getFullYear() - 10 + i).map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="rdp-dropdown_month">
+            <div className="rdp-caption_container arabic-calendar-caption" dir="rtl">
+              <div className="rdp-dropdown_container">
+                <div className="dropdown-group">
+                  <label className="dropdown-label">شهر</label>
                   <select
                     aria-label="شهر"
                     className="rdp-dropdown_month-select arabic-select"
                     value={date.getMonth()}
                     onChange={(e) => options.onMonthChange?.(Number(e.target.value))}
-                    style={{textAlign: 'right', direction: 'rtl', paddingRight: '0.5rem'}}
                   >
                     {monthLabels.ar.months.map((month, i) => (
                       <option key={i} value={i}>
                         {month}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="dropdown-group">
+                  <label className="dropdown-label">سنة</label>
+                  <select
+                    aria-label="سنة"
+                    className="rdp-dropdown_year-select arabic-select"
+                    value={date.getFullYear()}
+                    onChange={(e) => options.onYearChange?.(Number(e.target.value))}
+                  >
+                    {Array.from({ length: 20 }, (_, i) => date.getFullYear() - 10 + i).map((year) => (
+                      <option key={year} value={year}>
+                        {year}
                       </option>
                     ))}
                   </select>
@@ -158,15 +154,15 @@ function Calendar({
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
-        caption: "flex justify-center pt-1 relative items-center",
+        caption: isArabic ? "flex justify-center relative items-center" : "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         ),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
+        nav_button_previous: isArabic ? "absolute right-1" : "absolute left-1",
+        nav_button_next: isArabic ? "absolute left-1" : "absolute right-1",
         table: "w-full border-collapse space-y-1",
         head_row: "flex",
         head_cell:
