@@ -96,20 +96,30 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     );
   }
 
-  const navigationItems = [
+  // Define child navigation item type
+  type NavChildItem = {
+    name: string;
+    href: string;
+    icon: React.ReactNode;
+  };
+  
+  // Define navigation item types
+  type NavItem = {
+    name: string;
+    href: string;
+    icon: React.ReactNode;
+    children?: NavChildItem[];
+  };
+  
+  // Define navigation items
+  const navigationItems: NavItem[] = [
     { name: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
     { name: "Users", href: "/admin/users", icon: <Users className="h-5 w-5" /> },
     { name: "Tickets", href: "/admin/tickets", icon: <Ticket className="h-5 w-5" /> },
     { 
-      name: "Prices", 
-      href: "/admin/prices", 
-      icon: <CircleDollarSign className="h-5 w-5" />,
-      children: [
-        { name: "Base Prices", href: "/admin/prices/base", icon: <DollarSign className="h-4 w-4" /> },
-        { name: "Additional Services", href: "/admin/prices/services", icon: <PackagePlus className="h-4 w-4" /> },
-        { name: "Discounts", href: "/admin/prices/discounts", icon: <Percent className="h-4 w-4" /> },
-        { name: "Currency Settings", href: "/admin/prices/currency", icon: <CreditCard className="h-4 w-4" /> },
-      ]
+      name: "Services Pricing", 
+      href: "/admin/prices/services", 
+      icon: <CircleDollarSign className="h-5 w-5" />
     },
     { name: "Settings", href: "/admin/settings", icon: <Settings className="h-5 w-5" /> },
   ];
@@ -131,8 +141,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <nav className="flex-1 px-2 space-y-1">
               {navigationItems.map((item) => {
                 const isActive = location === item.href;
-                const hasChildren = item.children && item.children.length > 0;
-                const isChildActive = hasChildren && item.children.some((child) => location === child.href);
+                const hasChildren = item.children !== undefined && item.children.length > 0;
+                const isChildActive = hasChildren && item.children?.some((child) => location === child.href);
                 
                 if (!hasChildren) {
                   return (

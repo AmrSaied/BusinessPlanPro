@@ -127,12 +127,8 @@ function Router() {
       <AdminProtectedRoute path="/admin/pricing" component={() => <PricingPage />} />
       <AdminProtectedRoute path="/admin/settings" component={() => <SettingsPage />} />
       
-      {/* Admin Prices Routes */}
-      <AdminProtectedRoute path="/admin/prices" component={() => <PricesPage />} />
-      <AdminProtectedRoute path="/admin/prices/base" component={() => <BasePricesPage />} />
+      {/* Admin Prices Routes - Base prices and discounts removed */}
       <AdminProtectedRoute path="/admin/prices/services" component={() => <ServicesPage />} />
-      <AdminProtectedRoute path="/admin/prices/discounts" component={() => <DiscountsPage />} />
-      <AdminProtectedRoute path="/admin/prices/currency" component={() => <CurrencyPage />} />
       
       {/* 404 Route */}
       <Route component={() => (
