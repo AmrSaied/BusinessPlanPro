@@ -70,6 +70,8 @@ export interface IStorage {
   createAdditionalService(service: InsertAdditionalService): Promise<AdditionalService>;
   updateAdditionalService(id: number, service: Partial<AdditionalService>): Promise<AdditionalService | undefined>;
   deleteAdditionalService(id: number): Promise<boolean>;
+  clearAllAdditionalServices(): Promise<boolean>;
+  resetAdditionalServices(): Promise<AdditionalService[]>;
   
   // System logs operations
   getSystemLogs(level: string, search: string, page: number, limit: number): Promise<SystemLog[]>;
@@ -485,6 +487,23 @@ export class MemStorage implements IStorage {
 
   async deleteAdditionalService(id: number): Promise<boolean> {
     return this.additionalServices.delete(id);
+  }
+  
+  async clearAllAdditionalServices(): Promise<boolean> {
+    this.additionalServices.clear();
+    return true;
+  }
+  
+  async resetAdditionalServices(): Promise<AdditionalService[]> {
+    // Clear all existing services
+    await this.clearAllAdditionalServices();
+    this.currentServiceId = 1;
+    
+    // Initialize with default services
+    this.initializeAdditionalServices();
+    
+    // Return the reset services
+    return this.getAdditionalServices();
   }
 
   // Keep these for backwards compatibility
