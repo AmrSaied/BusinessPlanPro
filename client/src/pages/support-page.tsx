@@ -208,7 +208,7 @@ const SupportPage = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary", isRTL && "text-right")}
+                      className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white", isRTL && "text-right")}
                       placeholder={t('form_name_placeholder')}
                       dir={isRTL ? "rtl" : "ltr"}
                     />
@@ -225,7 +225,7 @@ const SupportPage = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white", isRTL && "text-right")}
                       placeholder={t('form_email_placeholder')}
                       dir={isRTL ? "rtl" : "ltr"}
                     />
@@ -242,7 +242,7 @@ const SupportPage = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary", isRTL && "text-right")}
+                    className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white", isRTL && "text-right")}
                     dir={isRTL ? "rtl" : "ltr"}
                   >
                     <option value="">{t('form_subject_placeholder')}</option>
@@ -265,7 +265,7 @@ const SupportPage = () => {
                     onChange={handleChange}
                     required
                     rows={5}
-                    className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary", isRTL && "text-right")}
+                    className={cn("w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary bg-white", isRTL && "text-right")}
                     placeholder={t('form_message_placeholder')}
                     dir={isRTL ? "rtl" : "ltr"}
                   ></textarea>
