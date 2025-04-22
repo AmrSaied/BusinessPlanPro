@@ -1560,6 +1560,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to create service" });
     }
   });
+  
+  // Public endpoint to get active additional services
+  app.get("/api/services", async (req, res) => {
+    try {
+      // Only return active services
+      const services = await storage.getAdditionalServices(true);
+      res.status(200).json(services);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+      res.status(500).json({ error: "Failed to fetch services" });
+    }
+  });
 
   app.patch("/api/admin/services/:id", isAdmin, async (req, res) => {
     try {

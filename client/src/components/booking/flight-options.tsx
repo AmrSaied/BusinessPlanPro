@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "@/hooks/use-translation";
 import { Button } from "@/components/ui/button";
-import { Flight } from "@shared/schema";
+import { Flight, AdditionalService } from "@shared/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { Loader2 } from "lucide-react";
 
 interface FlightOptionsProps {
   selectedFlight: Flight | null;
@@ -25,23 +28,32 @@ const FlightOptions = ({
   onContinue,
 }: FlightOptionsProps) => {
   const { t } = useTranslation();
-  const [options, setOptions] = useState<BookingOptions>({
-    expressProcessing: false,
-    editableTicket: false,
-    hotelReservation: false,
-    insuranceLetter: false,
-  });
+  const [selectedServices, setSelectedServices] = useState<Record<number, boolean>>({});
   const [totalPrice, setTotalPrice] = useState(selectedFlight?.price || 12);
   const [visible, setVisible] = useState(false);
+  
+  // Fetch additional services from the API
+  const { data: services, isLoading } = useQuery<AdditionalService[]>({
+    queryKey: ["/api/services"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+    enabled: !!selectedFlight
+  });
 
-  // Calculate total price when options change
+  // Calculate total price when selected services change
   useEffect(() => {
     let price = selectedFlight?.price || 12;
-    // Removed express processing and editable ticket options
-    if (options.hotelReservation) price += 2;
-    if (options.insuranceLetter) price += 2;
+    
+    // Add price of selected services
+    if (services && selectedServices) {
+      services.forEach(service => {
+        if (selectedServices[service.id]) {
+          price += service.price;
+        }
+      });
+    }
+    
     setTotalPrice(price);
-  }, [options, selectedFlight]);
+  }, [selectedServices, selectedFlight, services]);
 
   // Show with animation when flight is selected
   useEffect(() => {
@@ -50,16 +62,35 @@ const FlightOptions = ({
     }
   }, [selectedFlight]);
 
-  // Handle option toggle
-  const handleOptionChange = (option: keyof BookingOptions) => {
-    setOptions({
-      ...options,
-      [option]: !options[option],
-    });
+  // Handle service selection toggle
+  const handleServiceChange = (serviceId: number) => {
+    setSelectedServices(prev => ({
+      ...prev,
+      [serviceId]: !prev[serviceId]
+    }));
   };
 
-  // Handle continue button click
+  // Convert selected services to booking options for backwards compatibility
   const handleContinue = () => {
+    // Create a map from service type to boolean
+    const serviceTypeMap: Record<string, boolean> = {};
+    
+    if (services) {
+      services.forEach(service => {
+        if (selectedServices[service.id]) {
+          serviceTypeMap[service.type] = true;
+        }
+      });
+    }
+    
+    // Convert to BookingOptions format for backward compatibility
+    const options: BookingOptions = {
+      expressProcessing: false, // Removed per requirements, keeping for compatibility
+      editableTicket: false,    // Removed per requirements, keeping for compatibility
+      hotelReservation: serviceTypeMap["hotel"] || false,
+      insuranceLetter: serviceTypeMap["insurance"] || false,
+    };
+    
     onContinue(options);
   };
 
@@ -71,6 +102,19 @@ const FlightOptions = ({
   };
 
   if (!selectedFlight) return null;
+  
+  if (isLoading) {
+    return (
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2">Loading services...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -136,47 +180,43 @@ const FlightOptions = ({
                   </div>
                 </div>
                 <div className="font-semibold text-primary">
-                  €{selectedFlight.price?.toFixed(2) || "12.00"}
+                  ${selectedFlight.price?.toFixed(2) || "12.00"}
                 </div>
               </div>
 
-
-
-              {/* Hotel Reservation */}
-              <div className="p-5 flex justify-between items-center">
-                <div className="flex-1">
-                  <div className="font-medium">{t("options.hotel")}</div>
-                  <div className="text-sm text-gray-600">
-                    Add a matching hotel reservation document
+              {/* Dynamic Services from API */}
+              {services && services.length > 0 ? (
+                services.map(service => (
+                  <div key={service.id} className="p-5 flex justify-between items-center">
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <div className="font-medium">{service.name}</div>
+                        {service.isRequired && (
+                          <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full ml-2">
+                            Required
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {service.description}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="font-semibold text-gray-800 mr-4">+${service.price.toFixed(2)}</div>
+                      <Checkbox
+                        id={`service-${service.id}`}
+                        checked={selectedServices[service.id] || false}
+                        onCheckedChange={() => handleServiceChange(service.id)}
+                        disabled={service.isRequired}
+                      />
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="p-5 text-center text-gray-500">
+                  No additional services available
                 </div>
-                <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
-                  <Checkbox
-                    id="hotel"
-                    checked={options.hotelReservation}
-                    onCheckedChange={() => handleOptionChange("hotelReservation")}
-                  />
-                </div>
-              </div>
-
-              {/* Insurance Letter */}
-              <div className="p-5 flex justify-between items-center">
-                <div className="flex-1">
-                  <div className="font-medium">{t("options.insurance")}</div>
-                  <div className="text-sm text-gray-600">
-                    Travel insurance confirmation document
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="font-semibold text-gray-800 mr-4">+€2</div>
-                  <Checkbox
-                    id="insurance"
-                    checked={options.insuranceLetter}
-                    onCheckedChange={() => handleOptionChange("insuranceLetter")}
-                  />
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -187,7 +227,7 @@ const FlightOptions = ({
                 {t("options.totalPrice")}
               </div>
               <div className="text-2xl font-semibold text-primary">
-                €{totalPrice.toFixed(2)}
+                ${totalPrice.toFixed(2)}
               </div>
             </div>
             <Button
