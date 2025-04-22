@@ -7,10 +7,16 @@ import {
   Booking, InsertBooking, 
   Airport, InsertAirport, 
   BookingPassenger, InsertBookingPassenger,
-  SystemLog, InsertSystemLog, LogLevel
+  SystemLog, InsertSystemLog, LogLevel,
+  AdditionalService, InsertAdditionalService,
+  FlightPricing, InsertFlightPricing
 } from '@shared/schema';
 import { eq, ilike, or, and, sql } from 'drizzle-orm';
-import { users, flights, passengers, bookings, airports, bookingPassengers, systemLogs } from '@shared/schema';
+import { 
+  users, flights, passengers, bookings, airports, 
+  bookingPassengers, systemLogs, additionalServices, 
+  flightPricing 
+} from '@shared/schema';
 import { generatePNR } from './utils';
 import connectPgSimple from 'connect-pg-simple';
 import session from 'express-session';

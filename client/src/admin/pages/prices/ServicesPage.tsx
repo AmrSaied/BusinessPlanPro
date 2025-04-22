@@ -172,10 +172,10 @@ const ServicesPage = () => {
     },
   ];
 
-  // Fetch services
+  // Fetch services from the API
   const { data: services, isLoading } = useQuery<AdditionalService[]>({
-    queryKey: ["/api/admin/prices/services"],
-    queryFn: () => mockServices, // Replace with actual API call
+    queryKey: ["/api/admin/services"],
+    queryFn: getQueryFn({}),
   });
 
   // Filter services based on active tab
@@ -215,33 +215,99 @@ const ServicesPage = () => {
     },
   });
 
+  // Mutations for service operations
+  const addMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof ServiceFormSchema>) => {
+      const res = await apiRequest("POST", "/api/admin/services", data);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to add service");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Service added",
+        description: "The service has been added successfully.",
+      });
+      setIsAddDialogOpen(false);
+      addForm.reset();
+      // Refresh data
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/services"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: z.infer<typeof ServiceFormSchema> }) => {
+      const res = await apiRequest("PATCH", `/api/admin/services/${id}`, data);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to update service");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Service updated",
+        description: "The service has been updated successfully.",
+      });
+      setIsEditDialogOpen(false);
+      setSelectedService(null);
+      editForm.reset();
+      // Refresh data
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/services"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await apiRequest("DELETE", `/api/admin/services/${id}`);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Failed to delete service");
+      }
+      return true;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Service deleted",
+        description: "The service has been deleted successfully.",
+      });
+      // Refresh data
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/services"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Handle adding a new service
   const handleAddService = (data: z.infer<typeof ServiceFormSchema>) => {
-    // Example - replace with actual API call
-    toast({
-      title: "Service added",
-      description: `${data.name} has been added successfully.`,
-    });
-    setIsAddDialogOpen(false);
-    addForm.reset();
-    // Invalidate query to refresh data
-    // queryClient.invalidateQueries({ queryKey: ["/api/admin/prices/services"] });
+    addMutation.mutate(data);
   };
 
   // Handle editing a service
   const handleEditService = (data: z.infer<typeof ServiceFormSchema>) => {
     if (!selectedService) return;
-    
-    // Example - replace with actual API call
-    toast({
-      title: "Service updated",
-      description: `${data.name} has been updated successfully.`,
-    });
-    setIsEditDialogOpen(false);
-    setSelectedService(null);
-    editForm.reset();
-    // Invalidate query to refresh data
-    // queryClient.invalidateQueries({ queryKey: ["/api/admin/prices/services"] });
+    updateMutation.mutate({ id: selectedService.id, data });
   };
 
   // Open edit dialog with selected service data
@@ -252,24 +318,20 @@ const ServicesPage = () => {
       description: service.description,
       price: service.price,
       type: service.type,
-      isRequired: service.isRequired,
-      isPerPassenger: service.isPerPassenger,
-      isPerFlight: service.isPerFlight,
       currency: service.currency,
-      availableClasses: service.availableClasses,
+      isRequired: service.isRequired || false,
+      isPerPassenger: service.isPerPassenger || true,
+      isPerFlight: service.isPerFlight || false,
+      availableClasses: service.availableClasses || ["economy", "business", "first"],
     });
     setIsEditDialogOpen(true);
   };
 
   // Handle deleting a service
   const handleDeleteService = (id: number) => {
-    // Example - replace with actual API call
-    toast({
-      title: "Service deleted",
-      description: "The service has been deleted successfully.",
-    });
-    // Invalidate query to refresh data
-    // queryClient.invalidateQueries({ queryKey: ["/api/admin/prices/services"] });
+    if (confirm("Are you sure you want to delete this service?")) {
+      deleteMutation.mutate(id);
+    }
   };
 
   if (isLoading) {
@@ -423,6 +485,124 @@ const ServicesPage = () => {
                   {/* Fields for per-passenger, per-flight, required, and travel classes removed per requirements */}
                   <DialogFooter>
                     <Button type="submit">Add Service</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit Dialog */}
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogContent className="sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle>Edit Service</DialogTitle>
+                <DialogDescription>
+                  Update the details of this additional service.
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...editForm}>
+                <form onSubmit={editForm.handleSubmit(handleEditService)} className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={editForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Service Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Extra Baggage" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="type"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Service Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {serviceTypes.map((type) => (
+                                <SelectItem key={type.value} value={type.value}>
+                                  {type.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={editForm.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Describe the service details" 
+                            className="resize-none" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={editForm.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Price</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              placeholder="50" 
+                              {...field} 
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={editForm.control}
+                      name="currency"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Currency</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select currency" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="USD">USD</SelectItem>
+                              <SelectItem value="EUR">EUR</SelectItem>
+                              <SelectItem value="GBP">GBP</SelectItem>
+                              <SelectItem value="AUD">AUD</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Update Service</Button>
                   </DialogFooter>
                 </form>
               </Form>
