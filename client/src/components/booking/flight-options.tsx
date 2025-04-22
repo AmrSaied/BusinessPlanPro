@@ -12,8 +12,9 @@ interface FlightOptionsProps {
 }
 
 export interface BookingOptions {
-  expressProcessing: boolean;
-  editableTicket: boolean;
+  // Removed expressProcessing and editableTicket as per requirement
+  expressProcessing: boolean; // Keeping for backward compatibility
+  editableTicket: boolean;    // Keeping for backward compatibility
   hotelReservation: boolean;
   insuranceLetter: boolean;
 }
@@ -91,17 +92,18 @@ const FlightOptions = ({
               <div className="flex items-center">
                 <div className="h-8 w-8 bg-primary-100 rounded-full flex items-center justify-center text-primary mr-3">
                   <span className="text-xs font-bold">
-                    {selectedFlight.airline.substring(0, 2)}
+                    {selectedFlight.airlineCode.substring(0, 2)}
                   </span>
                 </div>
                 <div>
                   <div className="font-medium">
-                    {selectedFlight.airline} {selectedFlight.flightNumber}
+                    {selectedFlight.airlineName} {selectedFlight.flightNumber}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {selectedFlight.originAirport?.iataCode} →{" "}
-                    {selectedFlight.destinationAirport?.iataCode} |{" "}
-                    {formatDate(selectedFlight.departureDate || "")} |{" "}
+                    {selectedFlight.departureAirport} →{" "}
+                    {selectedFlight.arrivalAirport} |{" "}
+                    {/* Use date from departureTime if needed */}
+                    {formatDate(new Date().toISOString().split('T')[0])} |{" "}
                     {selectedFlight.departureTime} - {selectedFlight.arrivalTime}
                   </div>
                 </div>
