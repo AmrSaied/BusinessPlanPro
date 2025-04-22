@@ -191,11 +191,7 @@ const FlightOptions = ({
                     <div className="flex-1">
                       <div className="flex items-center">
                         <div className="font-medium">{service.name}</div>
-                        {service.isRequired && (
-                          <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full ml-2">
-                            Required
-                          </span>
-                        )}
+                        {/* Required badge removed as per requirements */}
                       </div>
                       <div className="text-sm text-gray-600">
                         {service.description}
@@ -207,7 +203,7 @@ const FlightOptions = ({
                         id={`service-${service.id}`}
                         checked={selectedServices[service.id] || false}
                         onCheckedChange={() => handleServiceChange(service.id)}
-                        disabled={service.isRequired}
+                        disabled={false}
                       />
                     </div>
                   </div>

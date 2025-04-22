@@ -104,7 +104,7 @@ export function registerAdminRoutes(app: Express) {
       await storage.addSystemLog(
         "info",
         "admin",
-        `Admin dashboard stats accessed by ${req.user.username}`
+        `Admin dashboard stats accessed by ${req.user?.username || "unknown"}`
       );
       
       // Return the stats
@@ -285,7 +285,7 @@ export function registerAdminRoutes(app: Express) {
       await storage.addSystemLog(
         "info",
         "admin",
-        `Base flight pricing created by ${req.user.username}: ${pricing.originAirport} → ${pricing.destinationAirport}`
+        `Base flight pricing created by ${req.user?.username || "unknown"}: ${pricing.originAirport} → ${pricing.destinationAirport}`
       );
       
       res.status(201).json(pricing);
@@ -349,7 +349,7 @@ export function registerAdminRoutes(app: Express) {
       await storage.addSystemLog(
         "info",
         "admin",
-        `Base flight pricing updated by ${req.user.username}: ${updatedPricing.originAirport} → ${updatedPricing.destinationAirport}`
+        `Base flight pricing updated by ${req.user?.username || "unknown"}: ${updatedPricing.originAirport} → ${updatedPricing.destinationAirport}`
       );
       
       res.json(updatedPricing);

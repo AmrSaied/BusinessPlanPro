@@ -552,12 +552,12 @@ export default function BasePricePage() {
                         <TableCell>{pricing.destinationAirport}</TableCell>
                         <TableCell>
                           <Badge variant={getTravelClassBadgeVariant(pricing.travelClass)}>
-                            {pricing.travelClass?.charAt(0).toUpperCase() + pricing.travelClass?.slice(1) || "Economy"}
+                            {pricing.travelClass ? (pricing.travelClass.charAt(0).toUpperCase() + pricing.travelClass.slice(1)) : "Economy"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">${pricing.basePrice.toFixed(2)}</TableCell>
                         <TableCell>
-                          <Badge variant={pricing.isActive ? "success" : "secondary"}>
+                          <Badge variant={pricing.isActive ? "default" : "secondary"}>
                             {pricing.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
