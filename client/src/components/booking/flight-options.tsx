@@ -60,7 +60,8 @@ const FlightOptions = ({
     if (services && Array.isArray(services) && selectedServices) {
       services.forEach((service: AdditionalService) => {
         if (selectedServices[service.id]) {
-          price += service.price;
+          // Use nullish coalescing to handle potential undefined price
+          price += service.price ?? 0;
         }
       });
     }

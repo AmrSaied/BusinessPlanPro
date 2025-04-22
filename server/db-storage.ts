@@ -862,12 +862,12 @@ export class DatabaseStorage implements IStorage {
       await this.clearAllAdditionalServices();
       
       // Add the two required services
-      const services = [
+      const services: InsertAdditionalService[] = [
         {
           name: "Hotel Reservation",
           description: "Add a matching hotel reservation document",
           price: 2,
-          type: "hotel", // Changed from "insurance" to "hotel" to match client-side mapping
+          type: "hotel", // Using hotel type to match client-side mapping
           currency: "USD",
           isActive: true
         },
