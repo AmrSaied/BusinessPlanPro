@@ -1516,6 +1516,175 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Additional Services Management Routes
+  app.get("/api/admin/services", isAdmin, async (req, res) => {
+    try {
+      // Get all additional services from the storage
+      const services = await storage.getAdditionalServices();
+      res.status(200).json(services);
+    } catch (error) {
+      console.error("Error fetching additional services:", error);
+      res.status(500).json({ error: "Failed to fetch additional services" });
+    }
+  });
+
+  app.get("/api/admin/services/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const serviceId = parseInt(id);
+      
+      if (isNaN(serviceId)) {
+        return res.status(400).json({ error: "Invalid service ID" });
+      }
+      
+      const service = await storage.getAdditionalService(serviceId);
+      
+      if (!service) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      res.status(200).json(service);
+    } catch (error) {
+      console.error("Error fetching service:", error);
+      res.status(500).json({ error: "Failed to fetch service" });
+    }
+  });
+
+  app.post("/api/admin/services", isAdmin, async (req, res) => {
+    try {
+      const serviceData = req.body;
+      const newService = await storage.createAdditionalService(serviceData);
+      res.status(201).json(newService);
+    } catch (error) {
+      console.error("Error creating service:", error);
+      res.status(500).json({ error: "Failed to create service" });
+    }
+  });
+
+  app.patch("/api/admin/services/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const serviceId = parseInt(id);
+      
+      if (isNaN(serviceId)) {
+        return res.status(400).json({ error: "Invalid service ID" });
+      }
+      
+      const serviceData = req.body;
+      const updatedService = await storage.updateAdditionalService(serviceId, serviceData);
+      
+      if (!updatedService) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      res.status(200).json(updatedService);
+    } catch (error) {
+      console.error("Error updating service:", error);
+      res.status(500).json({ error: "Failed to update service" });
+    }
+  });
+
+  app.delete("/api/admin/services/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const serviceId = parseInt(id);
+      
+      if (isNaN(serviceId)) {
+        return res.status(400).json({ error: "Invalid service ID" });
+      }
+      
+      const success = await storage.deleteAdditionalService(serviceId);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Service not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      res.status(500).json({ error: "Failed to delete service" });
+    }
+  });
+
+  // Flight Pricing Management Routes
+  app.get("/api/admin/flight-pricing", isAdmin, async (req, res) => {
+    try {
+      const pricing = await storage.getFlightPricing();
+      res.status(200).json(pricing);
+    } catch (error) {
+      console.error("Error fetching flight pricing:", error);
+      res.status(500).json({ error: "Failed to fetch flight pricing" });
+    }
+  });
+
+  app.post("/api/admin/flight-pricing", isAdmin, async (req, res) => {
+    try {
+      const pricingData = req.body;
+      const newPricing = await storage.createFlightPricing(pricingData);
+      res.status(201).json(newPricing);
+    } catch (error) {
+      console.error("Error creating flight pricing:", error);
+      res.status(500).json({ error: "Failed to create flight pricing" });
+    }
+  });
+
+  app.patch("/api/admin/flight-pricing/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const pricingId = parseInt(id);
+      
+      if (isNaN(pricingId)) {
+        return res.status(400).json({ error: "Invalid pricing ID" });
+      }
+      
+      const pricingData = req.body;
+      const updatedPricing = await storage.updateFlightPricing(pricingId, pricingData);
+      
+      if (!updatedPricing) {
+        return res.status(404).json({ error: "Pricing not found" });
+      }
+      
+      res.status(200).json(updatedPricing);
+    } catch (error) {
+      console.error("Error updating flight pricing:", error);
+      res.status(500).json({ error: "Failed to update flight pricing" });
+    }
+  });
+
+  app.delete("/api/admin/flight-pricing/:id", isAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const pricingId = parseInt(id);
+      
+      if (isNaN(pricingId)) {
+        return res.status(400).json({ error: "Invalid pricing ID" });
+      }
+      
+      const success = await storage.deleteFlightPricing(pricingId);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Pricing not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting flight pricing:", error);
+      res.status(500).json({ error: "Failed to delete flight pricing" });
+    }
+  });
+
+  // Public routes for services
+  app.get("/api/services", async (req, res) => {
+    try {
+      // Only return active services for public route
+      const services = await storage.getAdditionalServices(true);
+      res.status(200).json(services);
+    } catch (error) {
+      console.error("Error fetching additional services:", error);
+      res.status(500).json({ error: "Failed to fetch additional services" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
