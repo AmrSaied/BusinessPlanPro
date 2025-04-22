@@ -32,18 +32,22 @@ const FlightOptions = ({
   const [totalPrice, setTotalPrice] = useState(selectedFlight?.price || 12);
   const [visible, setVisible] = useState(false);
   
-  // Fetch additional services from the API
+  // Fetch additional services from the API - this pulls from the admin-configured services
   const { data: services, isLoading } = useQuery<AdditionalService[]>({
     queryKey: ["/api/services"],
     queryFn: getQueryFn({ on401: "returnNull" }),
-    enabled: !!selectedFlight
+    enabled: !!selectedFlight,
+    // Make sure to refetch when the component mounts to keep pricing up to date with admin panel
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 10000 // Refetch after 10 seconds to reflect admin changes quickly
   });
 
   // Calculate total price when selected services change
   useEffect(() => {
     let price = selectedFlight?.price || 12;
     
-    // Add price of selected services
+    // Add price of selected services from admin panel
     if (services && selectedServices) {
       services.forEach(service => {
         if (selectedServices[service.id]) {
