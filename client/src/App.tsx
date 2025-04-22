@@ -35,6 +35,13 @@ import TicketsPage from "@/admin/pages/TicketsPage";
 import PricingPage from "@/admin/pages/PricingPage";
 import SettingsPage from "@/admin/pages/SettingsPage";
 
+// Admin Prices Page imports
+import PricesPage from "@/admin/pages/prices/PricesPage";
+import BasePricesPage from "@/admin/pages/prices/BasePricesPage";
+import ServicesPage from "@/admin/pages/prices/ServicesPage";
+import DiscountsPage from "@/admin/pages/prices/DiscountsPage";
+import CurrencyPage from "@/admin/pages/prices/CurrencyPage";
+
 function Router() {
   return (
     <Switch>
@@ -119,6 +126,13 @@ function Router() {
       <AdminProtectedRoute path="/admin/tickets" component={() => <TicketsPage />} />
       <AdminProtectedRoute path="/admin/pricing" component={() => <PricingPage />} />
       <AdminProtectedRoute path="/admin/settings" component={() => <SettingsPage />} />
+      
+      {/* Admin Prices Routes */}
+      <AdminProtectedRoute path="/admin/prices" component={() => <PricesPage />} />
+      <AdminProtectedRoute path="/admin/prices/base" component={() => <BasePricesPage />} />
+      <AdminProtectedRoute path="/admin/prices/services" component={() => <ServicesPage />} />
+      <AdminProtectedRoute path="/admin/prices/discounts" component={() => <DiscountsPage />} />
+      <AdminProtectedRoute path="/admin/prices/currency" component={() => <CurrencyPage />} />
       
       {/* 404 Route */}
       <Route component={() => (
