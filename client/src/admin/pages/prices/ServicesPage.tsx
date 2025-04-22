@@ -93,11 +93,12 @@ const ServiceFormSchema = z.object({
   description: z.string().min(3, { message: "Description is required" }),
   price: z.number().min(0, { message: "Price must be a positive number" }),
   type: z.enum(["baggage", "seat", "meal", "priority", "insurance", "other"]),
+  currency: z.string().min(1, { message: "Currency is required" }),
+  // Keep these fields in schema for backward compatibility but don't display in UI
   isRequired: z.boolean().default(false),
   isPerPassenger: z.boolean().default(true),
   isPerFlight: z.boolean().default(false),
-  currency: z.string().min(1, { message: "Currency is required" }),
-  availableClasses: z.array(z.string()).min(1, { message: "At least one travel class must be selected" }),
+  availableClasses: z.array(z.string()).default(["economy", "business", "first"]),
 });
 
 const ServicesPage = () => {
@@ -419,118 +420,7 @@ const ServicesPage = () => {
                       )}
                     />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={addForm.control}
-                      name="isRequired"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                          <div className="space-y-0.5">
-                            <FormLabel>Required</FormLabel>
-                            <FormDescription>
-                              Must be purchased
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addForm.control}
-                      name="isPerPassenger"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                          <div className="space-y-0.5">
-                            <FormLabel>Per Passenger</FormLabel>
-                            <FormDescription>
-                              Apply to each passenger
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={addForm.control}
-                      name="isPerFlight"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                          <div className="space-y-0.5">
-                            <FormLabel>Per Flight</FormLabel>
-                            <FormDescription>
-                              Apply to each flight segment
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <FormField
-                    control={addForm.control}
-                    name="availableClasses"
-                    render={() => (
-                      <FormItem>
-                        <div className="mb-4">
-                          <FormLabel className="text-base">Available for Travel Classes</FormLabel>
-                          <FormDescription>
-                            Select which travel classes this service is available for
-                          </FormDescription>
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          {travelClasses.map((item) => (
-                            <FormField
-                              key={item.id}
-                              control={addForm.control}
-                              name="availableClasses"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem
-                                    key={item.id}
-                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                  >
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(item.id)}
-                                        onCheckedChange={(checked) => {
-                                          return checked
-                                            ? field.onChange([...field.value, item.id])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                  (value) => value !== item.id
-                                                )
-                                              )
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      {item.label}
-                                    </FormLabel>
-                                  </FormItem>
-                                )
-                              }}
-                            />
-                          ))}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Fields for per-passenger, per-flight, required, and travel classes removed per requirements */}
                   <DialogFooter>
                     <Button type="submit">Add Service</Button>
                   </DialogFooter>
@@ -568,8 +458,6 @@ const ServicesPage = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Availability</TableHead>
-                  <TableHead>Options</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -588,20 +476,7 @@ const ServicesPage = () => {
                     <TableCell>
                       {service.price} {service.currency}
                     </TableCell>
-                    <TableCell>
-                      {service.availableClasses.map((cls) => (
-                        <div key={cls} className="text-xs capitalize">
-                          {cls}
-                        </div>
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1 text-xs">
-                        {service.isRequired && <div>Required</div>}
-                        {service.isPerPassenger && <div>Per passenger</div>}
-                        {service.isPerFlight && <div>Per flight</div>}
-                      </div>
-                    </TableCell>
+
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
@@ -736,118 +611,7 @@ const ServicesPage = () => {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-4">
-                <FormField
-                  control={editForm.control}
-                  name="isRequired"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                      <div className="space-y-0.5">
-                        <FormLabel>Required</FormLabel>
-                        <FormDescription>
-                          Must be purchased
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={editForm.control}
-                  name="isPerPassenger"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                      <div className="space-y-0.5">
-                        <FormLabel>Per Passenger</FormLabel>
-                        <FormDescription>
-                          Apply to each passenger
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={editForm.control}
-                  name="isPerFlight"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                      <div className="space-y-0.5">
-                        <FormLabel>Per Flight</FormLabel>
-                        <FormDescription>
-                          Apply to each flight segment
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={editForm.control}
-                name="availableClasses"
-                render={() => (
-                  <FormItem>
-                    <div className="mb-4">
-                      <FormLabel className="text-base">Available for Travel Classes</FormLabel>
-                      <FormDescription>
-                        Select which travel classes this service is available for
-                      </FormDescription>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      {travelClasses.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={editForm.control}
-                          name="availableClasses"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, item.id])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          )
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal">
-                                  {item.label}
-                                </FormLabel>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* Fields for per-passenger, per-flight, required, and travel classes removed per requirements */}
               <DialogFooter>
                 <Button type="submit">Update Service</Button>
               </DialogFooter>
