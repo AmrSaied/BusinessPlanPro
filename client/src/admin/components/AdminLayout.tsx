@@ -118,7 +118,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: "Tickets", href: "/admin/tickets", icon: <Ticket className="h-5 w-5" /> },
     { 
       name: "Pricing", 
-      href: "#", 
+      href: "/admin/prices/services", // Default to services page instead of #
       icon: <DollarSign className="h-5 w-5" />,
       children: [
         { 
@@ -200,7 +200,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         </div>
                         <ChevronDown className={`h-4 w-4 transition-transform ${isActive || isChildActive ? "transform rotate-180 text-primary-foreground" : "text-muted-foreground"}`} />
                       </Link>
-                      {(isActive || isChildActive) && item.children && (
+                      {/* Always show children for pricing section */}
+                      {(item.name === "Pricing" || isActive || isChildActive) && item.children && (
                         <div className="ml-6 space-y-1 mt-1">
                           {item.children.map((child) => {
                             const isChildItemActive = location === child.href;
@@ -326,7 +327,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                               </div>
                               <ChevronDown className={`h-4 w-4 transition-transform ${isActive || isChildActive ? "transform rotate-180 text-primary-foreground" : "text-muted-foreground"}`} />
                             </Link>
-                            {(isActive || isChildActive) && item.children && (
+                            {/* Always show children for pricing section */}
+                            {(item.name === "Pricing" || isActive || isChildActive) && item.children && (
                               <div className="ml-6 space-y-1 mt-1">
                                 {item.children.map((child) => {
                                   const isChildItemActive = location === child.href;
